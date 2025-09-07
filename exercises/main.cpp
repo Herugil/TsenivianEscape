@@ -1,67 +1,14 @@
-/*
-Things to write
-point class:
-	int x, int y
-	getAdjacent(Direction)
-
-game object class:
-	bool isMoveable
-	bool canBePassedThrough
-	char symbol (for display)
-	operator << (for map display)
-	Point position
-	void move(map, direction) moves from 1 case towards direction if adjacent point is available on map
-	getters
-
-	(for later)
-	str description (for inspection)
-	showDescription() (for player inspection)
-
-wall(game object) class
-	isMoveable false,
-	symbol X,
-	description dummy description
-	canBePassedThrough false,
-
-map class
-	topLeft point,
-	bottomLeft point,
-	etc
-	floorLayer(std vector<std vector<unique ptrs<gameobject>>>) terrain, walls, etc
-	topLayer(std vector <std vector<unique ptrs<gameobject>>>) enemies, player, containers, traps, etc so they dont overwrite floor
-
-
-	placeFloor(gameObject, Point) puts an object on the floor
-	placeFloor(gameObject, Point1, Point2) puts copies of object on the floor in a square delimited by points (they form diagonals)
-	placeTop(gameObject, Point) same thing
-	getters for both layers
-
-	operator << displays top layer if present, bottom layer otherwise, empty char if nullptr
-	
-player(game object) class
-	symbol @
-	canBePassedThrough false
-	isMoveable true
-
-input class
-	handles player input (removes necessity for \n when pressing a key)
-	enum commands
-	Direction getDirection(commands) -> gets input returns direction
-	
-
-main 
-	getCommand, getDirection, display map
-*/
 #ifdef _WIN32
 #include <windows.h>
 #endif
-// Remove the unconditional #include <windows.h>
 
 #include "Map.h"
 #include "Layer.h"
 #include "GameSession.h"
 #include "Player.h"
 #include "Point.h"
+#include "Container.h"
+#include "Item.h"
 #include "Directions.h"
 #include <memory>
 #include <iostream>
@@ -100,6 +47,15 @@ int main() {
 	gameSession.getMap().placeWalls(Point(9, 0), Point(9, 9));
 	gameSession.getMap().placeWalls(Point(0, 9), Point(9, 9));
 	gameSession.getMap().placeWalls(Point(5, 0), Point(5, 5));
+	gameSession.getMap().placeWalls(Point(3, 9), Point(3, 5));
+	std::vector<std::unique_ptr<Item>> containerItems;
+
+	containerItems.push_back(std::make_unique<Item>("sword"));
+	containerItems.push_back(std::make_unique<Item>("bow"));
+	Container cont(std::move(containerItems), Point(0, 0));
+	cont.displayContents();
+	gameSession.getMap().placeTop(std::make_shared<Container>(std::move(cont)), Point(0, 0));
+
 	gameSession.displayMap();
 	while (true) {
 		if (Input::hasKeyPressed()) {

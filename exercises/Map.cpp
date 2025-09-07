@@ -14,7 +14,7 @@ void Map::placeFloor(std::unique_ptr<GameObject> gameObject, const Point& point)
 
 void Map::placeTop(std::shared_ptr<GameObject> gameObject, const Point& point) {
 	if(checkBounds(point))
-	m_topLayer[point.getX(), point.getY()] = gameObject; // implicit conversion to weak layer
+	m_topLayer[point.getX(), point.getY()] = gameObject; // implicit conversion to weak ptr
 }
 
 void Map::removeTop(const Point& point) {
