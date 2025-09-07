@@ -65,7 +65,7 @@ main
 #include <thread>
 #include "Input.h"
 #include "Settings.h"
-
+#include <windows.h>
 
 void clearScreen() {
 #ifdef _WIN32
