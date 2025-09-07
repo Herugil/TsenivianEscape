@@ -52,6 +52,10 @@ input class
 main 
 	getCommand, getDirection, display map
 */
+#ifdef _WIN32
+#include <windows.h>
+#endif
+// Remove the unconditional #include <windows.h>
 
 #include "Map.h"
 #include "Layer.h"
@@ -65,7 +69,6 @@ main
 #include <thread>
 #include "Input.h"
 #include "Settings.h"
-#include <windows.h>
 
 void clearScreen() {
 #ifdef _WIN32
