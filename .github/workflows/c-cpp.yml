@@ -1,0 +1,55 @@
+name: C/C++ Multi-Platform CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+    - name: Build Release
+      run: msbuild exercises.vcxproj /p:Configuration=Release /p:Platform=x64
+      working-directory: exercises
+    - name: Upload Windows Binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: game-windows
+        path: exercises/x64/Release/exercises.exe
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build macOS
+      run: |
+        g++ -std=c++14 -O2 \
+          *.cpp \
+          -o TsenivianEscape-macos
+      working-directory: exercises
+    - name: Upload macOS Binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: game-macos
+        path: exercises/TsenivianEscape-macos
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build Linux
+      run: |
+        g++ -std=c++14 -O2 \
+          *.cpp \
+          -o TsenivianEscape-linux
+      working-directory: exercises
+    - name: Upload Linux Binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: game-linux
+        path: exercises/TsenivianEscape-linux
