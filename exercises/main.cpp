@@ -17,29 +17,6 @@
 #include <memory>
 #include <thread>
 
-void clearScreen() {
-#ifdef _WIN32
-
-  // Windows-specific clear screen
-  HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-  if (hConsole != INVALID_HANDLE_VALUE) {
-    COORD coordScreen = {0, 0};
-    DWORD cCharsWritten;
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
-
-    if (GetConsoleScreenBufferInfo(hConsole, &csbi)) {
-      FillConsoleOutputCharacter(hConsole, ' ', csbi.dwSize.X * csbi.dwSize.Y,
-                                 coordScreen, &cCharsWritten);
-      SetConsoleCursorPosition(hConsole, coordScreen);
-    }
-  }
-#else
-  // macOS/Linux - ANSI escape codes work fine
-  std::cout << "\033[2J\033[H";
-  std::cout.flush(); // Force immediate output
-#endif
-}
-
 int main() {
   GameSession gameSession{10, 10, std::make_shared<Player>(Point(1, 1))};
   gameSession.getMap().placeWalls(Point(0, 0), Point(0, 9));
@@ -48,24 +25,21 @@ int main() {
   gameSession.getMap().placeWalls(Point(0, 9), Point(9, 9));
   gameSession.getMap().placeWalls(Point(5, 0), Point(5, 5));
   gameSession.getMap().placeWalls(Point(3, 9), Point(3, 5));
-  std::vector<std::unique_ptr<Item>> containerItems;
+  std::vector<std::shared_ptr<Item>> containerItems;
 
-  containerItems.push_back(std::make_unique<Item>("sword"));
-  containerItems.push_back(std::make_unique<Item>("bow"));
-  Container cont(std::move(containerItems), Point(0, 0));
+  containerItems.push_back(std::make_shared<Item>("sword"));
+  containerItems.push_back(std::make_shared<Item>("bow"));
+  Container cont(std::move(containerItems), Point(0, 0),
+                 "A battered and old looking wooden chest.");
   cont.displayContents();
-  gameSession.getMap().placeTop(std::make_shared<Container>(std::move(cont)),
-                                Point(0, 0));
+  gameSession.getMap().placeFloor(std::make_unique<Container>(std::move(cont)),
+                                  Point(2, 2));
 
   gameSession.displayMap();
   while (true) {
     if (Input::hasKeyPressed()) {
-      Directions::Direction dir = Input::getDirection();
-      if (dir != Directions::nbDirections) {
-        gameSession.movePlayer(dir);
-        clearScreen();
-        gameSession.displayMap();
-      }
+      Command::command command{CommandHandler::getCommand(Input::getKey())};
+      CommandHandler::executeWorldCommand(gameSession, command);
     }
     std::this_thread::sleep_for(
         std::chrono::milliseconds(Settings::g_timeSleepMS));
