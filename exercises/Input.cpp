@@ -61,7 +61,7 @@ void Input::setNonBlockingMode(bool enable) {
 
     if (enable) {
         struct termios newTermios = originalTermios;
-        newTermios.c_lflag &= ~(ICANON | ECHO);
+        newTermios.c_lflag &= ~static_cast<unsigned long>((ICANON | ECHO));
         tcsetattr(STDIN_FILENO, TCSANOW, &newTermios);
 
         int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
