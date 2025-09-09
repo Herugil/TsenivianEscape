@@ -28,4 +28,5 @@ const Point &GameSession::getPlayerPos() const {
   return m_player->getPosition();
 }
 
+Player &GameSession::getPlayer() { return *m_player; }
 Map &GameSession::getMap() { return m_currentMap; }

@@ -18,7 +18,9 @@ char GameObject::getSymbol() const { return m_symbol; }
 
 void GameObject::setPosition(const Point &point) { m_position = point; }
 
-void GameObject::playerInteraction() { std::cout << m_description; }
+void GameObject::playerInteraction([[maybe_unused]] Player &player) {
+  std::cout << m_description;
+}
 
 std::ostream &operator<<(std::ostream &out, const GameObject &gameObject) {
   out << gameObject.getSymbol();

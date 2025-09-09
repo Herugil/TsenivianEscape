@@ -89,14 +89,14 @@ std::ostream &operator<<(std::ostream &out, const Map &map) {
   return out;
 }
 
-void Map::interactPoint(const Point &point) {
+void Map::interactPoint(const Point &point, Player &player) {
   int x{point.getX()};
   int y{point.getY()};
   if (checkBounds(point)) {
     auto topObject = m_topLayer[x, y].lock();
     if (topObject)
-      topObject->playerInteraction();
+      topObject->playerInteraction(player);
     else if (m_floorLayer[x, y])
-      m_floorLayer[x, y]->playerInteraction();
+      m_floorLayer[x, y]->playerInteraction(player);
   }
 }

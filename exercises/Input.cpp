@@ -1,6 +1,7 @@
 #include "Input.h"
 #include "Directions.h"
 #include "GameSession.h"
+#include "Item.h"
 #include "ScreenUtils.h"
 
 #ifndef _WIN32
@@ -85,20 +86,18 @@ void Input::setNonBlockingMode(bool enable) {
 }
 #endif
 
-// struct Command:
-// one char member, one "command" enum listing all commands??
-
-// getCommand() -> returns Command::command
-
-// executeWorldCommand() -> for normal context(no combat, no menu etc) -> move
-// if w a s d. If E, executes getCommand(), if w pressed, interact with top
-// object, if s pressed bottom object, etc
-
 bool isMovementCommand(Command::command cmd) {
   return cmd >= Command::top && cmd <= Command::right;
 }
 bool isInteractionCommand(Command::command cmd) {
   return cmd == Command::interact;
+}
+bool isTakeAllCommand(Command::command cmd) { return cmd == Command::takeAll; }
+bool isHotkeyCommand(Command::command cmd) {
+  return cmd >= Command::hotkey1 && cmd <= Command::hotkey9;
+}
+bool isInventoryCommand(Command::command cmd) {
+  return cmd == Command::inventory;
 }
 
 Command::command CommandHandler::getCommand(char pressedKey) {
@@ -113,16 +112,45 @@ Command::command CommandHandler::getCommand(char pressedKey) {
     return Command::right;
   case CommandChar::interact:
     return Command::interact;
+  case CommandChar::takeAll:
+    return Command::takeAll;
+  case CommandChar::hotkey1:
+    return Command::hotkey1;
+  case CommandChar::hotkey2:
+    return Command::hotkey2;
+  case CommandChar::hotkey3:
+    return Command::hotkey3;
+  case CommandChar::hotkey4:
+    return Command::hotkey4;
+  case CommandChar::hotkey5:
+    return Command::hotkey5;
+  case CommandChar::hotkey6:
+    return Command::hotkey6;
+  case CommandChar::hotkey7:
+    return Command::hotkey7;
+  case CommandChar::hotkey8:
+    return Command::hotkey8;
+  case CommandChar::hotkey9:
+    return Command::hotkey9;
+  case CommandChar::inventory:
+    return Command::inventory;
   default:
     return Command::nbCommands;
   }
+}
+
+int getPressedKey(Command::command command) {
+  // goes from 0 to 9
+  return static_cast<int>(command - Command::hotkey1);
 }
 
 void CommandHandler::executeWorldCommand(GameSession &gameSession,
                                          Command::command command) {
   if (isMovementCommand(command))
     gameSession.movePlayer(static_cast<Directions::Direction>(command));
-  if (isInteractionCommand(command)) {
+  else if (isInteractionCommand(command)) {
+    // TODO: the block below could be a nice function to get
+    // directional input after a first input (eg attack, aim, etc)
     Command::command directionCommand{
         CommandHandler::getCommand(Input::getKeyBlocking())};
     auto directionInteract{
@@ -131,6 +159,32 @@ void CommandHandler::executeWorldCommand(GameSession &gameSession,
         gameSession.getPlayerPos().getAdjacentPoint(directionInteract)};
     ScreenUtils::clearScreen();
     gameSession.displayMap();
-    gameSession.getMap().interactPoint(adjPoint);
+    gameSession.getMap().interactPoint(adjPoint, gameSession.getPlayer());
+  } else if (isInventoryCommand(command)) {
+    ScreenUtils::clearScreen();
+    gameSession.getPlayer().displayInventory();
+  } else {
+    ScreenUtils::clearScreen();
+    gameSession.displayMap();
+  }
+}
+
+void CommandHandler::handleContainerCommands(Container &container,
+                                             Player &player) {
+  while (!container.getContents().empty()) {
+    auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
+    if (isTakeAllCommand(command)) {
+      ScreenUtils::clearScreen();
+      player.takeAllItems(container);
+      break;
+    } else if (isHotkeyCommand(command)) {
+      auto pressedKey{static_cast<std::size_t>(getPressedKey(command))};
+      auto item{container.takeItem(pressedKey)};
+      if (item) {
+        player.takeItem(item);
+        container.displayContents();
+      }
+    } else
+      break;
   }
 }

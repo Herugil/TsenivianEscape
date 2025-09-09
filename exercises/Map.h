@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Layer.h"
+#include "Player.h"
 #include "Point.h"
 #include <iostream>
 #include <memory>
@@ -23,7 +24,7 @@ public:
   bool isAvailable(const Point &point) const;
   bool checkBounds(const Point &point) const;
   friend std::ostream &operator<<(std::ostream &out, const Map &map);
-  void interactPoint(const Point &point);
+  void interactPoint(const Point &point, Player &player);
 };
 
 std::ostream &operator<<(std::ostream &out, const GameObject &gameObject);

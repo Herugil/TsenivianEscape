@@ -13,6 +13,6 @@ public:
   void movePlayer(Directions::Direction direction);
   void displayMap() const;
   const Point &getPlayerPos() const;
-
+  Player &getPlayer();
   Map &getMap();
 };

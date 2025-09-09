@@ -1,6 +1,8 @@
 #include "Container.h"
+#include "Input.h"
 #include "Point.h"
 #include <iostream>
+#include <memory>
 #include <vector>
 
 Container::Container(const Point &point, std::string_view description)
@@ -16,11 +18,27 @@ void Container::displayContents() {
   else
     std::cout << "Contains:\n";
   for (std::size_t i{0}; i < m_heldItems.size(); ++i) {
-    std::cout << i << ": " << *(m_heldItems[i]) << '\n';
+    std::cout << i + 1 << ": " << *(m_heldItems[i]) << '\n';
   }
 }
 
-void Container::playerInteraction() {
+void Container::playerInteraction(Player &player) {
   std::cout << m_description << '\n';
   displayContents();
+  CommandHandler::handleContainerCommands(*this, player);
 }
+
+std::vector<std::shared_ptr<Item>> Container::getContents() {
+  return m_heldItems;
+}
+
+std::shared_ptr<Item> Container::takeItem(std::size_t index) {
+  if (index >= m_heldItems.size())
+    return nullptr;
+
+  auto item = m_heldItems[index];
+  m_heldItems.erase(m_heldItems.begin() + static_cast<int>(index));
+  return item;
+}
+
+void Container::clearContents() { m_heldItems.clear(); }

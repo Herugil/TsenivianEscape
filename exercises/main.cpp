@@ -31,10 +31,10 @@ int main() {
   containerItems.push_back(std::make_shared<Item>("bow"));
   Container cont(std::move(containerItems), Point(0, 0),
                  "A battered and old looking wooden chest.");
-  cont.displayContents();
   gameSession.getMap().placeFloor(std::make_unique<Container>(std::move(cont)),
                                   Point(2, 2));
 
+  gameSession.getPlayer().takeItem(std::make_shared<Item>("Dagger"));
   gameSession.displayMap();
   while (true) {
     if (Input::hasKeyPressed()) {

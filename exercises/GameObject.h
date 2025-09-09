@@ -5,6 +5,8 @@
 #include <string_view>
 
 class Map;
+class Player;
+
 class GameObject {
   bool m_isMoveable{};
   bool m_traversable{};
@@ -24,7 +26,8 @@ public:
   bool isTraversable() const;
   bool isMoveable() const;
   void setPosition(const Point &point);
-  virtual void playerInteraction(); // not const because some object states can
-                                    // be changed through this function
+  virtual void
+  playerInteraction(Player &player); // not const because some object states can
+                                     // be changed through this function
   virtual ~GameObject() = default;
 };
