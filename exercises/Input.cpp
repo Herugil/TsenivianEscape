@@ -146,9 +146,11 @@ int getPressedKey(Command::command command) {
 
 void CommandHandler::executeWorldCommand(GameSession &gameSession,
                                          Command::command command) {
-  if (isMovementCommand(command))
+  if (isMovementCommand(command)) {
     gameSession.movePlayer(static_cast<Directions::Direction>(command));
-  else if (isInteractionCommand(command)) {
+    ScreenUtils::clearScreen();
+    gameSession.displayMap();
+  } else if (isInteractionCommand(command)) {
     // TODO: the block below could be a nice function to get
     // directional input after a first input (eg attack, aim, etc)
     Command::command directionCommand{
@@ -162,7 +164,9 @@ void CommandHandler::executeWorldCommand(GameSession &gameSession,
     gameSession.getMap().interactPoint(adjPoint, gameSession.getPlayer());
   } else if (isInventoryCommand(command)) {
     ScreenUtils::clearScreen();
-    gameSession.getPlayer().displayInventory();
+    gameSession.getPlayer().inventoryMenu();
+    ScreenUtils::clearScreen();
+    gameSession.displayMap();
   } else {
     ScreenUtils::clearScreen();
     gameSession.displayMap();
@@ -174,17 +178,33 @@ void CommandHandler::handleContainerCommands(Container &container,
   while (!container.getContents().empty()) {
     auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
     if (isTakeAllCommand(command)) {
-      ScreenUtils::clearScreen();
       player.takeAllItems(container);
+      container.displayContents();
       break;
     } else if (isHotkeyCommand(command)) {
       auto pressedKey{static_cast<std::size_t>(getPressedKey(command))};
-      auto item{container.takeItem(pressedKey)};
+      auto item{container.popItem(pressedKey)};
       if (item) {
         player.takeItem(item);
         container.displayContents();
       }
     } else
       break;
+  }
+}
+
+void CommandHandler::handleInventoryCommands(Player &player) {
+  while (true) {
+    ScreenUtils::clearScreen();
+    player.displayInventory();
+    auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
+    if (isHotkeyCommand(command)) {
+      auto pressedKey{static_cast<std::size_t>(getPressedKey(command))};
+      auto item{player.getItem(pressedKey)};
+      if (item) {
+        player.equipItem(item);
+      }
+    } else
+      return;
   }
 }

@@ -17,9 +17,9 @@ public:
   Container(const Point &point, std::string_view description = "");
   Container(std::vector<std::shared_ptr<Item>> items, const Point &point,
             std::string_view description = "");
-  std::vector<std::shared_ptr<Item>> getContents();
+  std::vector<std::shared_ptr<Item>> &getContents();
   void displayContents();
   void clearContents();
   void playerInteraction(Player &player) override;
-  std::shared_ptr<Item> takeItem(std::size_t index);
+  std::shared_ptr<Item> popItem(std::size_t index);
 };

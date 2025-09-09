@@ -77,4 +77,5 @@ namespace CommandHandler {
 Command::command getCommand(char pressedKey);
 void executeWorldCommand(GameSession &gameSession, Command::command command);
 void handleContainerCommands(Container &container, Player &player);
+void handleInventoryCommands(Player &player);
 } // namespace CommandHandler

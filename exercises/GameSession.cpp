@@ -17,8 +17,6 @@ void GameSession::movePlayer(Directions::Direction direction) {
     m_currentMap.placeTop(m_player, adjPoint);
     m_currentMap.removeTop(currentPos);
     m_player->setPosition(adjPoint);
-    ScreenUtils::clearScreen();
-    displayMap();
   }
 }
 

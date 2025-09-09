@@ -28,11 +28,11 @@ void Container::playerInteraction(Player &player) {
   CommandHandler::handleContainerCommands(*this, player);
 }
 
-std::vector<std::shared_ptr<Item>> Container::getContents() {
+std::vector<std::shared_ptr<Item>> &Container::getContents() {
   return m_heldItems;
 }
 
-std::shared_ptr<Item> Container::takeItem(std::size_t index) {
+std::shared_ptr<Item> Container::popItem(std::size_t index) {
   if (index >= m_heldItems.size())
     return nullptr;
 
