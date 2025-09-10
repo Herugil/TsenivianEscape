@@ -115,11 +115,13 @@ int main() {
           gameSession.displayMap();
           displayCombatInterface(gameSession.getPlayer());
         }
+        enemy->refillActionPoints();
       }
       if (initiativeIndex >= gameSession.getTurnOrder().size() - 1) {
         initiativeIndex = 0; // loop back to first player
-      } else
+      } else {
         initiativeIndex++;
+      }
     }
   }
 
