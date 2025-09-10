@@ -1,0 +1,3 @@
+/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles/game.dir
+/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles/edit_cache.dir
+/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles/rebuild_cache.dir
