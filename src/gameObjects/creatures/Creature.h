@@ -15,7 +15,7 @@ protected:
 
 public:
   Creature(char symbol, const Point &position, int healthPoints,
-           std::string_view name = "");
+           std::string_view name = "", std::string_view description = "");
   int getHealthPoints() const;
   bool isDead() const;
   void takeDamage(int damage);

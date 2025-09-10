@@ -40,7 +40,8 @@ int main() {
 
   auto npc{std::make_shared<NonPlayableCharacter>(
       'e', Point(4, 7), 12, std::vector<std::shared_ptr<Item>>{enemyLoot},
-      "Gruffy-looking man", "A dead body.")};
+      "Gruffy-looking man",
+      "A somber looking man, threatening you with a banana.", "A dead body.")};
   gameSession.addNpc(npc);
 
   gameSession.getPlayer().takeItem(

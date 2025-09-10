@@ -8,15 +8,17 @@
 NonPlayableCharacter::NonPlayableCharacter(char symbol, const Point &point,
                                            int healthPoints,
                                            std::string_view name,
+                                           std::string_view description,
                                            std::string_view deadDescription)
-    : Creature{symbol, point, healthPoints, name},
+    : Creature{symbol, point, healthPoints, name, description},
       m_deadDescription{deadDescription} {}
 
 NonPlayableCharacter::NonPlayableCharacter(
     char symbol, const Point &point, int healthPoints,
     std::vector<std::shared_ptr<Item>> items, std::string_view name,
-    std::string_view deadDescription)
-    : NonPlayableCharacter{symbol, point, healthPoints, name, deadDescription} {
+    std::string_view description, std::string_view deadDescription)
+    : NonPlayableCharacter{symbol, point,       healthPoints,
+                           name,   description, deadDescription} {
   m_inventory = std::move(items);
 }
 

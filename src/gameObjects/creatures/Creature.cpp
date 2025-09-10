@@ -4,9 +4,9 @@
 #include "map/Point.h"
 
 Creature::Creature(char symbol, const Point &position, int healthPoints,
-                   std::string_view name)
-    : GameObject{true, false, symbol, position}, m_healthPoints{healthPoints},
-      m_name{name} {}
+                   std::string_view name, std::string_view description)
+    : GameObject{true, false, symbol, position, description},
+      m_healthPoints{healthPoints}, m_name{name} {}
 
 int Creature::getHealthPoints() const { return m_healthPoints; }
 bool Creature::isDead() const { return m_healthPoints <= 0; }
