@@ -2,54 +2,59 @@ name: C/C++ Multi-Platform CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master", "main"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master", "main"]
 
 jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v2
-    - name: Build Release
-      run: msbuild exercises.vcxproj /p:Configuration=Release /p:Platform=x64
-      working-directory: exercises
-    - name: Upload Windows Binary
-      uses: actions/upload-artifact@v4
-      with:
-        name: game-windows
-        path: exercises/x64/Release/exercises.exe
+      - uses: actions/checkout@v4
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+      - name: Create build directory
+        run: mkdir build
+      - name: Configure CMake
+        run: cmake -B build -S . -G "Visual Studio 17 2022" -A x64
+      - name: Build Release
+        run: cmake --build build --config Release
+      - name: Upload Windows Binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: game-windows
+          path: build/Release/game.exe
 
   build-macos:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Build macOS
-      run: |
-        g++ -std=c++23 -O2 \
-          *.cpp \
-          -o TsenivianEscape-macos
-      working-directory: exercises
-    - name: Upload macOS Binary
-      uses: actions/upload-artifact@v4
-      with:
-        name: game-macos
-        path: exercises/TsenivianEscape-macos
+      - uses: actions/checkout@v4
+      - name: Create build directory
+        run: mkdir build
+      - name: Configure CMake
+        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+      - name: Build macOS
+        run: cmake --build build
+      - name: Upload macOS Binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: game-macos
+          path: build/game
 
   build-linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Build Linux
-      run: |
-        g++ -std=c++23 -O2 \
-          *.cpp \
-          -o TsenivianEscape-linux
-      working-directory: exercises
-    - name: Upload Linux Binary
-      uses: actions/upload-artifact@v4
-      with:
-        name: game-linux
-        path: exercises/TsenivianEscape-linux
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential cmake
+      - name: Create build directory
+        run: mkdir build
+      - name: Configure CMake
+        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+      - name: Build Linux
+        run: cmake --build build
+      - name: Upload Linux Binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: game-linux
+          path: build/game
