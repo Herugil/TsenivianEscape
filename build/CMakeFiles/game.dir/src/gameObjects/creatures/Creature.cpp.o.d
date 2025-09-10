@@ -1,6 +1,7 @@
 CMakeFiles/game.dir/src/gameObjects/creatures/Creature.cpp.o: \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.cpp \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/Settings.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/GameObject.h \
   /Users/pr058215/repositories/TsenivianEscape/src/input/Directions.h \
   /Users/pr058215/repositories/TsenivianEscape/src/input/Input.h \

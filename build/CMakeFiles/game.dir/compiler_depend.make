@@ -697,6 +697,7 @@ CMakeFiles/game.dir/src/core/GameSession.cpp.o: /Users/pr058215/repositories/Tse
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/Settings.h \
   /Users/pr058215/repositories/TsenivianEscape/src/core/GameSession.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/GameObject.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.h \
@@ -1408,6 +1409,7 @@ CMakeFiles/game.dir/src/gameObjects/GameObject.cpp.o: /Users/pr058215/repositori
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/Settings.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/GameObject.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Player.h \
@@ -2116,6 +2118,7 @@ CMakeFiles/game.dir/src/gameObjects/creatures/Creature.cpp.o: /Users/pr058215/re
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/Settings.h \
   /Users/pr058215/repositories/TsenivianEscape/src/core/GameSession.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/GameObject.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.h \
@@ -2826,6 +2829,7 @@ CMakeFiles/game.dir/src/gameObjects/creatures/NonPlayableCharacter.cpp.o: /Users
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/Settings.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/GameObject.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/NonPlayableCharacter.h \
@@ -3531,6 +3535,7 @@ CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.o: /Users/pr058215/repo
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/Settings.h \
   /Users/pr058215/repositories/TsenivianEscape/src/core/GameSession.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/GameObject.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.h \
@@ -5613,6 +5618,7 @@ CMakeFiles/game.dir/src/input/Input.cpp.o: /Users/pr058215/repositories/Tsenivia
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/Settings.h \
   /Users/pr058215/repositories/TsenivianEscape/src/core/GameSession.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/GameObject.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.h \
@@ -7087,6 +7093,7 @@ CMakeFiles/game.dir/src/map/Map.cpp.o: /Users/pr058215/repositories/TsenivianEsc
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/Settings.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/GameObject.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Player.h \
@@ -7796,6 +7803,7 @@ CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.o: /Users/pr058215/repositories/
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/Settings.h \
   /Users/pr058215/repositories/TsenivianEscape/src/core/GameSession.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/GameObject.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.h \
@@ -8482,8 +8490,6 @@ CMakeFiles/game.dir/src/utils/ScreenUtils.cpp.o: /Users/pr058215/repositories/Ts
 
 /Users/pr058215/repositories/TsenivianEscape/src/scripts/MeleeAttack.cpp:
 
-/Users/pr058215/repositories/TsenivianEscape/src/Settings.h:
-
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/thread:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__stop_token/stop_state.h:
@@ -8539,6 +8545,8 @@ CMakeFiles/game.dir/src/utils/ScreenUtils.cpp.o: /Users/pr058215/repositories/Ts
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__thread/jthread.h:
 
 /Users/pr058215/repositories/TsenivianEscape/src/core/GameSession.h:
+
+/Users/pr058215/repositories/TsenivianEscape/src/Settings.h:
 
 /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h:
 

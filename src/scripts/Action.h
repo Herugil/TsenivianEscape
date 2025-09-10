@@ -11,6 +11,8 @@ class Action {
 protected:
   std::string m_name{};
   bool m_needsInput{};
+  int m_cost{1}; // in some systems (pf2e) variable action cost
+  // for 1 spell but not gonna bother here
 
 public:
   Action(std::string_view name, bool needsInput)

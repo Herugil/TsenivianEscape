@@ -6,15 +6,17 @@ MeleeAttack::MeleeAttack(std::string_view name) : Action(name, true) {}
 
 void MeleeAttack::execute(GameSession &gameSession, Creature &actor,
                           Creature &target) {
-  int m_damage{actor.getMeleeDamage()};
-  target.takeDamage(m_damage);
-  std::cout << m_damage << "  damage dealt to " << target.getName() << " by "
-            << actor.getName() << ".\n";
+  if (actor.canAct(m_cost)) {
+    int m_damage{actor.getMeleeDamage()};
+    target.takeDamage(m_damage);
+    std::cout << m_damage << "  damage dealt to " << target.getName() << " by "
+              << actor.getName() << ".\n";
+  }
 }
 
 void MeleeAttack::playerExecute(GameSession &gameSession,
                                 Directions::Direction direction) {
-  auto player{gameSession.getPlayer()};
+  auto &player{gameSession.getPlayer()};
   int range{player.getMeleeRange()};
   auto &map{gameSession.getMap()};
   auto point{player.getPosition()};

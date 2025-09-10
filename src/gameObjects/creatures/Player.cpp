@@ -49,16 +49,18 @@ void Player::takeAllItems(Container &container) {
 }
 
 void Player::equipItem(std::shared_ptr<Item> item) {
-  if (item->getType() == Item::ItemType::oneHanded) {
-    auto equippedRightHand{m_equipment.rightHand.lock()};
-    if (equippedRightHand) {
-      equippedRightHand->setEquipped();
-      m_equipment.rightHand.reset();
-      if (equippedRightHand == item)
-        return;
+  if (canAct(1)) {
+    if (item->getType() == Item::ItemType::oneHanded) {
+      auto equippedRightHand{m_equipment.rightHand.lock()};
+      if (equippedRightHand) {
+        equippedRightHand->setEquipped();
+        m_equipment.rightHand.reset();
+        if (equippedRightHand == item)
+          return;
+      }
+      m_equipment.rightHand = item;
+      item->setEquipped();
     }
-    m_equipment.rightHand = item;
-    item->setEquipped();
   }
 }
 

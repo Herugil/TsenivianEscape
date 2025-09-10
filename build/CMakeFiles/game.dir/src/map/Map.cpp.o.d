@@ -454,6 +454,7 @@ CMakeFiles/game.dir/src/map/Map.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/size.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Player.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/Settings.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/items/Item.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iostream \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/ios \

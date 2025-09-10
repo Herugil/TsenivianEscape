@@ -25,6 +25,8 @@ public:
   void addNpc(std::shared_ptr<NonPlayableCharacter> npc);
   void addContainer(std::shared_ptr<Container> container);
   void cleanDeadNpcs();
+  const std::vector<std::shared_ptr<NonPlayableCharacter>> &getNpcs() const;
+  bool enemiesInMap() const;
   Player &getPlayer();
   Map &getMap();
 };

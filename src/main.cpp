@@ -15,8 +15,26 @@
 #include <memory>
 #include <thread>
 
-int main() {
-  GameSession gameSession{10, 10, std::make_shared<Player>(Point(2, 1), 10)};
+void displayCombatInterface(const Player &player) {
+  std::cout << "Movement:";
+  for (int i{0}; i < player.getMovementPoints(); ++i) {
+    std::cout << 'X';
+  }
+  for (int i{0}; i < player.getMaxMovementPoints() - player.getMovementPoints();
+       ++i)
+    std::cout << ' ';
+  std::cout << "   ";
+  std::cout << "Actions:";
+  for (int i{0}; i < player.getActionPoints(); ++i) {
+    std::cout << 'X';
+  }
+  for (int i{0}; i < player.getMaxActionPoints() - player.getActionPoints();
+       ++i)
+    std::cout << ' ';
+  std::cout << '\n';
+}
+
+GameSession &prepGame(GameSession &gameSession) {
   gameSession.getMap().placeWalls(Point(0, 0), Point(0, 9));
   gameSession.getMap().placeWalls(Point(0, 0), Point(9, 0));
   gameSession.getMap().placeWalls(Point(9, 0), Point(9, 9));
@@ -47,6 +65,26 @@ int main() {
   gameSession.getPlayer().takeItem(
       std::make_shared<Weapon>("Dagger", Item::ItemType::oneHanded, 2, 1));
   gameSession.displayMap();
+  return gameSession;
+}
+
+int main() {
+  GameSession gameSession{10, 10, std::make_shared<Player>(Point(2, 1), 10)};
+  prepGame(gameSession);
+
+  while (gameSession.enemiesInMap()) {
+    gameSession.getPlayer().setCombat();
+    if (Input::hasKeyPressed()) {
+      Command::command command{CommandHandler::getCommand(Input::getKey())};
+      CommandHandler::executeWorldCommand(gameSession, command);
+      displayCombatInterface(gameSession.getPlayer());
+    }
+    if (gameSession.getPlayer().getActionPoints() == 0 &&
+        gameSession.getPlayer().getMovementPoints() == 0)
+      gameSession.getPlayer().refillActionPoints();
+    std::this_thread::sleep_for(
+        std::chrono::milliseconds(Settings::g_timeSleepMS));
+  }
 
   while (true) {
     if (Input::hasKeyPressed()) {

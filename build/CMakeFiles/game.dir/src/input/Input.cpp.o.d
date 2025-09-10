@@ -90,6 +90,7 @@ CMakeFiles/game.dir/src/input/Input.cpp.o: \
   /Users/pr058215/repositories/TsenivianEscape/src/core/GameSession.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/NonPlayableCharacter.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/Settings.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/GameObject.h \
   /Users/pr058215/repositories/TsenivianEscape/src/map/Point.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/string \

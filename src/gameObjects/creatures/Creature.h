@@ -1,4 +1,5 @@
 #pragma once
+#include "Settings.h"
 #include "gameObjects/GameObject.h"
 #include "gameObjects/items/Item.h"
 #include <vector>
@@ -11,7 +12,11 @@ protected:
   // or player could pickpocket them
   std::string m_name{};
   int m_healthPoints{};
-  bool m_isDead{};
+  int m_maxMovementPoints{Settings::g_averageMoveSpeed};
+  int m_maxActionPoints{Settings::g_numActions};
+  int m_movementPoints{0};
+  int m_actionPoints{Settings::g_numActions};
+  bool m_inCombat{false};
 
 public:
   Creature(char symbol, const Point &position, int healthPoints,
@@ -21,5 +26,18 @@ public:
   void takeDamage(int damage);
   std::string_view getName() const;
   virtual int getMeleeDamage() const = 0;
+  int getMovementPoints() const;
+  int getActionPoints() const;
+  int getMaxMovementPoints() const;
+  int getMaxActionPoints() const;
+  bool useActionPoints(int cost = 1);
+  bool useMovementPoints(int cost = 1);
+  bool canAct(int cost = 1);
+  bool canMove(int cost = 1);
+  void refillActionPoints();
+  void refillMovementPoints();
   virtual ~Creature() = default;
+  bool inCombat() const;
+  void setCombat();
+  void unsetCombat();
 };
