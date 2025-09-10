@@ -31,7 +31,9 @@ void displayCombatInterface(const Player &player) {
   for (int i{0}; i < player.getMaxActionPoints() - player.getActionPoints();
        ++i)
     std::cout << ' ';
-  std::cout << '\n';
+  std::cout << '\n'
+            << "HP: " << player.getHealthPoints() << '/'
+            << player.getMaxHealthPoints() << '\n';
 }
 
 GameSession &prepGame(GameSession &gameSession) {
@@ -44,7 +46,7 @@ GameSession &prepGame(GameSession &gameSession) {
   std::vector<std::shared_ptr<Item>> containerItems;
 
   containerItems.push_back(
-      std::make_shared<Weapon>("sword", Item::ItemType::oneHanded, 3, 1));
+      std::make_shared<Weapon>("sword", Item::ItemType::oneHanded, 13, 1));
   containerItems.push_back(
       std::make_shared<Weapon>("spear", Item::ItemType::oneHanded, 2, 2));
   containerItems.push_back(
@@ -72,21 +74,54 @@ int main() {
   GameSession gameSession{10, 10, std::make_shared<Player>(Point(2, 1), 10)};
   prepGame(gameSession);
 
-  while (gameSession.enemiesInMap()) {
+  if (gameSession.enemiesInMap()) {
     gameSession.getPlayer().setCombat();
-    if (Input::hasKeyPressed()) {
-      Command::command command{CommandHandler::getCommand(Input::getKey())};
-      CommandHandler::executeWorldCommand(gameSession, command);
-      displayCombatInterface(gameSession.getPlayer());
+    gameSession.initializeTurnOrder();
+    for (auto character : gameSession.getTurnOrder()) {
+      auto ptr{character.lock()};
+      if (ptr)
+        ptr->setCombat();
     }
-    if (gameSession.getPlayer().getActionPoints() == 0 &&
-        gameSession.getPlayer().getMovementPoints() == 0)
-      gameSession.getPlayer().refillActionPoints();
-    std::this_thread::sleep_for(
-        std::chrono::milliseconds(Settings::g_timeSleepMS));
+    std::size_t initiativeIndex{0};
+
+    while (gameSession.enemiesInMap()) {
+      auto activeChar{gameSession.getTurnOrder()[initiativeIndex].lock()};
+      if (!activeChar)
+        break;
+
+      if (auto player{std::dynamic_pointer_cast<Player>(activeChar)}) {
+        while ((player->getActionPoints() > 0) |
+               (player->getMovementPoints() > 0)) {
+          Command::command command{
+              CommandHandler::getCommand(Input::getKeyBlocking())};
+          CommandHandler::executeWorldCommand(gameSession, command);
+          displayCombatInterface(gameSession.getPlayer());
+          gameSession.initializeTurnOrder(); // if someone dies, no turn
+        }
+        gameSession.getPlayer().refillActionPoints();
+
+      } else if (auto enemy{std::dynamic_pointer_cast<NonPlayableCharacter>(
+                     activeChar)}) {
+        while ((enemy->getActionPoints() > 0)) {
+          // AI script!!!
+          enemy->executeBasicAttack(gameSession.getPlayer(), gameSession);
+          gameSession.initializeTurnOrder(); // if someone dies, no turn
+          std::this_thread::sleep_for(
+              std::chrono::milliseconds(Settings::g_timeEnemyTurnMS));
+          ScreenUtils::clearScreen();
+          gameSession.displayMap();
+          displayCombatInterface(gameSession.getPlayer());
+        }
+      }
+      if (initiativeIndex >= gameSession.getTurnOrder().size() - 1) {
+        initiativeIndex = 0; // loop back to first player
+      } else
+        initiativeIndex++;
+    }
   }
 
   while (true) {
+    gameSession.getPlayer().unsetCombat();
     if (Input::hasKeyPressed()) {
       Command::command command{CommandHandler::getCommand(Input::getKey())};
       CommandHandler::executeWorldCommand(gameSession, command);

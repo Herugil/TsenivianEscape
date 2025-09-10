@@ -4,8 +4,8 @@
 
 MeleeAttack::MeleeAttack(std::string_view name) : Action(name, true) {}
 
-void MeleeAttack::execute(GameSession &gameSession, Creature &actor,
-                          Creature &target) {
+void MeleeAttack::execute([[maybe_unused]] GameSession &gameSession,
+                          Creature &actor, Creature &target) {
   if (actor.canAct(m_cost)) {
     int m_damage{actor.getMeleeDamage()};
     target.takeDamage(m_damage);

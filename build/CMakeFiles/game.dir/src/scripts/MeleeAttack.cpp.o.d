@@ -3,8 +3,8 @@ CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.o: \
   /Users/pr058215/repositories/TsenivianEscape/src/scripts/MeleeAttack.h \
   /Users/pr058215/repositories/TsenivianEscape/src/core/GameSession.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/NonPlayableCharacter.h \
-  /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.h \
   /Users/pr058215/repositories/TsenivianEscape/src/Settings.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/GameObject.h \
   /Users/pr058215/repositories/TsenivianEscape/src/input/Directions.h \
   /Users/pr058215/repositories/TsenivianEscape/src/input/Input.h \
@@ -690,6 +690,7 @@ CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__format/formatter_string.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__format/formatter_tuple.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/print \
+  /Users/pr058215/repositories/TsenivianEscape/src/scripts/Action.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/vector \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/temp_value.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/aligned_storage.h \
@@ -707,6 +708,5 @@ CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/assume_aligned.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/ranges_uninitialized_algorithms.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/uses_allocator_construction.h \
-  /Users/pr058215/repositories/TsenivianEscape/src/scripts/Action.h \
   /Users/pr058215/repositories/TsenivianEscape/src/map/Map.h \
   /Users/pr058215/repositories/TsenivianEscape/src/map/Layer.h

@@ -19,10 +19,9 @@ struct Equipment {
 class Player : public Creature {
 private:
   Equipment m_equipment{};
-  std::vector<std::shared_ptr<Action>> m_actions{};
 
 public:
-  Player(const Point &position, int healthPoints);
+  Player(const Point &position, int maxHealthPoints);
   void takeItem(std::shared_ptr<Item> item);
   void inventoryMenu();
   void actionMenu(GameSession &gameSession);

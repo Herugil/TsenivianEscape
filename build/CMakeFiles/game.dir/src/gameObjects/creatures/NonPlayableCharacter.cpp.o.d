@@ -1,8 +1,8 @@
 CMakeFiles/game.dir/src/gameObjects/creatures/NonPlayableCharacter.cpp.o: \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/NonPlayableCharacter.cpp \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/NonPlayableCharacter.h \
-  /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.h \
   /Users/pr058215/repositories/TsenivianEscape/src/Settings.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/GameObject.h \
   /Users/pr058215/repositories/TsenivianEscape/src/input/Directions.h \
   /Users/pr058215/repositories/TsenivianEscape/src/input/Input.h \
@@ -688,6 +688,7 @@ CMakeFiles/game.dir/src/gameObjects/creatures/NonPlayableCharacter.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__format/formatter_string.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__format/formatter_tuple.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/print \
+  /Users/pr058215/repositories/TsenivianEscape/src/scripts/Action.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/vector \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/temp_value.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/aligned_storage.h \

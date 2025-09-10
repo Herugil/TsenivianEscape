@@ -1,4 +1,5 @@
 #pragma once
+#include "Settings.h"
 #include "gameObjects/creatures/Creature.h"
 #include "gameObjects/items/Item.h"
 #include "map/Point.h"
@@ -11,20 +12,21 @@ class GameSession;
 class NonPlayableCharacter : public Creature {
 protected:
   std::string m_deadDescription{};
-  int m_meleeDamage{};
+  int m_meleeDamage{Settings::g_baseEnemyDamage};
 
 public:
-  NonPlayableCharacter(char symbol, const Point &point, int healthPoints,
+  NonPlayableCharacter(char symbol, const Point &point, int maxHealthPoints,
                        std::string_view name = "",
                        std::string_view description = "enemy",
                        std::string_view deadDescription = "");
-  NonPlayableCharacter(char symbol, const Point &point, int healthPoints,
+  NonPlayableCharacter(char symbol, const Point &point, int maxHealthPoints,
                        std::vector<std::shared_ptr<Item>>,
                        std::string_view name = "",
                        std::string_view description = "enemy",
                        std::string_view deadDescription = "");
   std::string_view getDeadDescription() const;
   std::vector<std::shared_ptr<Item>> getInventory() const;
+  void executeBasicAttack(Creature &target, GameSession &gameSession);
   int getMeleeDamage() const override;
   virtual ~NonPlayableCharacter() = default;
 };

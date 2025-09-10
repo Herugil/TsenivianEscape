@@ -12,6 +12,7 @@ class GameSession {
   std::shared_ptr<Player> m_player{};
   std::vector<std::shared_ptr<NonPlayableCharacter>> m_npcs{};
   std::vector<std::shared_ptr<Container>> m_sessionOwnedContainers{};
+  std::vector<std::weak_ptr<Creature>> m_turnOrder{};
   // when NPCs die, containers pop on the top layer, which
   // is made of weak ptrs. to ensure they're not left dangling, gameSession
   // handles their existence.
@@ -26,7 +27,10 @@ public:
   void addContainer(std::shared_ptr<Container> container);
   void cleanDeadNpcs();
   const std::vector<std::shared_ptr<NonPlayableCharacter>> &getNpcs() const;
+  std::vector<std::weak_ptr<Creature>> getTurnOrder() const;
   bool enemiesInMap() const;
   Player &getPlayer();
   Map &getMap();
+
+  void initializeTurnOrder();
 };

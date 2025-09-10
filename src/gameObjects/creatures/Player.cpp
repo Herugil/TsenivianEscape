@@ -4,11 +4,8 @@
 #include "scripts/MeleeAttack.h"
 #include <memory>
 
-Player::Player(const Point &position, int healthPoints)
-    : Creature('@', position, healthPoints, "you") {
-  m_actions.emplace_back(
-      std::make_shared<MeleeAttack>("Attack with right hand weapon"));
-}
+Player::Player(const Point &position, int maxHealthPoints)
+    : Creature('@', position, maxHealthPoints, "you") {}
 
 void Player::takeItem(std::shared_ptr<Item> item) {
   if (item) {

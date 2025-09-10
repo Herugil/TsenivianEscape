@@ -6,18 +6,18 @@
 #include <vector>
 
 NonPlayableCharacter::NonPlayableCharacter(char symbol, const Point &point,
-                                           int healthPoints,
+                                           int maxHealthPoints,
                                            std::string_view name,
                                            std::string_view description,
                                            std::string_view deadDescription)
-    : Creature{symbol, point, healthPoints, name, description},
+    : Creature{symbol, point, maxHealthPoints, name, description},
       m_deadDescription{deadDescription} {}
 
 NonPlayableCharacter::NonPlayableCharacter(
-    char symbol, const Point &point, int healthPoints,
+    char symbol, const Point &point, int maxHealthPoints,
     std::vector<std::shared_ptr<Item>> items, std::string_view name,
     std::string_view description, std::string_view deadDescription)
-    : NonPlayableCharacter{symbol, point,       healthPoints,
+    : NonPlayableCharacter{symbol, point,       maxHealthPoints,
                            name,   description, deadDescription} {
   m_inventory = std::move(items);
 }
@@ -31,3 +31,11 @@ std::vector<std::shared_ptr<Item>> NonPlayableCharacter::getInventory() const {
 }
 
 int NonPlayableCharacter::getMeleeDamage() const { return m_meleeDamage; }
+
+void NonPlayableCharacter::executeBasicAttack(Creature &target,
+                                              GameSession &gameSession) {
+  auto basicAction{m_actions[0]};
+  basicAction->execute(gameSession, *this, target);
+  // this should check for range, etc
+  // for now will hit the player anywhere on the map
+}

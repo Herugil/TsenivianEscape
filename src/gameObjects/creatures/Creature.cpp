@@ -2,13 +2,19 @@
 #include "core/GameSession.h"
 #include "gameObjects/GameObject.h"
 #include "map/Point.h"
+#include "scripts/MeleeAttack.h"
 
-Creature::Creature(char symbol, const Point &position, int healthPoints,
+Creature::Creature(char symbol, const Point &position, int maxHealthPoints,
                    std::string_view name, std::string_view description)
     : GameObject{true, false, symbol, position, description},
-      m_healthPoints{healthPoints}, m_name{name} {}
+      m_maxHealthPoints{maxHealthPoints}, m_name{name} {
+  m_actions.emplace_back(
+      std::make_shared<MeleeAttack>("Attack with right hand weapon"));
+  m_healthPoints = m_maxHealthPoints;
+}
 
 int Creature::getHealthPoints() const { return m_healthPoints; }
+int Creature::getMaxHealthPoints() const { return m_maxHealthPoints; }
 bool Creature::isDead() const { return m_healthPoints <= 0; }
 
 void Creature::takeDamage(int damage) { m_healthPoints -= damage; }

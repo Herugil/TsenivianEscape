@@ -2131,7 +2131,8 @@ CMakeFiles/game.dir/src/gameObjects/creatures/Creature.cpp.o: /Users/pr058215/re
   /Users/pr058215/repositories/TsenivianEscape/src/map/Layer.h \
   /Users/pr058215/repositories/TsenivianEscape/src/map/Map.h \
   /Users/pr058215/repositories/TsenivianEscape/src/map/Point.h \
-  /Users/pr058215/repositories/TsenivianEscape/src/scripts/Action.h
+  /Users/pr058215/repositories/TsenivianEscape/src/scripts/Action.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/scripts/MeleeAttack.h
 
 CMakeFiles/game.dir/src/gameObjects/creatures/NonPlayableCharacter.cpp.o: /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/NonPlayableCharacter.cpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/Availability.h \
@@ -2837,7 +2838,8 @@ CMakeFiles/game.dir/src/gameObjects/creatures/NonPlayableCharacter.cpp.o: /Users
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/terrain/Container.h \
   /Users/pr058215/repositories/TsenivianEscape/src/input/Directions.h \
   /Users/pr058215/repositories/TsenivianEscape/src/input/Input.h \
-  /Users/pr058215/repositories/TsenivianEscape/src/map/Point.h
+  /Users/pr058215/repositories/TsenivianEscape/src/map/Point.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/scripts/Action.h
 
 CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.o: /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Player.cpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/Availability.h \

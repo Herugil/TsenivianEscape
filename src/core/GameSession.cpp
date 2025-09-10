@@ -70,3 +70,24 @@ GameSession::getNpcs() const {
 }
 
 bool GameSession::enemiesInMap() const { return !m_npcs.empty(); }
+
+void GameSession::initializeTurnOrder() {
+  if (m_turnOrder.empty()) {
+    m_turnOrder.push_back(m_player);
+    for (std::weak_ptr<Creature> npc : m_npcs) {
+      m_turnOrder.push_back(npc);
+    }
+  } else {
+    for (auto it{m_turnOrder.begin()}; it != m_turnOrder.end();) {
+      auto lockedCharacter{(*it).lock()};
+      if (!lockedCharacter)
+        it = m_turnOrder.erase(it);
+      else
+        ++it;
+    }
+  }
+}
+
+std::vector<std::weak_ptr<Creature>> GameSession::getTurnOrder() const {
+  return m_turnOrder;
+}
