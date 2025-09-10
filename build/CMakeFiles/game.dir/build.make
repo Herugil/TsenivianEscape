@@ -100,24 +100,10 @@ CMakeFiles/game.dir/src/gameObjects/GameObject.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/game.dir/src/gameObjects/GameObject.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/GameObject.cpp -o CMakeFiles/game.dir/src/gameObjects/GameObject.cpp.s
 
-CMakeFiles/game.dir/src/gameObjects/Item.cpp.o: CMakeFiles/game.dir/flags.make
-CMakeFiles/game.dir/src/gameObjects/Item.cpp.o: /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/Item.cpp
-CMakeFiles/game.dir/src/gameObjects/Item.cpp.o: CMakeFiles/game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/game.dir/src/gameObjects/Item.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game.dir/src/gameObjects/Item.cpp.o -MF CMakeFiles/game.dir/src/gameObjects/Item.cpp.o.d -o CMakeFiles/game.dir/src/gameObjects/Item.cpp.o -c /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/Item.cpp
-
-CMakeFiles/game.dir/src/gameObjects/Item.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/game.dir/src/gameObjects/Item.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/Item.cpp > CMakeFiles/game.dir/src/gameObjects/Item.cpp.i
-
-CMakeFiles/game.dir/src/gameObjects/Item.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/game.dir/src/gameObjects/Item.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/Item.cpp -o CMakeFiles/game.dir/src/gameObjects/Item.cpp.s
-
 CMakeFiles/game.dir/src/gameObjects/creatures/Creature.cpp.o: CMakeFiles/game.dir/flags.make
 CMakeFiles/game.dir/src/gameObjects/creatures/Creature.cpp.o: /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.cpp
 CMakeFiles/game.dir/src/gameObjects/creatures/Creature.cpp.o: CMakeFiles/game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/game.dir/src/gameObjects/creatures/Creature.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/game.dir/src/gameObjects/creatures/Creature.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game.dir/src/gameObjects/creatures/Creature.cpp.o -MF CMakeFiles/game.dir/src/gameObjects/creatures/Creature.cpp.o.d -o CMakeFiles/game.dir/src/gameObjects/creatures/Creature.cpp.o -c /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.cpp
 
 CMakeFiles/game.dir/src/gameObjects/creatures/Creature.cpp.i: cmake_force
@@ -131,7 +117,7 @@ CMakeFiles/game.dir/src/gameObjects/creatures/Creature.cpp.s: cmake_force
 CMakeFiles/game.dir/src/gameObjects/creatures/NonPlayableCharacter.cpp.o: CMakeFiles/game.dir/flags.make
 CMakeFiles/game.dir/src/gameObjects/creatures/NonPlayableCharacter.cpp.o: /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/NonPlayableCharacter.cpp
 CMakeFiles/game.dir/src/gameObjects/creatures/NonPlayableCharacter.cpp.o: CMakeFiles/game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/game.dir/src/gameObjects/creatures/NonPlayableCharacter.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/game.dir/src/gameObjects/creatures/NonPlayableCharacter.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game.dir/src/gameObjects/creatures/NonPlayableCharacter.cpp.o -MF CMakeFiles/game.dir/src/gameObjects/creatures/NonPlayableCharacter.cpp.o.d -o CMakeFiles/game.dir/src/gameObjects/creatures/NonPlayableCharacter.cpp.o -c /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/NonPlayableCharacter.cpp
 
 CMakeFiles/game.dir/src/gameObjects/creatures/NonPlayableCharacter.cpp.i: cmake_force
@@ -145,7 +131,7 @@ CMakeFiles/game.dir/src/gameObjects/creatures/NonPlayableCharacter.cpp.s: cmake_
 CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.o: CMakeFiles/game.dir/flags.make
 CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.o: /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Player.cpp
 CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.o: CMakeFiles/game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.o -MF CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.o.d -o CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.o -c /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Player.cpp
 
 CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.i: cmake_force
@@ -155,6 +141,20 @@ CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.i: cmake_force
 CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Player.cpp -o CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.s
+
+CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.o: CMakeFiles/game.dir/flags.make
+CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.o: /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/items/Item.cpp
+CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.o: CMakeFiles/game.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.o -MF CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.o.d -o CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.o -c /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/items/Item.cpp
+
+CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/items/Item.cpp > CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.i
+
+CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/items/Item.cpp -o CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.s
 
 CMakeFiles/game.dir/src/gameObjects/terrain/Container.cpp.o: CMakeFiles/game.dir/flags.make
 CMakeFiles/game.dir/src/gameObjects/terrain/Container.cpp.o: /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/terrain/Container.cpp
@@ -226,10 +226,24 @@ CMakeFiles/game.dir/src/map/Map.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/game.dir/src/map/Map.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/pr058215/repositories/TsenivianEscape/src/map/Map.cpp -o CMakeFiles/game.dir/src/map/Map.cpp.s
 
+CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.o: CMakeFiles/game.dir/flags.make
+CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.o: /Users/pr058215/repositories/TsenivianEscape/src/scripts/MeleeAttack.cpp
+CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.o: CMakeFiles/game.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.o -MF CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.o.d -o CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.o -c /Users/pr058215/repositories/TsenivianEscape/src/scripts/MeleeAttack.cpp
+
+CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/pr058215/repositories/TsenivianEscape/src/scripts/MeleeAttack.cpp > CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.i
+
+CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/pr058215/repositories/TsenivianEscape/src/scripts/MeleeAttack.cpp -o CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.s
+
 CMakeFiles/game.dir/src/utils/ScreenUtils.cpp.o: CMakeFiles/game.dir/flags.make
 CMakeFiles/game.dir/src/utils/ScreenUtils.cpp.o: /Users/pr058215/repositories/TsenivianEscape/src/utils/ScreenUtils.cpp
 CMakeFiles/game.dir/src/utils/ScreenUtils.cpp.o: CMakeFiles/game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/game.dir/src/utils/ScreenUtils.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/game.dir/src/utils/ScreenUtils.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game.dir/src/utils/ScreenUtils.cpp.o -MF CMakeFiles/game.dir/src/utils/ScreenUtils.cpp.o.d -o CMakeFiles/game.dir/src/utils/ScreenUtils.cpp.o -c /Users/pr058215/repositories/TsenivianEscape/src/utils/ScreenUtils.cpp
 
 CMakeFiles/game.dir/src/utils/ScreenUtils.cpp.i: cmake_force
@@ -244,15 +258,16 @@ CMakeFiles/game.dir/src/utils/ScreenUtils.cpp.s: cmake_force
 game_OBJECTS = \
 "CMakeFiles/game.dir/src/core/GameSession.cpp.o" \
 "CMakeFiles/game.dir/src/gameObjects/GameObject.cpp.o" \
-"CMakeFiles/game.dir/src/gameObjects/Item.cpp.o" \
 "CMakeFiles/game.dir/src/gameObjects/creatures/Creature.cpp.o" \
 "CMakeFiles/game.dir/src/gameObjects/creatures/NonPlayableCharacter.cpp.o" \
 "CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.o" \
+"CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.o" \
 "CMakeFiles/game.dir/src/gameObjects/terrain/Container.cpp.o" \
 "CMakeFiles/game.dir/src/input/Directions.cpp.o" \
 "CMakeFiles/game.dir/src/input/Input.cpp.o" \
 "CMakeFiles/game.dir/src/main.cpp.o" \
 "CMakeFiles/game.dir/src/map/Map.cpp.o" \
+"CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.o" \
 "CMakeFiles/game.dir/src/utils/ScreenUtils.cpp.o"
 
 # External object files for target game
@@ -260,19 +275,20 @@ game_EXTERNAL_OBJECTS =
 
 game: CMakeFiles/game.dir/src/core/GameSession.cpp.o
 game: CMakeFiles/game.dir/src/gameObjects/GameObject.cpp.o
-game: CMakeFiles/game.dir/src/gameObjects/Item.cpp.o
 game: CMakeFiles/game.dir/src/gameObjects/creatures/Creature.cpp.o
 game: CMakeFiles/game.dir/src/gameObjects/creatures/NonPlayableCharacter.cpp.o
 game: CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.o
+game: CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.o
 game: CMakeFiles/game.dir/src/gameObjects/terrain/Container.cpp.o
 game: CMakeFiles/game.dir/src/input/Directions.cpp.o
 game: CMakeFiles/game.dir/src/input/Input.cpp.o
 game: CMakeFiles/game.dir/src/main.cpp.o
 game: CMakeFiles/game.dir/src/map/Map.cpp.o
+game: CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.o
 game: CMakeFiles/game.dir/src/utils/ScreenUtils.cpp.o
 game: CMakeFiles/game.dir/build.make
 game: CMakeFiles/game.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking CXX executable game"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Linking CXX executable game"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/game.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

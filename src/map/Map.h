@@ -25,6 +25,7 @@ public:
   bool checkBounds(const Point &point) const;
   friend std::ostream &operator<<(std::ostream &out, const Map &map);
   void interactPoint(const Point &point, Player &player);
+  std::shared_ptr<GameObject> getTopObject(const Point &point) const;
 };
 
 std::ostream &operator<<(std::ostream &out, const GameObject &gameObject);

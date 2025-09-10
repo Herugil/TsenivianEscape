@@ -1,6 +1,6 @@
 #include "Input.h"
 #include "core/GameSession.h"
-#include "gameObjects/Item.h"
+#include "gameObjects/items/Item.h"
 #include "input/Directions.h"
 #include "utils/ScreenUtils.h"
 
@@ -99,6 +99,9 @@ bool isHotkeyCommand(Command::command cmd) {
 bool isInventoryCommand(Command::command cmd) {
   return cmd == Command::inventory;
 }
+bool isActionMenuCommand(Command::command cmd) {
+  return cmd == Command::actionMenu;
+}
 
 Command::command CommandHandler::getCommand(char pressedKey) {
   switch (pressedKey) {
@@ -134,6 +137,8 @@ Command::command CommandHandler::getCommand(char pressedKey) {
     return Command::hotkey9;
   case CommandChar::inventory:
     return Command::inventory;
+  case CommandChar::actionMenu:
+    return Command::actionMenu;
   default:
     return Command::nbCommands;
   }
@@ -167,6 +172,10 @@ void CommandHandler::executeWorldCommand(GameSession &gameSession,
     gameSession.getPlayer().inventoryMenu();
     ScreenUtils::clearScreen();
     gameSession.displayMap();
+  } else if (isActionMenuCommand(command)) {
+    ScreenUtils::clearScreen();
+    gameSession.displayMap(); // to see direction of enemies when attacking
+    gameSession.getPlayer().actionMenu(gameSession);
   } else {
     ScreenUtils::clearScreen();
     gameSession.displayMap();
@@ -206,5 +215,27 @@ void CommandHandler::handleInventoryCommands(Player &player) {
       }
     } else
       return;
+  }
+}
+
+void CommandHandler::handleActionCommands(GameSession &gameSession) {
+  Player &player{gameSession.getPlayer()};
+  auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
+  if (isHotkeyCommand(command)) {
+    auto pressedKey{static_cast<std::size_t>(getPressedKey(command))};
+    auto action{player.getAction(pressedKey)};
+    if (action) {
+      if (action->needsInput()) {
+        auto directionCommand{
+            CommandHandler::getCommand(Input::getKeyBlocking())};
+        if (isMovementCommand(directionCommand)) {
+          ScreenUtils::clearScreen();
+          action->playerExecute(gameSession, static_cast<Directions::Direction>(
+                                                 directionCommand));
+          gameSession.displayMap();
+        }
+      } else
+        ; // TODO: non directional actions (easy but not implemented)
+    }
   }
 }

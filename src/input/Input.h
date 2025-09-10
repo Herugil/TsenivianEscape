@@ -21,17 +21,18 @@ constexpr char bottom{'s'};
 constexpr char right{'d'};
 constexpr char left{'q'};
 constexpr char interact{'e'};
-constexpr char takeAll('t');
-constexpr char hotkey1('1');
-constexpr char hotkey2('2');
-constexpr char hotkey3('3');
-constexpr char hotkey4('4');
-constexpr char hotkey5('5');
-constexpr char hotkey6('6');
-constexpr char hotkey7('7');
-constexpr char hotkey8('8');
-constexpr char hotkey9('9');
-constexpr char inventory('i');
+constexpr char takeAll{'t'};
+constexpr char hotkey1{'1'};
+constexpr char hotkey2{'2'};
+constexpr char hotkey3{'3'};
+constexpr char hotkey4{'4'};
+constexpr char hotkey5{'5'};
+constexpr char hotkey6{'6'};
+constexpr char hotkey7{'7'};
+constexpr char hotkey8{'8'};
+constexpr char hotkey9{'9'};
+constexpr char inventory{'i'};
+constexpr char actionMenu{'a'};
 } // namespace CommandChar
 
 struct Command {
@@ -52,6 +53,7 @@ struct Command {
     hotkey8,
     hotkey9,
     inventory,
+    actionMenu,
     nbCommands,
   };
 };
@@ -78,4 +80,5 @@ Command::command getCommand(char pressedKey);
 void executeWorldCommand(GameSession &gameSession, Command::command command);
 void handleContainerCommands(Container &container, Player &player);
 void handleInventoryCommands(Player &player);
+void handleActionCommands(GameSession &gameSession);
 } // namespace CommandHandler

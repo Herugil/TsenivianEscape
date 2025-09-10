@@ -1,10 +1,11 @@
 #pragma once
-#include "gameObjects/Item.h"
 #include "gameObjects/creatures/Creature.h"
+#include "gameObjects/items/Item.h"
 #include "gameObjects/terrain/Container.h"
 #include "input/Directions.h"
 #include "input/Input.h"
 #include "map/Point.h"
+#include "scripts/Action.h"
 #include <memory>
 #include <vector>
 
@@ -18,14 +19,20 @@ struct Equipment {
 class Player : public Creature {
 private:
   Equipment m_equipment{};
+  std::vector<std::shared_ptr<Action>> m_actions{};
 
 public:
   Player(const Point &position, int healthPoints);
   void takeItem(std::shared_ptr<Item> item);
   void inventoryMenu();
+  void actionMenu(GameSession &gameSession);
   void displayInventory() const;
+  void displayActions() const;
+  std::shared_ptr<Action> getAction(std::size_t index) const;
   void takeAllItems(Container &container);
-  void getRightHandItem() const {};
   void equipItem(std::shared_ptr<Item> item);
   std::shared_ptr<Item> getItem(std::size_t index) const;
+  int getMeleeDamage() const override;
+  int getMeleeRange() const; // thisll also be const override..
+  virtual ~Player() = default;
 };

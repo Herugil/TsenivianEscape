@@ -1,6 +1,6 @@
 #pragma once
 #include "gameObjects/GameObject.h"
-#include "gameObjects/Item.h"
+#include "gameObjects/items/Item.h"
 #include "input/Input.h"
 #include "map/Point.h"
 #include <memory>

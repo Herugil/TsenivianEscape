@@ -453,7 +453,8 @@ CMakeFiles/game.dir/src/map/Map.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/reverse_access.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/size.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Player.h \
-  /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/Item.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/items/Item.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iostream \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/ios \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__locale \
@@ -687,7 +688,6 @@ CMakeFiles/game.dir/src/map/Map.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__format/formatter_string.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__format/formatter_tuple.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/print \
-  /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/vector \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/temp_value.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/aligned_storage.h \
@@ -704,5 +704,6 @@ CMakeFiles/game.dir/src/map/Map.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/assume_aligned.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/ranges_uninitialized_algorithms.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/uses_allocator_construction.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/scripts/Action.h \
   /Users/pr058215/repositories/TsenivianEscape/src/map/Layer.h \
   /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/terrain/Wall.h

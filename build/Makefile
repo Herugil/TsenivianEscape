@@ -177,30 +177,6 @@ src/gameObjects/GameObject.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/gameObjects/GameObject.cpp.s
 .PHONY : src/gameObjects/GameObject.cpp.s
 
-src/gameObjects/Item.o: src/gameObjects/Item.cpp.o
-.PHONY : src/gameObjects/Item.o
-
-# target to build an object file
-src/gameObjects/Item.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/gameObjects/Item.cpp.o
-.PHONY : src/gameObjects/Item.cpp.o
-
-src/gameObjects/Item.i: src/gameObjects/Item.cpp.i
-.PHONY : src/gameObjects/Item.i
-
-# target to preprocess a source file
-src/gameObjects/Item.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/gameObjects/Item.cpp.i
-.PHONY : src/gameObjects/Item.cpp.i
-
-src/gameObjects/Item.s: src/gameObjects/Item.cpp.s
-.PHONY : src/gameObjects/Item.s
-
-# target to generate assembly for a file
-src/gameObjects/Item.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/gameObjects/Item.cpp.s
-.PHONY : src/gameObjects/Item.cpp.s
-
 src/gameObjects/creatures/Creature.o: src/gameObjects/creatures/Creature.cpp.o
 .PHONY : src/gameObjects/creatures/Creature.o
 
@@ -272,6 +248,30 @@ src/gameObjects/creatures/Player.s: src/gameObjects/creatures/Player.cpp.s
 src/gameObjects/creatures/Player.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.s
 .PHONY : src/gameObjects/creatures/Player.cpp.s
+
+src/gameObjects/items/Item.o: src/gameObjects/items/Item.cpp.o
+.PHONY : src/gameObjects/items/Item.o
+
+# target to build an object file
+src/gameObjects/items/Item.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.o
+.PHONY : src/gameObjects/items/Item.cpp.o
+
+src/gameObjects/items/Item.i: src/gameObjects/items/Item.cpp.i
+.PHONY : src/gameObjects/items/Item.i
+
+# target to preprocess a source file
+src/gameObjects/items/Item.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.i
+.PHONY : src/gameObjects/items/Item.cpp.i
+
+src/gameObjects/items/Item.s: src/gameObjects/items/Item.cpp.s
+.PHONY : src/gameObjects/items/Item.s
+
+# target to generate assembly for a file
+src/gameObjects/items/Item.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.s
+.PHONY : src/gameObjects/items/Item.cpp.s
 
 src/gameObjects/terrain/Container.o: src/gameObjects/terrain/Container.cpp.o
 .PHONY : src/gameObjects/terrain/Container.o
@@ -393,6 +393,30 @@ src/map/Map.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/map/Map.cpp.s
 .PHONY : src/map/Map.cpp.s
 
+src/scripts/MeleeAttack.o: src/scripts/MeleeAttack.cpp.o
+.PHONY : src/scripts/MeleeAttack.o
+
+# target to build an object file
+src/scripts/MeleeAttack.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.o
+.PHONY : src/scripts/MeleeAttack.cpp.o
+
+src/scripts/MeleeAttack.i: src/scripts/MeleeAttack.cpp.i
+.PHONY : src/scripts/MeleeAttack.i
+
+# target to preprocess a source file
+src/scripts/MeleeAttack.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.i
+.PHONY : src/scripts/MeleeAttack.cpp.i
+
+src/scripts/MeleeAttack.s: src/scripts/MeleeAttack.cpp.s
+.PHONY : src/scripts/MeleeAttack.s
+
+# target to generate assembly for a file
+src/scripts/MeleeAttack.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.s
+.PHONY : src/scripts/MeleeAttack.cpp.s
+
 src/utils/ScreenUtils.o: src/utils/ScreenUtils.cpp.o
 .PHONY : src/utils/ScreenUtils.o
 
@@ -432,9 +456,6 @@ help:
 	@echo "... src/gameObjects/GameObject.o"
 	@echo "... src/gameObjects/GameObject.i"
 	@echo "... src/gameObjects/GameObject.s"
-	@echo "... src/gameObjects/Item.o"
-	@echo "... src/gameObjects/Item.i"
-	@echo "... src/gameObjects/Item.s"
 	@echo "... src/gameObjects/creatures/Creature.o"
 	@echo "... src/gameObjects/creatures/Creature.i"
 	@echo "... src/gameObjects/creatures/Creature.s"
@@ -444,6 +465,9 @@ help:
 	@echo "... src/gameObjects/creatures/Player.o"
 	@echo "... src/gameObjects/creatures/Player.i"
 	@echo "... src/gameObjects/creatures/Player.s"
+	@echo "... src/gameObjects/items/Item.o"
+	@echo "... src/gameObjects/items/Item.i"
+	@echo "... src/gameObjects/items/Item.s"
 	@echo "... src/gameObjects/terrain/Container.o"
 	@echo "... src/gameObjects/terrain/Container.i"
 	@echo "... src/gameObjects/terrain/Container.s"
@@ -459,6 +483,9 @@ help:
 	@echo "... src/map/Map.o"
 	@echo "... src/map/Map.i"
 	@echo "... src/map/Map.s"
+	@echo "... src/scripts/MeleeAttack.o"
+	@echo "... src/scripts/MeleeAttack.i"
+	@echo "... src/scripts/MeleeAttack.s"
 	@echo "... src/utils/ScreenUtils.o"
 	@echo "... src/utils/ScreenUtils.i"
 	@echo "... src/utils/ScreenUtils.s"

@@ -3,10 +3,14 @@
 #include "gameObjects/GameObject.h"
 #include "map/Point.h"
 
-Creature::Creature(char symbol, const Point &position, int healthPoints)
-    : GameObject{true, false, symbol, position}, m_healthPoints{healthPoints} {}
+Creature::Creature(char symbol, const Point &position, int healthPoints,
+                   std::string_view name)
+    : GameObject{true, false, symbol, position}, m_healthPoints{healthPoints},
+      m_name{name} {}
 
 int Creature::getHealthPoints() const { return m_healthPoints; }
 bool Creature::isDead() const { return m_healthPoints <= 0; }
 
 void Creature::takeDamage(int damage) { m_healthPoints -= damage; }
+
+std::string_view Creature::getName() const { return m_name; }

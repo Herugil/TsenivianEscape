@@ -85,12 +85,12 @@ clean: CMakeFiles/game.dir/clean
 CMakeFiles/game.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13 "Built target game"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14 "Built target game"
 .PHONY : CMakeFiles/game.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/game.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles 13
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles 14
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/game.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles 0
 .PHONY : CMakeFiles/game.dir/rule
@@ -102,7 +102,7 @@ game: CMakeFiles/game.dir/rule
 # codegen rule for target.
 CMakeFiles/game.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13 "Finished codegen for target game"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/pr058215/repositories/TsenivianEscape/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14 "Finished codegen for target game"
 .PHONY : CMakeFiles/game.dir/codegen
 
 # clean rule for target.

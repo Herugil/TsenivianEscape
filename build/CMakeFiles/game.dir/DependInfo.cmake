@@ -10,15 +10,16 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/pr058215/repositories/TsenivianEscape/src/core/GameSession.cpp" "CMakeFiles/game.dir/src/core/GameSession.cpp.o" "gcc" "CMakeFiles/game.dir/src/core/GameSession.cpp.o.d"
   "/Users/pr058215/repositories/TsenivianEscape/src/gameObjects/GameObject.cpp" "CMakeFiles/game.dir/src/gameObjects/GameObject.cpp.o" "gcc" "CMakeFiles/game.dir/src/gameObjects/GameObject.cpp.o.d"
-  "/Users/pr058215/repositories/TsenivianEscape/src/gameObjects/Item.cpp" "CMakeFiles/game.dir/src/gameObjects/Item.cpp.o" "gcc" "CMakeFiles/game.dir/src/gameObjects/Item.cpp.o.d"
   "/Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Creature.cpp" "CMakeFiles/game.dir/src/gameObjects/creatures/Creature.cpp.o" "gcc" "CMakeFiles/game.dir/src/gameObjects/creatures/Creature.cpp.o.d"
   "/Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/NonPlayableCharacter.cpp" "CMakeFiles/game.dir/src/gameObjects/creatures/NonPlayableCharacter.cpp.o" "gcc" "CMakeFiles/game.dir/src/gameObjects/creatures/NonPlayableCharacter.cpp.o.d"
   "/Users/pr058215/repositories/TsenivianEscape/src/gameObjects/creatures/Player.cpp" "CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.o" "gcc" "CMakeFiles/game.dir/src/gameObjects/creatures/Player.cpp.o.d"
+  "/Users/pr058215/repositories/TsenivianEscape/src/gameObjects/items/Item.cpp" "CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.o" "gcc" "CMakeFiles/game.dir/src/gameObjects/items/Item.cpp.o.d"
   "/Users/pr058215/repositories/TsenivianEscape/src/gameObjects/terrain/Container.cpp" "CMakeFiles/game.dir/src/gameObjects/terrain/Container.cpp.o" "gcc" "CMakeFiles/game.dir/src/gameObjects/terrain/Container.cpp.o.d"
   "/Users/pr058215/repositories/TsenivianEscape/src/input/Directions.cpp" "CMakeFiles/game.dir/src/input/Directions.cpp.o" "gcc" "CMakeFiles/game.dir/src/input/Directions.cpp.o.d"
   "/Users/pr058215/repositories/TsenivianEscape/src/input/Input.cpp" "CMakeFiles/game.dir/src/input/Input.cpp.o" "gcc" "CMakeFiles/game.dir/src/input/Input.cpp.o.d"
   "/Users/pr058215/repositories/TsenivianEscape/src/main.cpp" "CMakeFiles/game.dir/src/main.cpp.o" "gcc" "CMakeFiles/game.dir/src/main.cpp.o.d"
   "/Users/pr058215/repositories/TsenivianEscape/src/map/Map.cpp" "CMakeFiles/game.dir/src/map/Map.cpp.o" "gcc" "CMakeFiles/game.dir/src/map/Map.cpp.o.d"
+  "/Users/pr058215/repositories/TsenivianEscape/src/scripts/MeleeAttack.cpp" "CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.o" "gcc" "CMakeFiles/game.dir/src/scripts/MeleeAttack.cpp.o.d"
   "/Users/pr058215/repositories/TsenivianEscape/src/utils/ScreenUtils.cpp" "CMakeFiles/game.dir/src/utils/ScreenUtils.cpp.o" "gcc" "CMakeFiles/game.dir/src/utils/ScreenUtils.cpp.o.d"
   )
 

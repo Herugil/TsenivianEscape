@@ -452,7 +452,7 @@ CMakeFiles/game.dir/src/gameObjects/creatures/Creature.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/empty.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/reverse_access.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/size.h \
-  /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/Item.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/gameObjects/items/Item.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iostream \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/ios \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__locale \
@@ -705,5 +705,6 @@ CMakeFiles/game.dir/src/gameObjects/creatures/Creature.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/assume_aligned.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/ranges_uninitialized_algorithms.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/uses_allocator_construction.h \
+  /Users/pr058215/repositories/TsenivianEscape/src/scripts/Action.h \
   /Users/pr058215/repositories/TsenivianEscape/src/map/Map.h \
   /Users/pr058215/repositories/TsenivianEscape/src/map/Layer.h

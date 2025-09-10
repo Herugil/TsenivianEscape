@@ -100,3 +100,9 @@ void Map::interactPoint(const Point &point, Player &player) {
       m_floorLayer[x, y]->playerInteraction(player);
   }
 }
+
+std::shared_ptr<GameObject> Map::getTopObject(const Point &point) const {
+  if (!checkBounds(point))
+    return nullptr;
+  return m_topLayer[point.getX(), point.getY()].lock();
+}

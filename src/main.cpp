@@ -1,8 +1,8 @@
 #include "Settings.h"
 #include "core/GameSession.h"
-#include "gameObjects/Item.h"
 #include "gameObjects/creatures/NonPlayableCharacter.h"
 #include "gameObjects/creatures/Player.h"
+#include "gameObjects/items/Weapon.h"
 #include "gameObjects/terrain/Container.h"
 #include "input/Directions.h"
 #include "input/Input.h"
@@ -26,24 +26,26 @@ int main() {
   std::vector<std::shared_ptr<Item>> containerItems;
 
   containerItems.push_back(
-      std::make_shared<Item>("sword", Item::ItemType::oneHanded));
-  containerItems.push_back(std::make_shared<Item>("bow"));
+      std::make_shared<Weapon>("sword", Item::ItemType::oneHanded, 3, 1));
+  containerItems.push_back(
+      std::make_shared<Weapon>("spear", Item::ItemType::oneHanded, 2, 2));
+  containerItems.push_back(
+      std::make_shared<Weapon>("bow", Item::ItemType::twoHanded, 2, 10));
   Container cont(std::move(containerItems), Point(0, 0),
                  "A battered and old looking wooden chest.");
   gameSession.getMap().placeFloor(std::make_unique<Container>(std::move(cont)),
                                   Point(2, 2));
-  auto enemyLoot{std::make_shared<Item>("Banana", Item::ItemType::oneHanded)};
+  auto enemyLoot{
+      std::make_shared<Weapon>("Banana", Item::ItemType::oneHanded, 1, 1)};
+
   auto npc{std::make_shared<NonPlayableCharacter>(
       'e', Point(4, 7), 12, std::vector<std::shared_ptr<Item>>{enemyLoot},
-      "A dead body.")};
+      "Gruffy-looking man", "A dead body.")};
   gameSession.addNpc(npc);
 
   gameSession.getPlayer().takeItem(
-      std::make_shared<Item>("Dagger", Item::ItemType::oneHanded));
+      std::make_shared<Weapon>("Dagger", Item::ItemType::oneHanded, 2, 1));
   gameSession.displayMap();
-  ScreenUtils::clearScreen();
-  npc->takeDamage(12);
-  gameSession.cleanDeadNpcs();
 
   while (true) {
     if (Input::hasKeyPressed()) {
