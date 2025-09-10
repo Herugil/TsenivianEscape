@@ -46,9 +46,9 @@ GameSession &prepGame(GameSession &gameSession) {
   std::vector<std::shared_ptr<Item>> containerItems;
 
   containerItems.push_back(
-      std::make_shared<Weapon>("sword", Item::ItemType::oneHanded, 13, 1));
+      std::make_shared<Weapon>("sword", Item::ItemType::oneHanded, 6, 1));
   containerItems.push_back(
-      std::make_shared<Weapon>("spear", Item::ItemType::oneHanded, 2, 2));
+      std::make_shared<Weapon>("spear", Item::ItemType::oneHanded, 3, 2));
   containerItems.push_back(
       std::make_shared<Weapon>("bow", Item::ItemType::twoHanded, 2, 10));
   Container cont(std::move(containerItems), Point(0, 0),
@@ -97,6 +97,8 @@ int main() {
           CommandHandler::executeWorldCommand(gameSession, command);
           displayCombatInterface(gameSession.getPlayer());
           gameSession.initializeTurnOrder(); // if someone dies, no turn
+          if (!gameSession.enemiesInMap())
+            break;
         }
         gameSession.getPlayer().refillActionPoints();
 
@@ -104,6 +106,7 @@ int main() {
                      activeChar)}) {
         while ((enemy->getActionPoints() > 0)) {
           // AI script!!!
+          std::cout << "Enemy turn.\n";
           enemy->executeBasicAttack(gameSession.getPlayer(), gameSession);
           gameSession.initializeTurnOrder(); // if someone dies, no turn
           std::this_thread::sleep_for(
