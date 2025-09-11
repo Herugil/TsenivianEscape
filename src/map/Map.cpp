@@ -1,7 +1,10 @@
 #include "map/Map.h"
 #include "gameObjects/terrain/Wall.h"
+#include "utils/GeometryUtils.h"
+#include "utils/QueueClass.h"
 #include <iostream>
 #include <memory>
+#include <unordered_map>
 
 Map::Map(int width, int height)
     : m_width{width}, m_height{height}, m_floorLayer(width, height),
@@ -105,4 +108,72 @@ std::shared_ptr<GameObject> Map::getTopObject(const Point &point) const {
   if (!checkBounds(point))
     return nullptr;
   return m_topLayer[point.getX(), point.getY()].lock();
+}
+
+struct ComparatorFunc {
+  std::unordered_map<Point, int> &fScore;
+  bool operator()(const Point &p1, const Point &p2) const {
+    return fScore[p1] >= fScore[p2];
+  }
+};
+
+std::deque<Point>
+Map::reconstructPath(std::unordered_map<Point, Point> cameFrom,
+                     Point current) const {
+  std::deque<Point> path{current};
+  while (cameFrom.contains(current)) {
+    Point next{cameFrom[current]};
+    path.push_front(next);
+    current = next;
+  }
+  return path;
+}
+
+std::deque<Point> Map::findPath(const Point &startPoint,
+                                const Point &endPoint) const {
+  // implementation of A* (see
+  // https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode)
+  // with map specific in minds (accessible tiles in the grid)
+  if (!isAvailable(endPoint) || (startPoint == endPoint))
+    return {};
+  // this probably wouldnt be called, but who knows
+  std::unordered_map<Point, Point> cameFrom{};
+  std::unordered_map<Point, int> gScore{};
+  // gScore stores score to get from start to key
+  std::unordered_map<Point, int> fScore{};
+  ComparatorFunc comp{fScore};
+  MyQueue<Point, std::vector<Point>, ComparatorFunc> openSet(comp);
+  // fScore is the guessed cost to get to the objective starting from key
+  gScore[startPoint] = 0;
+  fScore[startPoint] = GeometryUtils::distanceL1(startPoint, endPoint);
+  openSet.emplace(startPoint);
+
+  while (!openSet.empty()) {
+    Point currentPoint{openSet.top()};
+    if (currentPoint == endPoint)
+      return reconstructPath(cameFrom, currentPoint);
+    openSet.pop();
+    for (int i{0}; i < Directions::nbDirections; ++i) {
+      auto direction{static_cast<Directions::Direction>(i)};
+      Point neighbour{currentPoint.getAdjacentPoint(direction)};
+      if (!isAvailable(neighbour)) {
+        continue;
+      }
+      int tentativeGScore{gScore[currentPoint] + 1}; // 1 is a magic number
+      // and is the cost of moving from a point to its neighbour.
+      // should be replaced with neighbour.getMoveCost() once
+      // difficult terrain is implemented.
+      if ((gScore.contains(neighbour) && tentativeGScore < gScore[neighbour]) ||
+          (!gScore.contains(neighbour))) {
+        cameFrom[neighbour] = currentPoint;
+        gScore[neighbour] = tentativeGScore;
+        fScore[neighbour] =
+            tentativeGScore + GeometryUtils::distanceL1(neighbour, endPoint);
+        if (!openSet.contains(neighbour)) {
+          openSet.emplace(neighbour);
+        }
+      }
+    }
+  }
+  return {};
 }

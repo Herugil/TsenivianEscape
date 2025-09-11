@@ -13,6 +13,7 @@
 #include <chrono>
 #include <iostream>
 #include <memory>
+#include <queue>
 #include <thread>
 
 void displayCombatInterface(const Player &player) {
@@ -60,7 +61,7 @@ GameSession &prepGame(GameSession &gameSession) {
 
   auto npc{std::make_shared<NonPlayableCharacter>(
       'e', Point(4, 7), 12, std::vector<std::shared_ptr<Item>>{enemyLoot},
-      "Gruffy-looking man",
+      "Gruff-looking man",
       "A somber looking man, threatening you with a banana.", "A dead body.")};
   gameSession.addNpc(npc);
 
@@ -73,6 +74,10 @@ GameSession &prepGame(GameSession &gameSession) {
 int main() {
   GameSession gameSession{10, 10, std::make_shared<Player>(Point(2, 1), 10)};
   prepGame(gameSession);
+
+  auto path{gameSession.getMap().findPath(Point(1, 4), Point(6, 2))};
+  for (auto it : path)
+    std::cout << "X" << it.getX() << "Y" << it.getY() << '\n';
 
   if (gameSession.enemiesInMap()) {
     gameSession.getPlayer().setCombat();
@@ -92,6 +97,7 @@ int main() {
       if (auto player{std::dynamic_pointer_cast<Player>(activeChar)}) {
         while ((player->getActionPoints() > 0) |
                (player->getMovementPoints() > 0)) {
+          std::cout << "Your turn:\n";
           Command::command command{
               CommandHandler::getCommand(Input::getKeyBlocking())};
           CommandHandler::executeWorldCommand(gameSession, command);
@@ -106,7 +112,7 @@ int main() {
                      activeChar)}) {
         while ((enemy->getActionPoints() > 0)) {
           // AI script!!!
-          std::cout << "Enemy turn.\n";
+          std::cout << enemy->getName() << " turn\n ";
           enemy->executeBasicAttack(gameSession.getPlayer(), gameSession);
           gameSession.initializeTurnOrder(); // if someone dies, no turn
           std::this_thread::sleep_for(

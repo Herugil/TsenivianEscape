@@ -5,6 +5,7 @@
 #include "map/Point.h"
 #include <iostream>
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 class Map {
@@ -26,6 +27,10 @@ public:
   friend std::ostream &operator<<(std::ostream &out, const Map &map);
   void interactPoint(const Point &point, Player &player);
   std::shared_ptr<GameObject> getTopObject(const Point &point) const;
+  std::deque<Point> reconstructPath(std::unordered_map<Point, Point> cameFrom,
+                                    Point current) const;
+  std::deque<Point> findPath(const Point &startPoint,
+                             const Point &endPoint) const;
 };
 
 std::ostream &operator<<(std::ostream &out, const GameObject &gameObject);

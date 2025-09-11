@@ -52,6 +52,7 @@ void GameSession::addContainer(std::shared_ptr<Container> container) {
 void GameSession::cleanDeadNpcs() {
   for (auto it{m_npcs.begin()}; it != m_npcs.end();) {
     if ((*it)->isDead()) {
+      std::cout << (*it)->getName() << " is dead.\n";
       auto lootableBody{std::make_shared<Container>(
           (*it)->getInventory(), (*it)->getPosition(),
           (*it)->getDeadDescription())};

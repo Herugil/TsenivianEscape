@@ -1,5 +1,6 @@
 #pragma once
 #include "input/Directions.h"
+#include <functional>
 class Point {
 private:
   int m_x{};
@@ -23,4 +24,16 @@ public:
       return *this;
     }
   };
+
+  friend bool operator==(const Point &p1, const Point &p2) {
+    return p1.m_x == p2.m_x && p1.m_y == p2.m_y;
+  }
 };
+
+namespace std {
+template <> struct hash<Point> {
+  size_t operator()(const Point &p) const noexcept {
+    return hash<int>()(p.getX()) ^ (hash<int>()(p.getY()) << 1);
+  }
+};
+} // namespace std
