@@ -12,17 +12,17 @@ GameSession::GameSession(int width, int height, std::shared_ptr<Player> player)
 
 void GameSession::movePlayer(Directions::Direction direction) {
   // TODO: add actor parameter, rename function
-  bool canMove{m_player->canMove(1)};
-  if (!canMove) {
-    if (m_player->canAct(1)) {
-      m_player->refillMovementPoints();
-      canMove = true;
+  Point currentPos{m_player->getPosition()};
+  Point adjPoint(currentPos.getAdjacentPoint(direction));
+  if (m_currentMap.isAvailable(adjPoint)) {
+    bool canMove{m_player->canMove(1)};
+    if (!canMove) {
+      if (m_player->canAct(1)) {
+        m_player->refillMovementPoints();
+        canMove = true;
+      }
     }
-  }
-  if (canMove) {
-    Point currentPos{m_player->getPosition()};
-    Point adjPoint(currentPos.getAdjacentPoint(direction));
-    if (m_currentMap.isAvailable(adjPoint)) {
+    if (canMove) {
       m_currentMap.placeTop(m_player, adjPoint);
       m_currentMap.removeTop(currentPos);
       m_player->setPosition(adjPoint);
