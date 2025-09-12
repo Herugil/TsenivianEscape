@@ -46,14 +46,13 @@ NpcCombatAI::getDestination(Behaviors currentGoal,
 void NpcCombatAI::npcActCombat(GameSession &gameSession,
                                std::shared_ptr<NonPlayableCharacter> actor) {
   Behaviors currentGoal{Behaviors::basicAttack};
-  Point currentDestination{actor->getPosition()};
   Interface::timeAndDisplayInterface(gameSession, *actor);
   while (true) {
     // this loop is in case the npc changes behavior after his first action
     // eg it could heal itself then decide to go hit something
     if (actor->getActionPoints() <= 0) {
       // if no ap before changing behaviour, reset ap and pass
-      actor->refillActionPoints();
+      actor->resetTurn();
       return;
     }
     // will need to update currentGoal with getCurrentGoal

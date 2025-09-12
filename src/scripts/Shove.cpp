@@ -1,0 +1,63 @@
+#include "scripts/Shove.h"
+#include "core/GameSession.h"
+#include "map/Point.h"
+#include "utils/GeometryUtils.h"
+#include <memory>
+
+Shove::Shove(std::string_view name) : Action(name, true) {}
+
+void Shove::execute([[maybe_unused]] GameSession &gameSession, Creature &actor,
+                    std::shared_ptr<GameObject> target) {
+  std::cout << target->getPosition().getX();
+  Directions::Direction shoveDirection{GeometryUtils::getRequiredDirection(
+      actor.getPosition(), target->getPosition())};
+  if ((GeometryUtils::distanceL1(actor.getPosition(), target->getPosition()) >
+       1) || // shove has range of 1. magic number, to put somewhere else...
+      (shoveDirection == Directions::nbDirections)) {
+    return;
+  }
+  if (actor.useActionPoints()) {
+    if (target->isMoveable()) {
+      gameSession.moveCreature(target, shoveDirection, true);
+      std::cout << target->getName() << "shoved by " << actor.getName();
+    }
+  }
+}
+
+void Shove::playerExecute(GameSession &gameSession,
+                          Directions::Direction direction) {
+  if (direction == Directions::nbDirections)
+    return;
+  auto &player{gameSession.getPlayer()};
+  auto &map{gameSession.getMap()};
+  auto point{player.getPosition()};
+  Point targetPoint{point.getAdjacentPoint(direction)};
+  auto topObject = map.getTopObject(targetPoint);
+  if (!topObject)
+    return;
+  if (auto cont{std::dynamic_pointer_cast<Container>(topObject)}) {
+    if (cont->getContents().empty() &&
+        (!gameSession.getMap().isAvailable(
+            targetPoint.getAdjacentPoint(direction))) &&
+        gameSession.getPlayer().useActionPoints(1)) {
+      // edge case: container is empty and destination shove is blocked
+      gameSession.removeContainer(cont);
+      return;
+    } else if (!cont->getContents().empty() &&
+               (!gameSession.getMap().isAvailable(
+                   targetPoint.getAdjacentPoint(direction)))) {
+      std::cout << "This container isn't empty! It will get destroyed if you "
+                   "shove it. Please empty it before shoving it.\n";
+      return;
+    }
+  }
+  execute(gameSession, player, topObject);
+  gameSession.cleanDeadNpcs(); // not useful, for now
+  // once terrain can deal damage thisll be necessary
+}
+
+void Shove::execute([[maybe_unused]] GameSession &gameSession,
+                    [[maybe_unused]] Creature &actor,
+                    [[maybe_unused]] Creature &target) {
+  return;
+}

@@ -2,6 +2,7 @@
 #include "core/GameSession.h"
 #include "gameObjects/items/Item.h"
 #include "input/Directions.h"
+#include "scripts/Shove.h" // meeeh
 #include "utils/ScreenUtils.h"
 
 #ifndef _WIN32
@@ -102,6 +103,7 @@ bool isInventoryCommand(Command::command cmd) {
 bool isActionMenuCommand(Command::command cmd) {
   return cmd == Command::actionMenu;
 }
+bool isShoveCommmand(Command::command cmd) { return cmd == Command::shove; }
 
 Command::command CommandHandler::getCommand(char pressedKey) {
   switch (pressedKey) {
@@ -139,6 +141,10 @@ Command::command CommandHandler::getCommand(char pressedKey) {
     return Command::inventory;
   case CommandChar::actionMenu:
     return Command::actionMenu;
+  case CommandChar::skipTurn:
+    return Command::skipTurn;
+  case CommandChar::shove:
+    return Command::shove;
   default:
     return Command::nbCommands;
   }
@@ -177,6 +183,14 @@ void CommandHandler::executeWorldCommand(GameSession &gameSession,
     ScreenUtils::clearScreen();
     gameSession.displayMap(); // to see direction of enemies when attacking
     gameSession.getPlayer().actionMenu(gameSession);
+  } else if (isShoveCommmand(command)) {
+    Command::command directionCommand{
+        CommandHandler::getCommand(Input::getKeyBlocking())};
+    auto directionInteract{
+        static_cast<Directions::Direction>(directionCommand)};
+    gameSession.getPlayer().shove(gameSession, directionInteract);
+    ScreenUtils::clearScreen();
+    gameSession.displayMap(); // to see direction of enemies when attacking
   } else {
     ScreenUtils::clearScreen();
     gameSession.displayMap();

@@ -17,12 +17,12 @@ protected:
 
 public:
   NonPlayableCharacter(char symbol, const Point &point, int maxHealthPoints,
-                       std::string_view name = "",
+                       std::string_view name,
                        std::string_view description = "enemy",
                        std::string_view deadDescription = "");
   NonPlayableCharacter(char symbol, const Point &point, int maxHealthPoints,
                        std::vector<std::shared_ptr<Item>>,
-                       std::string_view name = "",
+                       std::string_view name,
                        std::string_view description = "enemy",
                        std::string_view deadDescription = "");
   std::string_view getDeadDescription() const;

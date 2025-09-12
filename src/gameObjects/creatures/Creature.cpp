@@ -6,8 +6,8 @@
 
 Creature::Creature(char symbol, const Point &position, int maxHealthPoints,
                    std::string_view name, std::string_view description)
-    : GameObject{true, false, symbol, position, description},
-      m_maxHealthPoints{maxHealthPoints}, m_name{name} {
+    : GameObject{true, false, symbol, position, name, description},
+      m_maxHealthPoints{maxHealthPoints} {
   m_actions.emplace_back(
       std::make_shared<MeleeAttack>("Attack with right hand weapon"));
   m_healthPoints = m_maxHealthPoints;
@@ -19,7 +19,7 @@ bool Creature::isDead() const { return m_healthPoints <= 0; }
 
 void Creature::takeDamage(int damage) { m_healthPoints -= damage; }
 
-std::string_view Creature::getName() const { return m_name; }
+const std::string &Creature::getName() const { return m_name; }
 int Creature::getMovementPoints() const { return m_movementPoints; }
 int Creature::getActionPoints() const { return m_actionPoints; }
 int Creature::getMaxMovementPoints() const { return m_maxMovementPoints; }
@@ -29,6 +29,11 @@ bool Creature::useActionPoints(int cost) {
   if (returnVal)
     m_actionPoints -= cost;
   return returnVal;
+}
+
+void Creature::resetTurn() {
+  refillActionPoints();
+  m_movementPoints = 0;
 }
 
 bool Creature::useMovementPoints(int cost) {

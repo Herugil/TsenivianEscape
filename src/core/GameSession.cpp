@@ -9,20 +9,24 @@ GameSession::GameSession(int width, int height, std::shared_ptr<Player> player)
   m_currentMap.placeTop(m_player, point);
 }
 
-void GameSession::moveCreature(std::shared_ptr<Creature> creature,
-                               Directions::Direction direction) {
+void GameSession::moveCreature(std::shared_ptr<GameObject> gameObject,
+                               Directions::Direction direction, bool forced) {
   // TODO: add actor parameter, rename function
   if (direction == Directions::nbDirections)
     // invalid direction
     return;
-  Point currentPos{creature->getPosition()};
+  Point currentPos{gameObject->getPosition()};
   Point adjPoint(currentPos.getAdjacentPoint(direction));
   if (m_currentMap.isAvailable(adjPoint)) {
-    bool canMove{creature->useMovementPoints()};
+    bool canMove{false};
+    if (forced)
+      canMove = gameObject->isMoveable();
+    else if (auto creature{std::dynamic_pointer_cast<Creature>(gameObject)})
+      canMove = creature->useMovementPoints();
     if (canMove) {
-      m_currentMap.placeTop(creature, adjPoint);
+      m_currentMap.placeTop(gameObject, adjPoint);
       m_currentMap.removeTop(currentPos);
-      creature->setPosition(adjPoint);
+      gameObject->setPosition(adjPoint);
     }
   }
 }
@@ -46,6 +50,24 @@ void GameSession::addNpc(std::shared_ptr<NonPlayableCharacter> npc) {
 void GameSession::addContainer(std::shared_ptr<Container> container) {
   m_sessionOwnedContainers.push_back(container);
   m_currentMap.placeTop(container, container->getPosition());
+}
+
+void GameSession::removeContainer(std::shared_ptr<Container> container) {
+  for (auto it{m_sessionOwnedContainers.begin()};
+       it != m_sessionOwnedContainers.end();) {
+    if (*it == container) {
+      // this is the container to remove.
+      // first remove the weak ptr of the top layer of map
+      // then remove shared ptr from the vector
+      // will go out of scope after the scope of the call of this function
+      // because shared ptr has been passed as an arg
+      // so after the return the container probably lives somewhere!
+      getMap().removeTop((*it)->getPosition());
+      it = m_sessionOwnedContainers.erase(it);
+      return;
+    } else
+      ++it;
+  }
 }
 
 void GameSession::cleanDeadNpcs() {

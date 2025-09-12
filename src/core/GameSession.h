@@ -21,12 +21,13 @@ class GameSession {
 
 public:
   GameSession(int width, int height, std::shared_ptr<Player> player);
-  void moveCreature(std::shared_ptr<Creature> creature,
-                    Directions::Direction direction);
+  void moveCreature(std::shared_ptr<GameObject> gameObject,
+                    Directions::Direction direction, bool forced = false);
   void displayMap() const;
   const Point &getPlayerPos() const;
   void addNpc(std::shared_ptr<NonPlayableCharacter> npc);
   void addContainer(std::shared_ptr<Container> container);
+  void removeContainer(std::shared_ptr<Container> container);
   void cleanDeadNpcs();
   const std::vector<std::shared_ptr<NonPlayableCharacter>> &getNpcs() const;
   std::vector<std::weak_ptr<Creature>> getTurnOrder() const;

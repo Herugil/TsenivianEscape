@@ -33,7 +33,7 @@ GameSession &prepGame(GameSession &gameSession) {
       std::make_shared<Weapon>("spear", Item::ItemType::oneHanded, 3, 2));
   containerItems.push_back(
       std::make_shared<Weapon>("bow", Item::ItemType::twoHanded, 2, 10));
-  Container cont(std::move(containerItems), Point(0, 0),
+  Container cont(std::move(containerItems), Point(0, 0), "chest",
                  "A battered and old looking wooden chest.");
   gameSession.getMap().placeFloor(std::make_unique<Container>(std::move(cont)),
                                   Point(2, 2));
@@ -81,17 +81,19 @@ int main() {
 
       if (auto player{std::dynamic_pointer_cast<Player>(activeChar)}) {
         Interface::displayCombatInterface(*player);
-        while ((player->getActionPoints() > 0) |
+        while ((player->getActionPoints() > 0) ||
                (player->getMovementPoints() > 0)) {
           Command::command command{
               CommandHandler::getCommand(Input::getKeyBlocking())};
+          if (command == Command::skipTurn)
+            break;
           CommandHandler::executeWorldCommand(gameSession, command);
           Interface::displayCombatInterface(gameSession.getPlayer());
           gameSession.initializeTurnOrder(); // if someone dies, no turn
           if (!gameSession.enemiesInMap())
             break;
         }
-        gameSession.getPlayer().refillActionPoints();
+        gameSession.getPlayer().resetTurn();
         Interface::timeAndDisplayInterface(gameSession, *player,
                                            Settings::g_timeEnemyActionMS);
 

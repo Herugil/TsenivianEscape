@@ -12,7 +12,6 @@ protected:
   // player needs an inventory, monsters should be lootable once they die
   // or player could pickpocket them
   std::vector<std::shared_ptr<Action>> m_actions{};
-  std::string m_name{};
   int m_healthPoints{};
   int m_maxHealthPoints{};
   int m_maxMovementPoints{Settings::g_averageMoveSpeed};
@@ -27,13 +26,14 @@ public:
   int getHealthPoints() const;
   bool isDead() const;
   void takeDamage(int damage);
-  std::string_view getName() const;
+  const std::string &getName() const;
   virtual int getMeleeDamage() const = 0;
   virtual int getMeleeRange() const = 0;
   int getMovementPoints() const;
   int getActionPoints() const;
   int getMaxMovementPoints() const;
   int getMaxActionPoints() const;
+  void resetTurn();
   int getMaxHealthPoints() const;
   bool useActionPoints(int cost = 1);
   bool useMovementPoints(int cost = 1);

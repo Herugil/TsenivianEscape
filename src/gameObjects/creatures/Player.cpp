@@ -5,7 +5,7 @@
 #include <memory>
 
 Player::Player(const Point &position, int maxHealthPoints)
-    : Creature('@', position, maxHealthPoints, "you") {}
+    : Creature('@', position, maxHealthPoints, "you"), m_shoveAction{} {}
 
 void Player::takeItem(std::shared_ptr<Item> item) {
   if (item) {
@@ -66,6 +66,10 @@ std::shared_ptr<Item> Player::getItem(std::size_t index) const {
   if (i >= m_inventory.size())
     return nullptr;
   return m_inventory[i];
+}
+
+void Player::shove(GameSession &gameSession, Directions::Direction direction) {
+  m_shoveAction.playerExecute(gameSession, direction);
 }
 
 int Player::getMeleeDamage() const {

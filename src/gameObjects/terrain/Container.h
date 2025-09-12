@@ -14,9 +14,10 @@ private:
   std::vector<std::shared_ptr<Item>> m_heldItems{};
 
 public:
-  Container(const Point &point, std::string_view description = "");
-  Container(std::vector<std::shared_ptr<Item>> items, const Point &point,
+  Container(const Point &point, std::string_view name,
             std::string_view description = "");
+  Container(std::vector<std::shared_ptr<Item>> items, const Point &point,
+            std::string_view name, std::string_view description = "");
   std::vector<std::shared_ptr<Item>> &getContents();
   void displayContents();
   void clearContents();

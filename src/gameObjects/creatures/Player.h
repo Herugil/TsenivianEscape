@@ -6,6 +6,7 @@
 #include "input/Input.h"
 #include "map/Point.h"
 #include "scripts/Action.h"
+#include "scripts/Shove.h"
 #include <memory>
 #include <vector>
 
@@ -19,6 +20,7 @@ struct Equipment {
 class Player : public Creature {
 private:
   Equipment m_equipment{};
+  Shove m_shoveAction{};
 
 public:
   Player(const Point &position, int maxHealthPoints);
@@ -31,6 +33,7 @@ public:
   void takeAllItems(Container &container);
   void equipItem(std::shared_ptr<Item> item);
   std::shared_ptr<Item> getItem(std::size_t index) const;
+  void shove(GameSession &gameSession, Directions::Direction direction);
   int getMeleeDamage() const override;
   int getMeleeRange() const override; // thisll also be const override..
   virtual ~Player() = default;

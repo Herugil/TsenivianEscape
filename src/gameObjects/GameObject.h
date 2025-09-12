@@ -14,15 +14,18 @@ class GameObject {
 
 protected:
   Point m_position{};
+  std::string m_name{};
   std::string m_description{};
 
 private:
 public:
   explicit GameObject(bool isMoveable = false, bool isTraversable = false,
                       char symbol = ' ', Point position = Point(),
+                      std::string_view name = "",
                       std::string_view description = "");
   const Point &getPosition() const;
   char getSymbol() const;
+  const std::string &getName() const;
   bool isTraversable() const;
   bool isMoveable() const;
   void setPosition(const Point &point);
