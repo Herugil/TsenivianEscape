@@ -33,7 +33,7 @@ constexpr char hotkey8{'8'};
 constexpr char hotkey9{'9'};
 constexpr char inventory{'i'};
 constexpr char actionMenu{'a'};
-constexpr char shove{'w'};
+constexpr char shove{'r'};
 constexpr char skipTurn{' '};
 } // namespace CommandChar
 
