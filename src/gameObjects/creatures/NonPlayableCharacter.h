@@ -12,6 +12,7 @@ class GameSession;
 class NonPlayableCharacter : public Creature {
 protected:
   std::string m_deadDescription{};
+  int m_meleeRange{Settings::g_baseEnemyRange};
   int m_meleeDamage{Settings::g_baseEnemyDamage};
 
 public:
@@ -28,5 +29,6 @@ public:
   std::vector<std::shared_ptr<Item>> getInventory() const;
   void executeBasicAttack(Creature &target, GameSession &gameSession);
   int getMeleeDamage() const override;
+  int getMeleeRange() const override;
   virtual ~NonPlayableCharacter() = default;
 };

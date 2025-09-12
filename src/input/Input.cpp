@@ -152,7 +152,8 @@ int getPressedKey(Command::command command) {
 void CommandHandler::executeWorldCommand(GameSession &gameSession,
                                          Command::command command) {
   if (isMovementCommand(command)) {
-    gameSession.movePlayer(static_cast<Directions::Direction>(command));
+    gameSession.moveCreature(gameSession.getPlayerPtr(),
+                             static_cast<Directions::Direction>(command));
     ScreenUtils::clearScreen();
     gameSession.displayMap();
   } else if (isInteractionCommand(command)) {

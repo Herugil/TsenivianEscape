@@ -29,6 +29,7 @@ public:
   void takeDamage(int damage);
   std::string_view getName() const;
   virtual int getMeleeDamage() const = 0;
+  virtual int getMeleeRange() const = 0;
   int getMovementPoints() const;
   int getActionPoints() const;
   int getMaxMovementPoints() const;
@@ -36,8 +37,8 @@ public:
   int getMaxHealthPoints() const;
   bool useActionPoints(int cost = 1);
   bool useMovementPoints(int cost = 1);
-  bool canAct(int cost = 1);
-  bool canMove(int cost = 1);
+  bool canAct(int cost = 1) const;
+  bool canMove(int cost = 1) const;
   void refillActionPoints();
   void refillMovementPoints();
   virtual ~Creature() = default;

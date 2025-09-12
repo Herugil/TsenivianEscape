@@ -31,6 +31,7 @@ std::vector<std::shared_ptr<Item>> NonPlayableCharacter::getInventory() const {
 }
 
 int NonPlayableCharacter::getMeleeDamage() const { return m_meleeDamage; }
+int NonPlayableCharacter::getMeleeRange() const { return m_meleeRange; }
 
 void NonPlayableCharacter::executeBasicAttack(Creature &target,
                                               GameSession &gameSession) {

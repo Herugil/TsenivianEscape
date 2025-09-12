@@ -25,26 +25,31 @@ int Creature::getActionPoints() const { return m_actionPoints; }
 int Creature::getMaxMovementPoints() const { return m_maxMovementPoints; }
 int Creature::getMaxActionPoints() const { return m_maxActionPoints; }
 bool Creature::useActionPoints(int cost) {
-  bool canAct{m_actionPoints - cost >= 0};
-  if (canAct)
+  bool returnVal{canAct(cost)};
+  if (returnVal)
     m_actionPoints -= cost;
-  return canAct;
+  return returnVal;
 }
+
 bool Creature::useMovementPoints(int cost) {
-  bool canMove{m_movementPoints - cost >= 0};
-  if (canMove)
-    m_movementPoints -= cost;
-  return canMove;
+  bool returnVal{canMove(cost)};
+  if (canMove(cost)) {
+    if (m_movementPoints - cost >= 0)
+      m_movementPoints -= cost;
+    else {
+      m_actionPoints -= 1;
+      m_movementPoints = getMaxMovementPoints() - cost;
+      returnVal = true;
+    }
+  }
+  return returnVal;
 }
-bool Creature::canAct(int cost) {
-  if (!m_inCombat)
-    return true;
-  return useActionPoints(cost);
+
+bool Creature::canAct(int cost) const {
+  return (!m_inCombat || m_actionPoints - cost >= 0);
 }
-bool Creature::canMove(int cost) {
-  if (!m_inCombat)
-    return true;
-  return useMovementPoints(cost);
+bool Creature::canMove(int cost) const {
+  return (!m_inCombat || m_movementPoints - cost >= 0 || m_actionPoints > 0);
 }
 
 void Creature::refillActionPoints() { m_actionPoints = m_maxActionPoints; }

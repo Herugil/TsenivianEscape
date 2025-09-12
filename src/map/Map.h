@@ -17,6 +17,8 @@ private:
 
 public:
   explicit Map(int width = 10, int height = 10);
+  int getWidth() const;
+  int getHeight() const;
   void placeFloor(std::unique_ptr<GameObject> gameObject, const Point &point);
   void placeTop(std::shared_ptr<GameObject> gameObject, const Point &point);
   void removeTop(const Point &point);

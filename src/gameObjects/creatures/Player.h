@@ -32,6 +32,6 @@ public:
   void equipItem(std::shared_ptr<Item> item);
   std::shared_ptr<Item> getItem(std::size_t index) const;
   int getMeleeDamage() const override;
-  int getMeleeRange() const; // thisll also be const override..
+  int getMeleeRange() const override; // thisll also be const override..
   virtual ~Player() = default;
 };

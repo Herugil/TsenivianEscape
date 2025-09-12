@@ -10,6 +10,9 @@ Map::Map(int width, int height)
     : m_width{width}, m_height{height}, m_floorLayer(width, height),
       m_topLayer(width, height) {}
 
+int Map::getWidth() const { return m_width; }
+int Map::getHeight() const { return m_height; }
+
 void Map::placeFloor(std::unique_ptr<GameObject> gameObject,
                      const Point &point) {
   if (checkBounds(point))

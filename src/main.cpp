@@ -9,6 +9,8 @@
 #include "map/Layer.h"
 #include "map/Map.h"
 #include "map/Point.h"
+#include "scripts/NpcCombatAI.h"
+#include "utils/Interface.h"
 #include "utils/ScreenUtils.h"
 #include <chrono>
 #include <iostream>
@@ -16,34 +18,13 @@
 #include <queue>
 #include <thread>
 
-void displayCombatInterface(const Player &player) {
-  std::cout << "Movement:";
-  for (int i{0}; i < player.getMovementPoints(); ++i) {
-    std::cout << 'X';
-  }
-  for (int i{0}; i < player.getMaxMovementPoints() - player.getMovementPoints();
-       ++i)
-    std::cout << ' ';
-  std::cout << "   ";
-  std::cout << "Actions:";
-  for (int i{0}; i < player.getActionPoints(); ++i) {
-    std::cout << 'X';
-  }
-  for (int i{0}; i < player.getMaxActionPoints() - player.getActionPoints();
-       ++i)
-    std::cout << ' ';
-  std::cout << '\n'
-            << "HP: " << player.getHealthPoints() << '/'
-            << player.getMaxHealthPoints() << '\n';
-}
-
 GameSession &prepGame(GameSession &gameSession) {
-  gameSession.getMap().placeWalls(Point(0, 0), Point(0, 9));
-  gameSession.getMap().placeWalls(Point(0, 0), Point(9, 0));
-  gameSession.getMap().placeWalls(Point(9, 0), Point(9, 9));
-  gameSession.getMap().placeWalls(Point(0, 9), Point(9, 9));
+  gameSession.getMap().placeWalls(Point(0, 0), Point(0, 19));
+  gameSession.getMap().placeWalls(Point(0, 0), Point(19, 0));
+  gameSession.getMap().placeWalls(Point(19, 0), Point(19, 19));
+  gameSession.getMap().placeWalls(Point(0, 9), Point(19, 9));
   gameSession.getMap().placeWalls(Point(5, 0), Point(5, 5));
-  gameSession.getMap().placeWalls(Point(3, 9), Point(3, 5));
+  gameSession.getMap().placeWalls(Point(12, 19), Point(12, 5));
   std::vector<std::shared_ptr<Item>> containerItems;
 
   containerItems.push_back(
@@ -58,12 +39,20 @@ GameSession &prepGame(GameSession &gameSession) {
                                   Point(2, 2));
   auto enemyLoot{
       std::make_shared<Weapon>("Banana", Item::ItemType::oneHanded, 1, 1)};
+  auto enemyLoot2{
+      std::make_shared<Weapon>("Apple", Item::ItemType::oneHanded, 1, 1)};
 
   auto npc{std::make_shared<NonPlayableCharacter>(
       'e', Point(4, 7), 12, std::vector<std::shared_ptr<Item>>{enemyLoot},
       "Gruff-looking man",
       "A somber looking man, threatening you with a banana.", "A dead body.")};
   gameSession.addNpc(npc);
+
+  auto npc2{std::make_shared<NonPlayableCharacter>(
+      'E', Point(8, 2), 8, std::vector<std::shared_ptr<Item>>{enemyLoot2},
+      "Strange-looking man",
+      "A strange looking man, threatening you with an apple.", "A dead body.")};
+  gameSession.addNpc(npc2);
 
   gameSession.getPlayer().takeItem(
       std::make_shared<Weapon>("Dagger", Item::ItemType::oneHanded, 2, 1));
@@ -72,12 +61,8 @@ GameSession &prepGame(GameSession &gameSession) {
 }
 
 int main() {
-  GameSession gameSession{10, 10, std::make_shared<Player>(Point(2, 1), 10)};
+  GameSession gameSession{20, 10, std::make_shared<Player>(Point(2, 1), 10)};
   prepGame(gameSession);
-
-  auto path{gameSession.getMap().findPath(Point(1, 4), Point(6, 2))};
-  for (auto it : path)
-    std::cout << "X" << it.getX() << "Y" << it.getY() << '\n';
 
   if (gameSession.enemiesInMap()) {
     gameSession.getPlayer().setCombat();
@@ -95,33 +80,24 @@ int main() {
         break;
 
       if (auto player{std::dynamic_pointer_cast<Player>(activeChar)}) {
+        Interface::displayCombatInterface(*player);
         while ((player->getActionPoints() > 0) |
                (player->getMovementPoints() > 0)) {
-          std::cout << "Your turn:\n";
           Command::command command{
               CommandHandler::getCommand(Input::getKeyBlocking())};
           CommandHandler::executeWorldCommand(gameSession, command);
-          displayCombatInterface(gameSession.getPlayer());
+          Interface::displayCombatInterface(gameSession.getPlayer());
           gameSession.initializeTurnOrder(); // if someone dies, no turn
           if (!gameSession.enemiesInMap())
             break;
         }
         gameSession.getPlayer().refillActionPoints();
+        Interface::timeAndDisplayInterface(gameSession, *player,
+                                           Settings::g_timeEnemyActionMS);
 
       } else if (auto enemy{std::dynamic_pointer_cast<NonPlayableCharacter>(
                      activeChar)}) {
-        while ((enemy->getActionPoints() > 0)) {
-          // AI script!!!
-          std::cout << enemy->getName() << " turn\n ";
-          enemy->executeBasicAttack(gameSession.getPlayer(), gameSession);
-          gameSession.initializeTurnOrder(); // if someone dies, no turn
-          std::this_thread::sleep_for(
-              std::chrono::milliseconds(Settings::g_timeEnemyTurnMS));
-          ScreenUtils::clearScreen();
-          gameSession.displayMap();
-          displayCombatInterface(gameSession.getPlayer());
-        }
-        enemy->refillActionPoints();
+        NpcCombatAI::npcActCombat(gameSession, enemy);
       }
       if (initiativeIndex >= gameSession.getTurnOrder().size() - 1) {
         initiativeIndex = 0; // loop back to first player
@@ -129,15 +105,15 @@ int main() {
         initiativeIndex++;
       }
     }
-  }
 
-  while (true) {
-    gameSession.getPlayer().unsetCombat();
-    if (Input::hasKeyPressed()) {
-      Command::command command{CommandHandler::getCommand(Input::getKey())};
-      CommandHandler::executeWorldCommand(gameSession, command);
+    while (true) {
+      gameSession.getPlayer().unsetCombat();
+      if (Input::hasKeyPressed()) {
+        Command::command command{CommandHandler::getCommand(Input::getKey())};
+        CommandHandler::executeWorldCommand(gameSession, command);
+      }
+      std::this_thread::sleep_for(
+          std::chrono::milliseconds(Settings::g_timeSleepMS));
     }
-    std::this_thread::sleep_for(
-        std::chrono::milliseconds(Settings::g_timeSleepMS));
   }
 }

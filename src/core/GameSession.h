@@ -1,4 +1,5 @@
 #pragma once
+#include "gameObjects/creatures/Creature.h"
 #include "gameObjects/creatures/NonPlayableCharacter.h"
 #include "gameObjects/creatures/Player.h"
 #include "gameObjects/terrain/Container.h"
@@ -20,7 +21,8 @@ class GameSession {
 
 public:
   GameSession(int width, int height, std::shared_ptr<Player> player);
-  void movePlayer(Directions::Direction direction);
+  void moveCreature(std::shared_ptr<Creature> creature,
+                    Directions::Direction direction);
   void displayMap() const;
   const Point &getPlayerPos() const;
   void addNpc(std::shared_ptr<NonPlayableCharacter> npc);
@@ -29,8 +31,11 @@ public:
   const std::vector<std::shared_ptr<NonPlayableCharacter>> &getNpcs() const;
   std::vector<std::weak_ptr<Creature>> getTurnOrder() const;
   bool enemiesInMap() const;
+  std::shared_ptr<Player> getPlayerPtr() const; // useful in some cases where
+  // player ptr is required as a parameter (eg move)
   Player &getPlayer();
   Map &getMap();
+  const Map &getMap() const;
 
   void initializeTurnOrder();
 };

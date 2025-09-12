@@ -1,5 +1,4 @@
 #include "core/GameSession.h"
-#include "gameObjects/creatures/Player.h"
 #include "map/Map.h"
 #include "map/Point.h"
 #include "utils/ScreenUtils.h"
@@ -10,22 +9,20 @@ GameSession::GameSession(int width, int height, std::shared_ptr<Player> player)
   m_currentMap.placeTop(m_player, point);
 }
 
-void GameSession::movePlayer(Directions::Direction direction) {
+void GameSession::moveCreature(std::shared_ptr<Creature> creature,
+                               Directions::Direction direction) {
   // TODO: add actor parameter, rename function
-  Point currentPos{m_player->getPosition()};
+  if (direction == Directions::nbDirections)
+    // invalid direction
+    return;
+  Point currentPos{creature->getPosition()};
   Point adjPoint(currentPos.getAdjacentPoint(direction));
   if (m_currentMap.isAvailable(adjPoint)) {
-    bool canMove{m_player->canMove(1)};
-    if (!canMove) {
-      if (m_player->canAct(1)) {
-        m_player->refillMovementPoints();
-        canMove = true;
-      }
-    }
+    bool canMove{creature->useMovementPoints()};
     if (canMove) {
-      m_currentMap.placeTop(m_player, adjPoint);
+      m_currentMap.placeTop(creature, adjPoint);
       m_currentMap.removeTop(currentPos);
-      m_player->setPosition(adjPoint);
+      creature->setPosition(adjPoint);
     }
   }
 }
@@ -38,6 +35,8 @@ const Point &GameSession::getPlayerPos() const {
 
 Player &GameSession::getPlayer() { return *m_player; }
 Map &GameSession::getMap() { return m_currentMap; }
+const Map &GameSession::getMap() const { return m_currentMap; }
+std::shared_ptr<Player> GameSession::getPlayerPtr() const { return m_player; }
 
 void GameSession::addNpc(std::shared_ptr<NonPlayableCharacter> npc) {
   m_npcs.push_back(npc);
