@@ -36,7 +36,7 @@ DataLoader::getAllItems() {
       std::string name{value["name"]};
       int damage{value["damage"]};
       int range{value["range"]};
-      items[key] = std::make_shared<Item>(
+      items[key] = std::make_shared<Weapon>(
           Weapon{name, Item::ItemType::oneHanded, damage, range});
     }
   }
@@ -55,32 +55,61 @@ void placeWalls(json &data, Map &map) {
   }
 }
 
-void placeEnemies(json &data, Map &map) {
-  std::string wallDesc{data["wallDescription"]};
-  const auto &arrWalls{data["walls"]};
-  assert((arrWalls.size() % 2 == 0) &&
-         "Walls list needs to have an even length!");
-  for (std::size_t i{0}; i < arrWalls.size(); i += 2) {
-    Point p1{arrWalls[i][0], arrWalls[i][1]};
-    Point p2{arrWalls[i + 1][0], arrWalls[i + 1][1]};
-    map.placeWalls(p1, p2, wallDesc);
+void placeEnemies(
+    json &data, Map &map, GameSession &gameSession,
+    const std::unordered_map<std::string, std::shared_ptr<Item>> &items) {
+  const auto &arrEnemies{data["enemies"]};
+  for (auto enemy : arrEnemies) {
+    char symbol{std::string(enemy[0])[0]}; // json doesnt have char
+    Point pos{enemy[1][0], enemy[1][1]};
+    int maxHealth{enemy[2]};
+    const auto &itemIds{enemy[3]};
+    std::vector<std::shared_ptr<Item>> loot{};
+    for (auto itemId : itemIds) {
+      if (items.contains(itemId))
+        loot.emplace_back(items.at(itemId)->clone());
+      else
+        std::cout << itemId << " not added, cant find it in items.\n";
+    }
+    std::string name{enemy[4]};
+    std::string desc{enemy[5]};
+    std::string descDead{enemy[6]};
+
+    auto npc{std::make_shared<NonPlayableCharacter>(
+        symbol, pos, map.getName(), maxHealth, loot, name, desc, descDead)};
+    gameSession.addNpc(npc);
   }
 }
 
-void placeEnemies(json &data, Map &map,
-                  [[maybe_unused]] GameSession &gameSession) {
-  std::string wallDesc{data["wallDescription"]};
-  const auto &arrWalls{data["walls"]};
-  assert((arrWalls.size() % 2 == 0) &&
-         "Walls list needs to have an even length!");
-  for (std::size_t i{0}; i < arrWalls.size(); i += 2) {
-    Point p1{arrWalls[i][0], arrWalls[i][1]};
-    Point p2{arrWalls[i + 1][0], arrWalls[i + 1][1]};
-    map.placeWalls(p1, p2, wallDesc);
+void placeObjects(
+    json &data, Map &map,
+    const std::unordered_map<std::string, std::shared_ptr<Item>> &items) {
+  const auto &arrObjects{data["gameObjects"]};
+  for (auto object : arrObjects) {
+    char symbol{std::string(object[0])[0]}; // json doesnt have char
+    Point pos{object[1][0], object[1][1]};
+    std::string type{object[2]};
+    const auto &itemIds{object[3]};
+    std::string name{object[4]};
+    std::string desc{object[5]};
+    if (type == "container") {
+      std::vector<std::shared_ptr<Item>> loot{};
+      for (auto itemId : itemIds) {
+        if (items.contains(itemId))
+          loot.emplace_back(items.at(itemId)->clone());
+        else
+          std::cout << itemId << " not added, cant find it in items.\n";
+      }
+      Container container{loot, pos, name, map.getName(), desc, symbol};
+      map.placeFloor(std::make_unique<Container>(std::move(container)), pos);
+    } else {
+      GameObject obj{false, false, symbol, map.getName(), pos, name, desc};
+      map.placeFloor(std::make_unique<GameObject>(std::move(obj)), pos);
+    }
   }
 }
 
-std::unordered_map<std::string, Map> DataLoader::getAllMaps(
+void DataLoader::populateGameSession(
     [[maybe_unused]] std::unordered_map<std::string, std::shared_ptr<Item>>
         &items,
     GameSession &gameSession) {
@@ -98,11 +127,12 @@ std::unordered_map<std::string, Map> DataLoader::getAllMaps(
     auto it{name.find(".json")};
     name.erase(it);
 
-    Map map{name, data["mapWidth"], data["mapHeight"], introText};
-    placeWalls(data, map);
-    placeEnemies(data, map, gameSession);
+    gameSession.addMap(
+        Map{name, data["mapWidth"], data["mapHeight"], introText});
+    gameSession.setCurrentMap(name);
 
-    allMaps.emplace(name, std::move(map));
+    placeWalls(data, gameSession.getMap());
+    placeEnemies(data, gameSession.getMap(), gameSession, items);
+    placeObjects(data, gameSession.getMap(), items);
   }
-  return allMaps;
 }

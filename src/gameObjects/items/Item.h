@@ -31,5 +31,6 @@ public:
   // thanks to solene
   virtual int getDamage() const { return 0; };
   virtual int getRange() const { return 0; }
+  virtual std::shared_ptr<Item> clone() const = 0;
   virtual ~Item() = default;
 };

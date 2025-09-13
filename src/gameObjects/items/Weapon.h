@@ -12,5 +12,8 @@ public:
       : Item{name, itemType}, m_damage{damage}, m_range{range} {}
   int getDamage() const override { return m_damage; }
   int getRange() const override { return m_damage; }
+  std::shared_ptr<Item> clone() const override {
+    return std::make_shared<Weapon>(*this);
+  };
   virtual ~Weapon() = default;
 };

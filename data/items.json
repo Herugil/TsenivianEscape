@@ -8,7 +8,19 @@
   "itemDagger": {
     "name": "dagger",
     "itemType": "oneHanded",
-    "damage": 1,
+    "damage": 2,
     "range": 1
+  },
+  "itemSword": {
+    "name": "sword",
+    "itemType": "oneHanded",
+    "damage": 3,
+    "range": 1
+  },
+  "itemSpear": {
+    "name": "spear",
+    "itemType": "oneHanded",
+    "damage": 2,
+    "range": 2
   }
 }

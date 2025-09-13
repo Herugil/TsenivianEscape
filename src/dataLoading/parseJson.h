@@ -9,8 +9,8 @@ class GameSession;
 
 namespace DataLoader {
 using json = nlohmann::json;
-std::unordered_map<std::string, Map>
-getAllMaps(std::unordered_map<std::string, std::shared_ptr<Item>> &items,
-           GameSession &gameSession);
+void populateGameSession(
+    std::unordered_map<std::string, std::shared_ptr<Item>> &items,
+    GameSession &gameSession);
 std::unordered_map<std::string, std::shared_ptr<Item>> getAllItems();
 } // namespace DataLoader

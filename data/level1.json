@@ -26,8 +26,8 @@
     [
       "e",
       [4, 2],
-      10,
-      ["ItemBanana"],
+      4,
+      ["itemBanana"],
       "Gruff looking man",
       "A gruff looking man.",
       "A dead body."
@@ -35,8 +35,8 @@
     [
       "E",
       [6, 7],
-      12,
-      ["ItemDagger"],
+      3,
+      ["itemDagger"],
       "Dark looking man",
       "A threatening looking man.",
       "A dead body."
@@ -44,9 +44,9 @@
   ],
   "gameObjects": [
     [
-      "container",
       "X",
       [9, 5],
+      "container",
       ["itemSword", "itemSpear"],
       "hidden items in the wall",
       "A brick goes loose, revealing some items:"

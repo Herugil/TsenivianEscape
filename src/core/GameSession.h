@@ -17,10 +17,11 @@ class GameSession {
   // when NPCs die, containers pop on the top layer, which
   // is made of weak ptrs. to ensure they're not left dangling, gameSession
   // handles their existence.
-  Map m_currentMap{"placeholder"};
+  std::unordered_map<std::string, Map> m_allMaps;
+  Map *m_currentMap{nullptr};
 
 public:
-  GameSession(int width, int height, std::shared_ptr<Player> player);
+  GameSession(std::shared_ptr<Player> player);
   void moveCreature(std::shared_ptr<GameObject> gameObject,
                     Directions::Direction direction, bool forced = false);
   void displayMap() const;
@@ -37,6 +38,8 @@ public:
   Player &getPlayer();
   Map &getMap();
   const Map &getMap() const;
+  void addMap(Map &&map);
+  void setCurrentMap(std::string_view mapName);
 
   void initializeTurnOrder();
 };

@@ -3,10 +3,10 @@
 #include "map/Point.h"
 #include "utils/ScreenUtils.h"
 
-GameSession::GameSession(int width, int height, std::shared_ptr<Player> player)
-    : m_player{std::move(player)}, m_currentMap{"placeholder", width, height} {
-  Point point{m_player->getPosition()};
-  m_currentMap.placeTop(m_player, point);
+GameSession::GameSession(std::shared_ptr<Player> player)
+    : m_player{std::move(player)} {
+  m_allMaps.emplace("placeholder", Map{"placeholder"});
+  m_currentMap = &m_allMaps.at("placeholder");
 }
 
 void GameSession::moveCreature(std::shared_ptr<GameObject> gameObject,
@@ -17,39 +17,39 @@ void GameSession::moveCreature(std::shared_ptr<GameObject> gameObject,
     return;
   Point currentPos{gameObject->getPosition()};
   Point adjPoint(currentPos.getAdjacentPoint(direction));
-  if (m_currentMap.isAvailable(adjPoint)) {
+  if (m_currentMap->isAvailable(adjPoint)) {
     bool canMove{false};
     if (forced)
       canMove = gameObject->isMoveable();
     else if (auto creature{std::dynamic_pointer_cast<Creature>(gameObject)})
       canMove = creature->useMovementPoints();
     if (canMove) {
-      m_currentMap.placeTop(gameObject, adjPoint);
-      m_currentMap.removeTop(currentPos);
+      m_currentMap->placeTop(gameObject, adjPoint);
+      m_currentMap->removeTop(currentPos);
       gameObject->setPosition(adjPoint);
     }
   }
 }
 
-void GameSession::displayMap() const { std::cout << m_currentMap; }
+void GameSession::displayMap() const { std::cout << *m_currentMap; }
 
 const Point &GameSession::getPlayerPos() const {
   return m_player->getPosition();
 }
 
 Player &GameSession::getPlayer() { return *m_player; }
-Map &GameSession::getMap() { return m_currentMap; }
-const Map &GameSession::getMap() const { return m_currentMap; }
+Map &GameSession::getMap() { return *m_currentMap; }
+const Map &GameSession::getMap() const { return *m_currentMap; }
 std::shared_ptr<Player> GameSession::getPlayerPtr() const { return m_player; }
 
 void GameSession::addNpc(std::shared_ptr<NonPlayableCharacter> npc) {
   m_npcs.push_back(npc);
-  m_currentMap.placeTop(npc, npc->getPosition());
+  m_currentMap->placeTop(npc, npc->getPosition());
 }
 
 void GameSession::addContainer(std::shared_ptr<Container> container) {
   m_sessionOwnedContainers.push_back(container);
-  m_currentMap.placeTop(container, container->getPosition());
+  m_currentMap->placeTop(container, container->getPosition());
 }
 
 void GameSession::removeContainer(std::shared_ptr<Container> container) {
@@ -75,11 +75,11 @@ void GameSession::cleanDeadNpcs() {
     if ((*it)->isDead()) {
       std::cout << (*it)->getName() << " is dead.\n";
       auto lootableBody{std::make_shared<Container>(
-          (*it)->getInventory(), (*it)->getPosition(), m_currentMap.getName(),
+          (*it)->getInventory(), (*it)->getPosition(), m_currentMap->getName(),
           (*it)->getDeadDescription())};
       addContainer(lootableBody);
-      m_currentMap.removeTop((*it)->getPosition());
-      m_currentMap.placeTop(lootableBody, lootableBody->getPosition());
+      m_currentMap->removeTop((*it)->getPosition());
+      m_currentMap->placeTop(lootableBody, lootableBody->getPosition());
       it = m_npcs.erase(it);
     } else
       ++it;
@@ -112,4 +112,18 @@ void GameSession::initializeTurnOrder() {
 
 std::vector<std::weak_ptr<Creature>> GameSession::getTurnOrder() const {
   return m_turnOrder;
+}
+
+void GameSession::addMap(Map &&map) {
+  m_allMaps.emplace(map.getName(), std::move(map));
+}
+
+void GameSession::setCurrentMap(std::string_view mapName) {
+  std::string strMapName{mapName};
+  if (!m_allMaps.contains(strMapName)) {
+    std::cout << "Can't find " << mapName << ", not changing maps.\n";
+    return;
+  }
+  m_currentMap = &m_allMaps.at(strMapName);
+  m_currentMap->placeTop(m_player, m_player->getPosition());
 }
