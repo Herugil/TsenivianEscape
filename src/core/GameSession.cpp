@@ -91,13 +91,22 @@ GameSession::getNpcs() const {
   return m_npcs;
 }
 
-bool GameSession::enemiesInMap() const { return !m_npcs.empty(); }
+bool GameSession::enemiesInMap() const {
+  for (auto npc : m_npcs) {
+    if (npc->getCurrentMap() == m_currentMap->getName())
+      return true;
+  }
+  return false;
+}
 
 void GameSession::initializeTurnOrder() {
   if (m_turnOrder.empty()) {
     m_turnOrder.push_back(m_player);
     for (std::weak_ptr<Creature> npc : m_npcs) {
-      m_turnOrder.push_back(npc);
+      if (!npc.expired()) {
+        if (npc.lock()->getCurrentMap() == m_currentMap->getName())
+          m_turnOrder.push_back(npc);
+      }
     }
   } else {
     for (auto it{m_turnOrder.begin()}; it != m_turnOrder.end();) {
@@ -124,6 +133,8 @@ void GameSession::setCurrentMap(std::string_view mapName) {
     std::cout << "Can't find " << mapName << ", not changing maps.\n";
     return;
   }
+  m_currentMap->removeTop(m_player->getPosition());
   m_currentMap = &m_allMaps.at(strMapName);
+  m_player->setCurrentMap(strMapName);
   m_currentMap->placeTop(m_player, m_player->getPosition());
 }

@@ -24,6 +24,7 @@ int main() {
       std::make_shared<Player>(Point(2, 1), "placeHolder", 10)};
   std::unordered_map<std::string, std::shared_ptr<Item>> items{
       DataLoader::getAllItems()};
+  gameSession.getPlayer().takeItem(items["itemSword"]->clone());
   DataLoader::populateGameSession(items, gameSession);
   gameSession.setCurrentMap("level1");
   gameSession.displayMap();
@@ -72,6 +73,8 @@ int main() {
         initiativeIndex++;
       }
     }
+
+    gameSession.setCurrentMap("level2");
 
     while (true) {
       gameSession.getPlayer().unsetCombat();
