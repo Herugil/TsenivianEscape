@@ -5,13 +5,15 @@
 #include <memory>
 #include <vector>
 
-Container::Container(const Point &point, std::string_view name,
-                     std::string_view description)
-    : GameObject(true, false, 'c', point, name, description) {}
+Container::Container(const Point &point, std::string_view currentMap,
+                     std::string_view name, std::string_view description,
+                     char symbol)
+    : GameObject(true, false, symbol, currentMap, point, name, description) {}
 Container::Container(std::vector<std::shared_ptr<Item>> items,
-                     const Point &point, std::string_view name,
-                     std::string_view description)
-    : GameObject(true, false, 'c', point, name, description),
+                     const Point &point, std::string_view currentMap,
+                     std::string_view name, std::string_view description,
+                     char symbol)
+    : GameObject(true, false, symbol, currentMap, point, name, description),
       m_heldItems{std::move(items)} {}
 
 void Container::displayContents() {

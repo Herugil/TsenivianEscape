@@ -21,8 +21,9 @@ protected:
   bool m_inCombat{false};
 
 public:
-  Creature(char symbol, const Point &position, int maxHealthPoints,
-           std::string_view name = "", std::string_view description = "");
+  Creature(char symbol, const Point &position, std::string_view currentMap,
+           int maxHealthPoints, std::string_view name = "",
+           std::string_view description = "");
   int getHealthPoints() const;
   bool isDead() const;
   void takeDamage(int damage);

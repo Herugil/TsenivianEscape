@@ -4,9 +4,10 @@
 #include "map/Point.h"
 #include "scripts/MeleeAttack.h"
 
-Creature::Creature(char symbol, const Point &position, int maxHealthPoints,
+Creature::Creature(char symbol, const Point &position,
+                   std::string_view currentMap, int maxHealthPoints,
                    std::string_view name, std::string_view description)
-    : GameObject{true, false, symbol, position, name, description},
+    : GameObject{true, false, symbol, currentMap, position, name, description},
       m_maxHealthPoints{maxHealthPoints} {
   m_actions.emplace_back(
       std::make_shared<MeleeAttack>("Attack with right hand weapon"));

@@ -4,8 +4,10 @@
 #include "scripts/MeleeAttack.h"
 #include <memory>
 
-Player::Player(const Point &position, int maxHealthPoints)
-    : Creature('@', position, maxHealthPoints, "you"), m_shoveAction{} {}
+Player::Player(const Point &position, std::string_view currentMap,
+               int maxHealthPoints)
+    : Creature('@', position, currentMap, maxHealthPoints, "you"),
+      m_shoveAction{} {}
 
 void Player::takeItem(std::shared_ptr<Item> item) {
   if (item) {

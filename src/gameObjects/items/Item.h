@@ -29,7 +29,7 @@ public:
   bool isEquipped() const { return m_isEquipped; }
   void setEquipped() { m_isEquipped = !m_isEquipped; }
   // thanks to solene
-  virtual int getDamage() const = 0;
-  virtual int getRange() const = 0;
+  virtual int getDamage() const { return 0; };
+  virtual int getRange() const { return 0; }
   virtual ~Item() = default;
 };

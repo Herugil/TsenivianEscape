@@ -1,0 +1,55 @@
+{
+  "introTextFile": "level1.txt",
+  "mapWidth": 10,
+  "mapHeight": 10,
+  "wallDescription": "A simple wall of rough hewn stone",
+  "walls": [
+    [0, 0],
+    [0, 3],
+
+    [0, 5],
+    [0, 9],
+
+    [9, 0],
+    [9, 4],
+
+    [9, 6],
+    [9, 9],
+
+    [9, 0],
+    [0, 0],
+
+    [0, 9],
+    [9, 9]
+  ],
+  "enemies": [
+    [
+      "e",
+      [4, 2],
+      10,
+      ["ItemBanana"],
+      "Gruff looking man",
+      "A gruff looking man.",
+      "A dead body."
+    ],
+    [
+      "E",
+      [6, 7],
+      12,
+      ["ItemDagger"],
+      "Dark looking man",
+      "A threatening looking man.",
+      "A dead body."
+    ]
+  ],
+  "gameObjects": [
+    [
+      "container",
+      "X",
+      [9, 5],
+      ["itemSword", "itemSpear"],
+      "hidden items in the wall",
+      "A brick goes loose, revealing some items:"
+    ]
+  ]
+}

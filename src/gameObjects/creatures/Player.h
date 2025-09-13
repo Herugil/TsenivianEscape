@@ -23,7 +23,8 @@ private:
   Shove m_shoveAction{};
 
 public:
-  Player(const Point &position, int maxHealthPoints);
+  Player(const Point &position, std::string_view currentMap,
+         int maxHealthPoints);
   void takeItem(std::shared_ptr<Item> item);
   void inventoryMenu();
   void actionMenu(GameSession &gameSession);

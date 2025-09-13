@@ -1,0 +1,14 @@
+{
+  "itemBanana": {
+    "name": "banana",
+    "itemType": "oneHanded",
+    "damage": 1,
+    "range": 1
+  },
+  "itemDagger": {
+    "name": "dagger",
+    "itemType": "oneHanded",
+    "damage": 1,
+    "range": 1
+  }
+}

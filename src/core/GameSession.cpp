@@ -4,7 +4,7 @@
 #include "utils/ScreenUtils.h"
 
 GameSession::GameSession(int width, int height, std::shared_ptr<Player> player)
-    : m_player{std::move(player)}, m_currentMap{width, height} {
+    : m_player{std::move(player)}, m_currentMap{"placeholder", width, height} {
   Point point{m_player->getPosition()};
   m_currentMap.placeTop(m_player, point);
 }
@@ -75,7 +75,7 @@ void GameSession::cleanDeadNpcs() {
     if ((*it)->isDead()) {
       std::cout << (*it)->getName() << " is dead.\n";
       auto lootableBody{std::make_shared<Container>(
-          (*it)->getInventory(), (*it)->getPosition(),
+          (*it)->getInventory(), (*it)->getPosition(), m_currentMap.getName(),
           (*it)->getDeadDescription())};
       addContainer(lootableBody);
       m_currentMap.removeTop((*it)->getPosition());

@@ -17,7 +17,7 @@ class GameSession {
   // when NPCs die, containers pop on the top layer, which
   // is made of weak ptrs. to ensure they're not left dangling, gameSession
   // handles their existence.
-  Map m_currentMap{};
+  Map m_currentMap{"placeholder"};
 
 public:
   GameSession(int width, int height, std::shared_ptr<Player> player);

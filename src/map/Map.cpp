@@ -6,12 +6,14 @@
 #include <memory>
 #include <unordered_map>
 
-Map::Map(int width, int height)
-    : m_width{width}, m_height{height}, m_floorLayer(width, height),
-      m_topLayer(width, height) {}
+Map::Map(std::string_view mapName, int width, int height,
+         std::string_view introText)
+    : m_name{mapName}, m_width{width}, m_height{height}, m_introText{introText},
+      m_floorLayer(width, height), m_topLayer(width, height) {}
 
 int Map::getWidth() const { return m_width; }
 int Map::getHeight() const { return m_height; }
+const std::string &Map::getName() const { return m_name; }
 
 void Map::placeFloor(std::unique_ptr<GameObject> gameObject,
                      const Point &point) {
@@ -66,19 +68,24 @@ void Map::moveFloor(const Point &position, Directions::Direction direction)
   // this should call move semantics, because these are unique pointers?
 }
 
-void Map::placeWalls(const Point &bottomLeft, const Point &topRight) {
+void Map::placeWalls(const Point &bottomLeft, const Point &topRight,
+                     std::string_view description) {
   int leftMin{std::min(bottomLeft.getX(), topRight.getX())};
   int bottomMin{std::min(bottomLeft.getY(), topRight.getY())};
   int rightMax{std::max(bottomLeft.getX(), topRight.getX())};
   int topMax{std::max(bottomLeft.getY(), topRight.getY())};
   for (int i{leftMin}; i <= rightMax; ++i) {
     for (int j{bottomMin}; j <= topMax; ++j) {
-      placeFloor(std::make_unique<Wall>(Point(i, j)), Point(i, j));
+      placeFloor(std::make_unique<Wall>(Point(i, j), m_name, description),
+                 Point(i, j));
     }
   }
 }
 
 std::ostream &operator<<(std::ostream &out, const Map &map) {
+  if (map.m_readIntroText) {
+    std::cout << map.m_introText;
+  }
   for (int row{0}; row < map.m_height; ++row) {
     for (int col{0}; col < map.m_width; ++col) {
       auto topObject{map.m_topLayer[col, row].lock()};
@@ -94,6 +101,8 @@ std::ostream &operator<<(std::ostream &out, const Map &map) {
   }
   return out;
 }
+
+void Map::setIntroTextRead() { m_readIntroText = false; }
 
 void Map::interactPoint(const Point &point, Player &player) {
   int x{point.getX()};

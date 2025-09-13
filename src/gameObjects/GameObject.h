@@ -8,11 +8,11 @@
 class Player;
 
 class GameObject {
+protected:
   bool m_isMoveable{};
   bool m_traversable{};
   char m_symbol{};
-
-protected:
+  std::string m_currentMap{};
   Point m_position{};
   std::string m_name{};
   std::string m_description{};
@@ -20,10 +20,12 @@ protected:
 private:
 public:
   explicit GameObject(bool isMoveable = false, bool isTraversable = false,
-                      char symbol = ' ', Point position = Point(),
-                      std::string_view name = "",
+                      char symbol = ' ', std::string_view currentMap = "",
+                      Point position = Point(), std::string_view name = "",
                       std::string_view description = "");
   const Point &getPosition() const;
+  const std::string &getCurrentMap() const;
+  void setCurrentMap(std::string_view map);
   char getSymbol() const;
   const std::string &getName() const;
   bool isTraversable() const;
