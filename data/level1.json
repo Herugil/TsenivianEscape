@@ -30,7 +30,17 @@
       "container",
       "hidden items in the wall",
       "A brick goes loose, revealing some items:",
-      ["itemSword", "itemSpear"]
+      [
+        "itemSword",
+        "itemSpear",
+        "itemBanana",
+        "itemDagger",
+        "itemDagger",
+        "itemBanana",
+        "itemDagger",
+        "itemBanana",
+        "itemSpear"
+      ]
     ],
     [
       "O",

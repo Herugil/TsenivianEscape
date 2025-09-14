@@ -28,7 +28,7 @@ public:
   void takeItem(std::shared_ptr<Item> item);
   void inventoryMenu();
   void actionMenu(GameSession &gameSession);
-  void displayInventory() const;
+  void displayInventory(std::size_t page = 0) const;
   void displayActions() const;
   std::shared_ptr<Action> getAction(std::size_t index) const;
   void takeAllItems(Container &container);
@@ -37,5 +37,6 @@ public:
   void shove(GameSession &gameSession, Directions::Direction direction);
   int getMeleeDamage() const override;
   int getMeleeRange() const override; // thisll also be const override..
+  int numObjectsHeld() const;
   virtual ~Player() = default;
 };

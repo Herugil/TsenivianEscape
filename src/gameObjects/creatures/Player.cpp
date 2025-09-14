@@ -1,4 +1,5 @@
 #include "gameObjects/creatures/Player.h"
+#include "Settings.h"
 #include "map/Map.h"
 #include "map/Point.h"
 #include "scripts/MeleeAttack.h"
@@ -15,21 +16,28 @@ void Player::takeItem(std::shared_ptr<Item> item) {
   }
 }
 
-void Player::inventoryMenu() {
-  displayInventory();
-  CommandHandler::handleInventoryCommands(*this);
-}
+void Player::inventoryMenu() { CommandHandler::handleInventoryCommands(*this); }
 
 void Player::actionMenu(GameSession &gameSession) {
   displayActions();
   CommandHandler::handleActionCommands(gameSession);
 }
 
-void Player::displayInventory() const {
-  std::cout << "Inventory: \n";
-  for (std::size_t i{0}; i < m_inventory.size(); ++i) {
-    std::cout << i + 1 << ": " << *(m_inventory[i]) << '\n';
+void Player::displayInventory(std::size_t page) const {
+  std::cout << "Inventory (page): " << page << '\n';
+  std::size_t lenItemsDisplay{Settings::g_itemListSize};
+  if (page == m_inventory.size() / Settings::g_itemListSize)
+    // ie if viewing the last page
+    lenItemsDisplay = m_inventory.size() % Settings::g_itemListSize;
+  // only display remaining items
+  for (std::size_t i{0}; i < lenItemsDisplay; ++i) {
+    std::cout << i + 1 << ": "
+              << *(m_inventory[page * Settings::g_itemListSize + i]) << '\n';
   }
+}
+
+int Player::numObjectsHeld() const {
+  return static_cast<int>(m_inventory.size());
 }
 
 void Player::displayActions() const {

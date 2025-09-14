@@ -218,13 +218,23 @@ void CommandHandler::handleContainerCommands(Container &container,
 }
 
 void CommandHandler::handleInventoryCommands(Player &player) {
+  std::size_t page{0};
   while (true) {
     ScreenUtils::clearScreen();
-    player.displayInventory();
+    player.displayInventory(page);
     auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
+    if (isMovementCommand(command)) {
+      if (command == Command::left && page > 0)
+        page--;
+      if (command == Command::right &&
+          page < static_cast<std::size_t>(player.numObjectsHeld()) /
+                     Settings::g_itemListSize)
+        page++;
+      continue;
+    }
     if (isHotkeyCommand(command)) {
       auto pressedKey{static_cast<std::size_t>(getPressedKey(command))};
-      auto item{player.getItem(pressedKey)};
+      auto item{player.getItem(page * Settings::g_itemListSize + pressedKey)};
       if (item) {
         player.equipItem(item);
       }
