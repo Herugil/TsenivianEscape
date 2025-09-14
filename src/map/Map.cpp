@@ -1,7 +1,9 @@
 #include "map/Map.h"
 #include "gameObjects/terrain/Wall.h"
+#include "input/Input.h"
 #include "utils/GeometryUtils.h"
 #include "utils/QueueClass.h"
+#include "utils/ScreenUtils.h"
 #include <iostream>
 #include <memory>
 #include <unordered_map>
@@ -82,9 +84,10 @@ void Map::placeWalls(const Point &bottomLeft, const Point &topRight,
   }
 }
 
-std::ostream &operator<<(std::ostream &out, const Map &map) {
+std::ostream &operator<<(std::ostream &out, Map &map) {
   if (map.m_readIntroText) {
-    std::cout << map.m_introText;
+    map.printIntroText();
+    map.setIntroTextRead();
   }
   for (int row{0}; row < map.m_height; ++row) {
     for (int col{0}; col < map.m_width; ++col) {
@@ -120,6 +123,14 @@ std::shared_ptr<GameObject> Map::getTopObject(const Point &point) const {
   if (!checkBounds(point))
     return nullptr;
   return m_topLayer[point.getX(), point.getY()].lock();
+}
+
+GameObject *Map::getFloorObject(const Point &point) const {
+  // returns raw pointer to floor object
+  // ownership isnt transferred
+  if (!checkBounds(point))
+    return nullptr;
+  return m_floorLayer[point.getX(), point.getY()].get();
 }
 
 struct ComparatorFunc {
@@ -188,4 +199,13 @@ std::deque<Point> Map::findPath(const Point &startPoint,
     }
   }
   return {};
+}
+
+void Map::printIntroText() {
+  ScreenUtils::clearScreen();
+
+  std::cout << m_introText << '\n';
+  std::cout << "Press any key to continue...\n";
+  Input::getKeyBlocking();
+  ScreenUtils::clearScreen();
 }

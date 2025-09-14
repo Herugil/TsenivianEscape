@@ -32,14 +32,16 @@ public:
   void moveFloor(const Point &position, Directions::Direction direction);
   bool isAvailable(const Point &point) const;
   bool checkBounds(const Point &point) const;
-  friend std::ostream &operator<<(std::ostream &out, const Map &map);
+  friend std::ostream &operator<<(std::ostream &out, Map &map);
   void interactPoint(const Point &point, Player &player);
   void setIntroTextRead(); // careful to always call this when entering a level
   std::shared_ptr<GameObject> getTopObject(const Point &point) const;
+  GameObject *getFloorObject(const Point &point) const;
   std::deque<Point> reconstructPath(std::unordered_map<Point, Point> cameFrom,
                                     Point current) const;
   std::deque<Point> findPath(const Point &startPoint,
                              const Point &endPoint) const;
+  void printIntroText();
 };
 
 std::ostream &operator<<(std::ostream &out, const GameObject &gameObject);

@@ -24,6 +24,7 @@ public:
   GameSession(std::shared_ptr<Player> player);
   void moveCreature(std::shared_ptr<GameObject> gameObject,
                     Directions::Direction direction, bool forced = false);
+  void respawnPlayer();
   void displayMap() const;
   const Point &getPlayerPos() const;
   void addNpc(std::shared_ptr<NonPlayableCharacter> npc);
@@ -40,6 +41,8 @@ public:
   const Map &getMap() const;
   void addMap(Map &&map);
   void setCurrentMap(std::string_view mapName);
+  Map &getMap(std::string_view mapName);
 
   void initializeTurnOrder();
+  void resetInitiative();
 };

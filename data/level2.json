@@ -1,5 +1,5 @@
 {
-  "introTextFile": "level1.txt",
+  "introTextFile": "level2.txt",
   "mapWidth": 10,
   "mapHeight": 10,
   "wallDescription": "A simple wall of rough hewn stone",
@@ -41,9 +41,18 @@
       "X",
       [9, 5],
       "container",
-      ["itemDagger", "itemBanana"],
       "hidden items in the wall",
-      "A brick goes loose, revealing some items:"
+      "A brick goes loose, revealing some items:",
+      ["itemDagger", "itemBanana"]
+    ],
+    [
+      "O",
+      [0, 4],
+      "mapChanger",
+      "passage to the next room",
+      "A creaking, half open wooden door.",
+      "level1",
+      [3, 2]
     ]
   ]
 }

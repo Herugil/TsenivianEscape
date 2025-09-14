@@ -27,63 +27,62 @@ int main() {
   gameSession.getPlayer().takeItem(items["itemSword"]->clone());
   DataLoader::populateGameSession(items, gameSession);
   gameSession.setCurrentMap("level1");
+  gameSession.respawnPlayer();
   gameSession.displayMap();
-  gameSession.getMap().setIntroTextRead();
 
-  if (gameSession.enemiesInMap()) {
-    gameSession.getPlayer().setCombat();
-    gameSession.initializeTurnOrder();
-    for (auto character : gameSession.getTurnOrder()) {
-      auto ptr{character.lock()};
-      if (ptr)
-        ptr->setCombat();
-    }
-    std::size_t initiativeIndex{0};
-
-    while (gameSession.enemiesInMap()) {
-      auto activeChar{gameSession.getTurnOrder()[initiativeIndex].lock()};
-      if (!activeChar)
-        break;
-
-      if (auto player{std::dynamic_pointer_cast<Player>(activeChar)}) {
-        Interface::displayCombatInterface(*player);
-        while ((player->getActionPoints() > 0) ||
-               (player->getMovementPoints() > 0)) {
-          Command::command command{
-              CommandHandler::getCommand(Input::getKeyBlocking())};
-          if (command == Command::skipTurn)
-            break;
-          CommandHandler::executeWorldCommand(gameSession, command);
-          Interface::displayCombatInterface(gameSession.getPlayer());
-          gameSession.initializeTurnOrder(); // if someone dies, no turn
-          if (!gameSession.enemiesInMap())
-            break;
+  while (true) {
+    if (gameSession.enemiesInMap()) {
+      gameSession.initializeTurnOrder();
+      for (auto character : gameSession.getTurnOrder()) {
+        auto ptr{character.lock()};
+        if (ptr) {
+          ptr->setCombat();
         }
-        gameSession.getPlayer().resetTurn();
-        Interface::timeAndDisplayInterface(gameSession, *player,
-                                           Settings::g_timeEnemyActionMS);
-
-      } else if (auto enemy{std::dynamic_pointer_cast<NonPlayableCharacter>(
-                     activeChar)}) {
-        NpcCombatAI::npcActCombat(gameSession, enemy);
       }
-      if (initiativeIndex >= gameSession.getTurnOrder().size() - 1) {
-        initiativeIndex = 0; // loop back to first player
-      } else {
-        initiativeIndex++;
+      std::size_t initiativeIndex{0};
+      while (gameSession.enemiesInMap()) {
+        auto activeChar{gameSession.getTurnOrder()[initiativeIndex].lock()};
+        if (!activeChar)
+          break;
+
+        if (auto player{std::dynamic_pointer_cast<Player>(activeChar)}) {
+          Interface::displayCombatInterface(*player);
+          while ((player->getActionPoints() > 0) ||
+                 (player->getMovementPoints() > 0)) {
+            Command::command command{
+                CommandHandler::getCommand(Input::getKeyBlocking())};
+            if (command == Command::skipTurn)
+              break;
+            CommandHandler::executeWorldCommand(gameSession, command);
+            Interface::displayCombatInterface(gameSession.getPlayer());
+            gameSession.initializeTurnOrder(); // if someone dies, no turn
+            if (!gameSession.enemiesInMap())
+              break;
+          }
+          gameSession.getPlayer().resetTurn();
+          Interface::timeAndDisplayInterface(gameSession, *player,
+                                             Settings::g_timeEnemyActionMS);
+
+        } else if (auto enemy{std::dynamic_pointer_cast<NonPlayableCharacter>(
+                       activeChar)}) {
+          NpcCombatAI::npcActCombat(gameSession, enemy);
+        }
+        if (initiativeIndex >= gameSession.getTurnOrder().size() - 1) {
+          initiativeIndex = 0; // loop back to first player
+        } else {
+          initiativeIndex++;
+        }
       }
-    }
-
-    gameSession.setCurrentMap("level2");
-
-    while (true) {
       gameSession.getPlayer().unsetCombat();
-      if (Input::hasKeyPressed()) {
-        Command::command command{CommandHandler::getCommand(Input::getKey())};
-        CommandHandler::executeWorldCommand(gameSession, command);
-      }
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(Settings::g_timeSleepMS));
+      gameSession.resetInitiative();
     }
+
+    if (Input::hasKeyPressed()) {
+      Command::command command{
+          CommandHandler::getCommand(Input::getKeyBlocking())};
+      CommandHandler::executeWorldCommand(gameSession, command);
+    }
+    std::this_thread::sleep_for(
+        std::chrono::milliseconds(Settings::g_timeSleepMS));
   }
 }

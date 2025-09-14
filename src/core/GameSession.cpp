@@ -1,4 +1,6 @@
 #include "core/GameSession.h"
+#include "gameObjects/terrain/MapChanger.h"
+#include "gameObjects/terrain/WalkOnObject.h"
 #include "map/Map.h"
 #include "map/Point.h"
 #include "utils/ScreenUtils.h"
@@ -7,6 +9,10 @@ GameSession::GameSession(std::shared_ptr<Player> player)
     : m_player{std::move(player)} {
   m_allMaps.emplace("placeholder", Map{"placeholder"});
   m_currentMap = &m_allMaps.at("placeholder");
+}
+
+void GameSession::respawnPlayer() {
+  m_currentMap->placeTop(m_player, m_player->getPosition());
 }
 
 void GameSession::moveCreature(std::shared_ptr<GameObject> gameObject,
@@ -27,6 +33,10 @@ void GameSession::moveCreature(std::shared_ptr<GameObject> gameObject,
       m_currentMap->placeTop(gameObject, adjPoint);
       m_currentMap->removeTop(currentPos);
       gameObject->setPosition(adjPoint);
+      if (auto walkOn{dynamic_cast<WalkOnObject *>(
+              getMap().getFloorObject(adjPoint))}) {
+        walkOn->activateWalkOn(gameObject, *this);
+      }
     }
   }
 }
@@ -76,7 +86,7 @@ void GameSession::cleanDeadNpcs() {
       std::cout << (*it)->getName() << " is dead.\n";
       auto lootableBody{std::make_shared<Container>(
           (*it)->getInventory(), (*it)->getPosition(), m_currentMap->getName(),
-          (*it)->getDeadDescription())};
+          (*it)->getName() + "'s body", (*it)->getDeadDescription())};
       addContainer(lootableBody);
       m_currentMap->removeTop((*it)->getPosition());
       m_currentMap->placeTop(lootableBody, lootableBody->getPosition());
@@ -100,7 +110,9 @@ bool GameSession::enemiesInMap() const {
 }
 
 void GameSession::initializeTurnOrder() {
-  if (m_turnOrder.empty()) {
+  if (m_turnOrder.size() <= 1) { // player is alone in initiative
+    // at the start of the game
+    m_turnOrder.clear();
     m_turnOrder.push_back(m_player);
     for (std::weak_ptr<Creature> npc : m_npcs) {
       if (!npc.expired()) {
@@ -136,5 +148,18 @@ void GameSession::setCurrentMap(std::string_view mapName) {
   m_currentMap->removeTop(m_player->getPosition());
   m_currentMap = &m_allMaps.at(strMapName);
   m_player->setCurrentMap(strMapName);
-  m_currentMap->placeTop(m_player, m_player->getPosition());
+  initializeTurnOrder();
+  m_player->resetTurn();
 }
+
+Map &GameSession::getMap(std::string_view mapName) {
+  std::string strMapName{mapName};
+  // not very dry
+  if (!m_allMaps.contains(strMapName)) {
+    std::cout << "Can't find " << mapName << ", not changing maps.\n";
+    return *m_currentMap;
+  }
+  return m_allMaps.at(strMapName);
+}
+
+void GameSession::resetInitiative() { m_turnOrder.clear(); }

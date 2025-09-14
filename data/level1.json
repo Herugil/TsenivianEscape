@@ -26,19 +26,10 @@
     [
       "e",
       [4, 2],
-      4,
+      1,
       ["itemBanana"],
       "Gruff looking man",
       "A gruff looking man.",
-      "A dead body."
-    ],
-    [
-      "E",
-      [6, 7],
-      3,
-      ["itemDagger"],
-      "Dark looking man",
-      "A threatening looking man.",
       "A dead body."
     ]
   ],
@@ -47,9 +38,18 @@
       "X",
       [9, 5],
       "container",
-      ["itemSword", "itemSpear"],
       "hidden items in the wall",
-      "A brick goes loose, revealing some items:"
+      "A brick goes loose, revealing some items:",
+      ["itemSword", "itemSpear"]
+    ],
+    [
+      "O",
+      [8, 8],
+      "mapChanger",
+      "passage to the next room",
+      "A creaking, half open wooden door.",
+      "level2",
+      [2, 2]
     ]
   ]
 }

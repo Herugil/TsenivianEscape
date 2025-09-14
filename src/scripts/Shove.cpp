@@ -8,7 +8,6 @@ Shove::Shove(std::string_view name) : Action(name, true) {}
 
 void Shove::execute([[maybe_unused]] GameSession &gameSession, Creature &actor,
                     std::shared_ptr<GameObject> target) {
-  std::cout << target->getPosition().getX();
   Directions::Direction shoveDirection{GeometryUtils::getRequiredDirection(
       actor.getPosition(), target->getPosition())};
   if ((GeometryUtils::distanceL1(actor.getPosition(), target->getPosition()) >

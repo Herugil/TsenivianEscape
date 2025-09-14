@@ -6,7 +6,6 @@
 #include <vector>
 
 NonPlayableCharacter::NonPlayableCharacter(char symbol, const Point &point,
-
                                            std::string_view currentMap,
                                            int maxHealthPoints,
                                            std::string_view name,

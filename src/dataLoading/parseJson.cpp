@@ -1,10 +1,11 @@
 #include "dataLoading/parseJson.h"
 #include "core/GameSession.h"
+#include "gameObjects/items/Item.h"
+#include "gameObjects/items/Weapon.h"
+#include "gameObjects/terrain/MapChanger.h"
 #include <cassert>
 #include <filesystem>
 #include <fstream>
-#include <gameObjects/items/Item.h>
-#include <gameObjects/items/Weapon.h>
 #include <nlohmann/json.hpp>
 #include <sstream>
 #include <string>
@@ -88,12 +89,12 @@ void placeObjects(
   for (auto object : arrObjects) {
     char symbol{std::string(object[0])[0]}; // json doesnt have char
     Point pos{object[1][0], object[1][1]};
-    std::string type{object[2]};
-    const auto &itemIds{object[3]};
-    std::string name{object[4]};
-    std::string desc{object[5]};
+    const std::string type{object[2]};
+    const std::string name{object[3]};
+    const std::string desc{object[4]};
     if (type == "container") {
       std::vector<std::shared_ptr<Item>> loot{};
+      const auto &itemIds{object[5]};
       for (auto itemId : itemIds) {
         if (items.contains(itemId))
           loot.emplace_back(items.at(itemId)->clone());
@@ -102,6 +103,12 @@ void placeObjects(
       }
       Container container{loot, pos, name, map.getName(), desc, symbol};
       map.placeFloor(std::make_unique<Container>(std::move(container)), pos);
+    } else if (type == "mapChanger") {
+      const std::string nextMap{object[5]};
+      Point spawningPoint{object[6][0], object[6][1]};
+      MapChanger obj{map.getName(), pos,  nextMap, spawningPoint,
+                     symbol,        name, desc};
+      map.placeFloor(std::make_unique<MapChanger>(std::move(obj)), pos);
     } else {
       GameObject obj{false, false, symbol, map.getName(), pos, name, desc};
       map.placeFloor(std::make_unique<GameObject>(std::move(obj)), pos);
