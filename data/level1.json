@@ -22,17 +22,7 @@
     [0, 9],
     [9, 9]
   ],
-  "enemies": [
-    [
-      "e",
-      [4, 2],
-      1,
-      ["itemBanana"],
-      "Gruff looking man",
-      "A gruff looking man.",
-      "A dead body."
-    ]
-  ],
+  "enemies": [],
   "gameObjects": [
     [
       "X",

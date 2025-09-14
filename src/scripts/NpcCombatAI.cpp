@@ -6,6 +6,7 @@
 #include "utils/GeometryUtils.h"
 #include "utils/Interface.h"
 #include "utils/ScreenUtils.h"
+#include <algorithm>
 #include <chrono>
 #include <memory>
 #include <queue>
@@ -15,6 +16,7 @@ std::deque<Point>
 NpcCombatAI::getDestination(Behaviors currentGoal,
                             const GameSession &gameSession,
                             const NonPlayableCharacter &actor) {
+  std::vector<Point> possiblePoints{};
   switch (currentGoal) {
   case basicAttack:
     if (GeometryUtils::distanceL1(actor.getPosition(),
@@ -29,15 +31,24 @@ NpcCombatAI::getDestination(Behaviors currentGoal,
           static_cast<Directions::Direction>(i))};
       if (!gameSession.getMap().isAvailable(potentialDestination))
         continue; // cant go there
-      std::deque<Point> res{gameSession.getMap().findPath(
-          actor.getPosition(), potentialDestination)};
+      possiblePoints.push_back(potentialDestination);
+    }
+    std::sort(possiblePoints.begin(), possiblePoints.end(),
+              [actor](const Point &p1, const Point &p2) {
+                return GeometryUtils::distanceL1(actor.getPosition(), p1) <=
+                       GeometryUtils::distanceL1(actor.getPosition(), p2);
+              });
+    for (auto possiblePoint : possiblePoints) {
+      std::deque<Point> res{
+          gameSession.getMap().findPath(actor.getPosition(), possiblePoint)};
       if (!res.empty()) {
         res.pop_front(); // this is the current point! unneeded
         return res;
-      } // found a path, return it, this means AI will prefer moving
-        // top,
-        // bot, left and right in that order to attack
-    }
+      }
+    } // found a path, return it, this means AI will prefer moving
+      // top,
+      // bot, left and right in that order to attack
+
   default:     // actor has no goal, so he doesnt really need to move..
     return {}; // will remain in place
   }

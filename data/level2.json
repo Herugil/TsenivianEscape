@@ -1,6 +1,6 @@
 {
   "introTextFile": "level2.txt",
-  "mapWidth": 10,
+  "mapWidth": 13,
   "mapHeight": 10,
   "wallDescription": "A simple wall of rough hewn stone",
   "walls": [
@@ -8,38 +8,56 @@
     [0, 3],
 
     [0, 5],
-    [0, 9],
+    [0, 12],
 
-    [9, 0],
-    [9, 4],
+    [12, 0],
+    [12, 4],
 
-    [9, 6],
-    [9, 9],
+    [12, 6],
+    [12, 12],
 
-    [9, 0],
+    [12, 0],
     [0, 0],
 
     [0, 9],
-    [9, 9],
+    [12, 9],
 
     [4, 0],
     [4, 5]
   ],
   "enemies": [
     [
+      "e",
+      [1, 8],
+      1,
+      ["itemBanana"],
+      "Gruff looking man",
+      "A gruff looking man.",
+      "A dead body."
+    ],
+    [
       "E",
-      [6, 7],
-      3,
-      ["itemSpear"],
-      "Dark looking man",
-      "A threatening looking man.",
+      [8, 2],
+      1,
+      ["itemBanana"],
+      "Gruff looking man",
+      "A gruff looking man.",
+      "A dead body."
+    ],
+    [
+      "P",
+      [5, 2],
+      1,
+      ["itemBanana"],
+      "Gruff looking man",
+      "A gruff looking man.",
       "A dead body."
     ]
   ],
   "gameObjects": [
     [
       "X",
-      [9, 5],
+      [12, 5],
       "container",
       "hidden items in the wall",
       "A brick goes loose, revealing some items:",

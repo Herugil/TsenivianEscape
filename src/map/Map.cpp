@@ -203,7 +203,6 @@ std::deque<Point> Map::findPath(const Point &startPoint,
 
 void Map::printIntroText() {
   ScreenUtils::clearScreen();
-
   std::cout << m_introText << '\n';
   std::cout << "Press any key to continue...\n";
   Input::getKeyBlocking();
