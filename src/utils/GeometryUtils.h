@@ -6,4 +6,5 @@ namespace GeometryUtils {
 int distanceL1(const Point &p1, const Point &p2);
 double distanceL2(const Point &p1, const Point &p2);
 Directions::Direction getRequiredDirection(const Point &p1, const Point &p2);
+std::vector<Point> drawStraightLine(const Point &p1, const Point &p2);
 } // namespace GeometryUtils
