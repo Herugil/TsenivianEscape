@@ -14,6 +14,8 @@ protected:
   std::string m_deadDescription{};
   int m_meleeRange{Settings::g_baseEnemyRange};
   int m_meleeDamage{Settings::g_baseEnemyDamage};
+  int m_distanceRange{Settings::g_baseEnemyDistanceRange};
+  int m_distanceDamage{Settings::g_baseEnemyDistanceDamage};
 
 public:
   NonPlayableCharacter(char symbol, const Point &point,
@@ -32,5 +34,7 @@ public:
   void executeBasicAttack(Creature &target, GameSession &gameSession);
   int getMeleeDamage() const override;
   int getMeleeRange() const override;
+  int getDistanceDamage() const override;
+  int getDistanceRange() const override;
   virtual ~NonPlayableCharacter() = default;
 };

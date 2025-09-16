@@ -30,6 +30,8 @@ public:
   const std::string &getName() const;
   virtual int getMeleeDamage() const = 0;
   virtual int getMeleeRange() const = 0;
+  virtual int getDistanceDamage() const = 0;
+  virtual int getDistanceRange() const = 0;
   int getMovementPoints() const;
   int getActionPoints() const;
   int getMaxMovementPoints() const;

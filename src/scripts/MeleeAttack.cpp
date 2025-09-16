@@ -3,14 +3,13 @@
 #include "utils/GeometryUtils.h"
 #include <memory>
 
-MeleeAttack::MeleeAttack(std::string_view name) : Action(name, true) {}
+MeleeAttack::MeleeAttack(std::string_view name) : Action(name, true, false) {}
 
 void MeleeAttack::execute([[maybe_unused]] GameSession &gameSession,
-                          Creature &actor, Creature &target) {
+                          Creature &actor, Creature &target) const {
   if (actor.useActionPoints()) {
-    if (!(GeometryUtils::distanceL1(actor.getPosition(),
-                                    target.getPosition()) <=
-          actor.getMeleeRange()))
+    if (GeometryUtils::distanceL1(actor.getPosition(), target.getPosition()) >
+        actor.getMeleeRange())
       return;
     int m_damage{actor.getMeleeDamage()};
     target.takeDamage(m_damage);
@@ -20,7 +19,7 @@ void MeleeAttack::execute([[maybe_unused]] GameSession &gameSession,
 }
 
 void MeleeAttack::playerExecute(GameSession &gameSession,
-                                Directions::Direction direction) {
+                                Directions::Direction direction) const {
   auto &player{gameSession.getPlayer()};
   int range{player.getMeleeRange()};
   auto &map{gameSession.getMap()};

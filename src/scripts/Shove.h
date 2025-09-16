@@ -11,10 +11,10 @@ class Shove : public Action {
 public:
   explicit Shove(std::string_view name = "Shove");
   void execute(GameSession &gameSession, Creature &actor,
-               Creature &target) override;
+               Creature &target) const override;
   void execute(GameSession &gameSession, Creature &actor,
-               std::shared_ptr<GameObject> target);
+               std::shared_ptr<GameObject> target) const;
   void playerExecute(GameSession &gameSession,
-                     Directions::Direction direction) override;
+                     Directions::Direction direction) const override;
   ~Shove() = default;
 };

@@ -34,10 +34,13 @@ public:
   std::shared_ptr<Action> getAction(std::size_t index) const;
   void takeAllItems(Container &container);
   void equipItem(std::shared_ptr<Item> item);
+  void updateActionsOnEquip();
   std::shared_ptr<Item> getItem(std::size_t index) const;
   void shove(GameSession &gameSession, Directions::Direction direction);
   int getMeleeDamage() const override;
-  int getMeleeRange() const override; // thisll also be const override..
+  int getMeleeRange() const override;
+  int getDistanceDamage() const override;
+  int getDistanceRange() const override;
   int numObjectsHeld() const;
   virtual ~Player() = default;
 };

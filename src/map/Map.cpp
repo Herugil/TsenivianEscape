@@ -201,6 +201,22 @@ std::deque<Point> Map::findPath(const Point &startPoint,
   return {};
 }
 
+bool Map::isPointVisible(const Point &from, const Point &to) const {
+  if (!checkBounds(from) || !checkBounds(to))
+    return false;
+  auto linePoints{GeometryUtils::drawStraightLine(from, to)};
+  linePoints.erase(linePoints.begin()); // remove starting point
+  linePoints.pop_back();                // remove end point
+  for (const auto &point : linePoints) {
+    if (!isAvailable(point))
+      // this is only a first approximation, ideally should check for
+      // visibility blocking property (can shoot across creatures or difficult
+      // terrain, but not walls for example)
+      return false;
+  }
+  return true;
+}
+
 void Map::printIntroText() {
   ScreenUtils::clearScreen();
   std::cout << m_introText << '\n';

@@ -4,10 +4,10 @@
 #include "utils/GeometryUtils.h"
 #include <memory>
 
-Shove::Shove(std::string_view name) : Action(name, true) {}
+Shove::Shove(std::string_view name) : Action(name, true, false) {}
 
 void Shove::execute([[maybe_unused]] GameSession &gameSession, Creature &actor,
-                    std::shared_ptr<GameObject> target) {
+                    std::shared_ptr<GameObject> target) const {
   Directions::Direction shoveDirection{GeometryUtils::getRequiredDirection(
       actor.getPosition(), target->getPosition())};
   if ((GeometryUtils::distanceL1(actor.getPosition(), target->getPosition()) >
@@ -24,7 +24,7 @@ void Shove::execute([[maybe_unused]] GameSession &gameSession, Creature &actor,
 }
 
 void Shove::playerExecute(GameSession &gameSession,
-                          Directions::Direction direction) {
+                          Directions::Direction direction) const {
   if (direction == Directions::nbDirections)
     return;
   auto &player{gameSession.getPlayer()};
@@ -57,6 +57,6 @@ void Shove::playerExecute(GameSession &gameSession,
 
 void Shove::execute([[maybe_unused]] GameSession &gameSession,
                     [[maybe_unused]] Creature &actor,
-                    [[maybe_unused]] Creature &target) {
+                    [[maybe_unused]] Creature &target) const {
   return;
 }

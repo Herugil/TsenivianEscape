@@ -45,4 +45,7 @@ public:
 
   void initializeTurnOrder();
   void resetInitiative();
+
+  std::vector<std::weak_ptr<NonPlayableCharacter>> getEnemiesInMap() const;
+  void displayEnemiesInMap() const;
 };

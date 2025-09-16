@@ -41,6 +41,7 @@ public:
                                     Point current) const;
   std::deque<Point> findPath(const Point &startPoint,
                              const Point &endPoint) const;
+  bool isPointVisible(const Point &from, const Point &to) const;
   void printIntroText();
 };
 

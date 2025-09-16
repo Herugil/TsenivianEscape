@@ -3,13 +3,12 @@
 #include "gameObjects/creatures/Creature.h"
 #include "scripts/Action.h"
 
-class MeleeAttack : public Action {
+class RangedAttack : public Action {
 
 public:
-  MeleeAttack(std::string_view name);
+  RangedAttack(std::string_view name);
   void execute(GameSession &gameSession, Creature &actor,
                Creature &target) const override;
-  void playerExecute(GameSession &gameSession,
-                     Directions::Direction direction) const override;
-  ~MeleeAttack() = default;
+  void playerExecute(GameSession &gameSession, Creature &target) const override;
+  ~RangedAttack() = default;
 };

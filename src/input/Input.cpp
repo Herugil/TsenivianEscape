@@ -104,6 +104,9 @@ bool isActionMenuCommand(Command::command cmd) {
   return cmd == Command::actionMenu;
 }
 bool isShoveCommmand(Command::command cmd) { return cmd == Command::shove; }
+bool isShowEnemiesCommand(Command::command cmd) {
+  return cmd == Command::showEnemies;
+}
 
 Command::command CommandHandler::getCommand(char pressedKey) {
   switch (pressedKey) {
@@ -143,6 +146,8 @@ Command::command CommandHandler::getCommand(char pressedKey) {
     return Command::actionMenu;
   case CommandChar::skipTurn:
     return Command::skipTurn;
+  case CommandChar::showEnemies:
+    return Command::showEnemies;
   case CommandChar::shove:
     return Command::shove;
   default:
@@ -191,6 +196,11 @@ void CommandHandler::executeWorldCommand(GameSession &gameSession,
     gameSession.getPlayer().shove(gameSession, directionInteract);
     ScreenUtils::clearScreen();
     gameSession.displayMap(); // to see direction of enemies when attacking
+  } else if (isShowEnemiesCommand(command)) {
+    gameSession.displayEnemiesInMap();
+    Input::getKeyBlocking();
+    ScreenUtils::clearScreen();
+    gameSession.displayMap();
   } else {
     ScreenUtils::clearScreen();
     gameSession.displayMap();
@@ -250,7 +260,7 @@ void CommandHandler::handleActionCommands(GameSession &gameSession) {
     auto pressedKey{static_cast<std::size_t>(getPressedKey(command))};
     auto action{player.getAction(pressedKey)};
     if (action) {
-      if (action->needsInput()) {
+      if (action->needsDirectionalInput()) {
         auto directionCommand{
             CommandHandler::getCommand(Input::getKeyBlocking())};
         if (isMovementCommand(directionCommand)) {
@@ -258,6 +268,22 @@ void CommandHandler::handleActionCommands(GameSession &gameSession) {
           action->playerExecute(gameSession, static_cast<Directions::Direction>(
                                                  directionCommand));
           gameSession.displayMap();
+        }
+      }
+      if (action->needsHotkeyInput()) {
+        gameSession.displayEnemiesInMap();
+        auto hotkeyCommand{CommandHandler::getCommand(Input::getKeyBlocking())};
+        if (isHotkeyCommand(hotkeyCommand)) {
+          auto pressedKey{
+              static_cast<std::size_t>(getPressedKey(hotkeyCommand))};
+          if (pressedKey >= gameSession.getEnemiesInMap().size())
+            return;
+          auto targetCreature{gameSession.getEnemiesInMap()[pressedKey].lock()};
+          if (targetCreature) {
+            ScreenUtils::clearScreen();
+            action->playerExecute(gameSession, *targetCreature);
+            gameSession.displayMap();
+          }
         }
       } else
         ; // TODO: non directional actions (easy but not implemented)

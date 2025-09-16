@@ -34,6 +34,7 @@ constexpr char hotkey9{'9'};
 constexpr char inventory{'i'};
 constexpr char actionMenu{'a'};
 constexpr char shove{'r'};
+constexpr char showEnemies{'\t'};
 constexpr char skipTurn{' '};
 } // namespace CommandChar
 
@@ -56,6 +57,7 @@ struct Command {
     hotkey9,
     inventory,
     actionMenu,
+    showEnemies,
     skipTurn,
     shove,
     nbCommands,

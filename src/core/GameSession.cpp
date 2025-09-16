@@ -3,6 +3,7 @@
 #include "gameObjects/terrain/WalkOnObject.h"
 #include "map/Map.h"
 #include "map/Point.h"
+#include "utils/GeometryUtils.h"
 #include "utils/ScreenUtils.h"
 
 GameSession::GameSession(std::shared_ptr<Player> player)
@@ -160,6 +161,37 @@ Map &GameSession::getMap(std::string_view mapName) {
     return *m_currentMap;
   }
   return m_allMaps.at(strMapName);
+}
+
+std::vector<std::weak_ptr<NonPlayableCharacter>>
+GameSession::getEnemiesInMap() const {
+  std::vector<std::weak_ptr<NonPlayableCharacter>> enemies{};
+  for (auto npc : m_npcs) {
+    if (npc->getCurrentMap() == m_currentMap->getName())
+      enemies.push_back(npc);
+  }
+  return enemies;
+}
+
+void GameSession::displayEnemiesInMap() const {
+  auto enemies{getEnemiesInMap()};
+  if (enemies.empty()) {
+    std::cout << "No enemies in this map.\n";
+    return;
+  }
+  std::cout << "Enemies in this map:\n";
+  for (std::size_t i{0}; i < enemies.size(); ++i) {
+    if (auto lockedEnemy{enemies[i].lock()}) {
+      std::cout << i + 1 << ": " << lockedEnemy->getName() << "  "
+                << lockedEnemy->getSymbol() << " at distance "
+                << GeometryUtils::distanceL2(m_player->getPosition(),
+                                             lockedEnemy->getPosition());
+      if (!m_currentMap->isPointVisible(m_player->getPosition(),
+                                        lockedEnemy->getPosition()))
+        std::cout << " (not visible)";
+      std::cout << '\n';
+    }
+  }
 }
 
 void GameSession::resetInitiative() { m_turnOrder.clear(); }

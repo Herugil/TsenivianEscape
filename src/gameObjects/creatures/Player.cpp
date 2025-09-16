@@ -1,8 +1,10 @@
 #include "gameObjects/creatures/Player.h"
 #include "Settings.h"
+#include "gameObjects/items/Weapon.h"
 #include "map/Map.h"
 #include "map/Point.h"
 #include "scripts/MeleeAttack.h"
+#include "scripts/RangedAttack.h"
 #include <memory>
 
 Player::Player(const Point &position, std::string_view currentMap,
@@ -55,6 +57,26 @@ void Player::takeAllItems(Container &container) {
   container.clearContents();
 }
 
+void Player::updateActionsOnEquip() {
+  m_actions.erase(m_actions.begin());
+  auto m_rightHand = m_equipment.rightHand.lock();
+  if (m_rightHand) {
+    if (auto weapon = std::dynamic_pointer_cast<Weapon>(m_rightHand)) {
+      if (weapon->getWeaponType() == Weapon::ranged) {
+        m_actions.insert(m_actions.begin(),
+                         std::make_shared<RangedAttack>(
+                             "Ranged attack with right hand weapon"));
+        return;
+      }
+    }
+  }
+  // cases where no weapon or melee weapon equipped
+  m_actions.insert(
+      m_actions.begin(),
+      std::make_shared<MeleeAttack>(
+          "Attack with right hand weapon")); // should be a constant
+}
+
 void Player::equipItem(std::shared_ptr<Item> item) {
   if (useActionPoints(1)) {
     if (item->getType() == Item::ItemType::oneHanded) {
@@ -87,6 +109,7 @@ void Player::equipItem(std::shared_ptr<Item> item) {
       m_equipment.leftHand = item;
       item->setEquipped();
     }
+    updateActionsOnEquip();
   }
 }
 
@@ -102,19 +125,35 @@ void Player::shove(GameSession &gameSession, Directions::Direction direction) {
 }
 
 int Player::getMeleeDamage() const {
-  auto rightHandWeapon{m_equipment.rightHand.lock()};
-  if (rightHandWeapon)
-    return rightHandWeapon->getDamage();
-  else
-    return 1; // magic number for fist damage.. will fix later
+  auto rightHandItem{m_equipment.rightHand.lock()};
+  if (auto rightHandWeapon = std::dynamic_pointer_cast<Weapon>(rightHandItem))
+    if (rightHandWeapon->getWeaponType() == Weapon::melee)
+      return rightHandWeapon->getDamage();
+  return 1; // magic number for fist damage.. will fix later
 }
 
 int Player::getMeleeRange() const {
-  auto rightHandWeapon{m_equipment.rightHand.lock()};
-  if (rightHandWeapon)
-    return rightHandWeapon->getRange();
-  else
-    return 1; // magic number for fist damage.. will fix later
+  auto rightHandItem{m_equipment.rightHand.lock()};
+  if (auto rightHandWeapon = std::dynamic_pointer_cast<Weapon>(rightHandItem))
+    if (rightHandWeapon->getWeaponType() == Weapon::melee)
+      return rightHandWeapon->getRange();
+  return 1; // magic number for fist damage.. will fix later
+}
+
+int Player::getDistanceDamage() const {
+  auto rightHandItem{m_equipment.rightHand.lock()};
+  if (auto rightHandWeapon = std::dynamic_pointer_cast<Weapon>(rightHandItem))
+    if (rightHandWeapon->getWeaponType() == Weapon::ranged)
+      return rightHandWeapon->getDamage();
+  return 0; // no ranged weapon equipped
+}
+
+int Player::getDistanceRange() const {
+  auto rightHandItem{m_equipment.rightHand.lock()};
+  if (auto rightHandWeapon = std::dynamic_pointer_cast<Weapon>(rightHandItem))
+    if (rightHandWeapon->getWeaponType() == Weapon::ranged)
+      return rightHandWeapon->getRange();
+  return 0; // no ranged weapon equipped
 }
 
 std::shared_ptr<Action> Player::getAction(std::size_t index) const {

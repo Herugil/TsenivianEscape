@@ -20,7 +20,7 @@ public:
       : Item{name, itemType}, m_damage{damage}, m_range{range},
         m_weaponType{getTypeFromStr(weaponType)} {}
   int getDamage() const override { return m_damage; }
-  int getRange() const override { return m_damage; }
+  int getRange() const override { return m_range; }
   std::shared_ptr<Item> clone() const override {
     return std::make_shared<Weapon>(*this);
   };
