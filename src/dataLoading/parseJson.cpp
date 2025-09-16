@@ -33,12 +33,14 @@ DataLoader::getAllItems() {
   std::ifstream f("../data/items.json");
   json data = json::parse(f);
   for (auto &[key, value] : data.items()) {
-    if (value["itemType"] == "oneHanded") {
+    if (value["itemType"] == "oneHanded" || value["itemType"] == "twoHanded") {
+      std::string weaponType{value["weaponType"]};
+      std::string itemType{value["itemType"]};
       std::string name{value["name"]};
       int damage{value["damage"]};
       int range{value["range"]};
-      items[key] = std::make_shared<Weapon>(
-          Weapon{name, Item::ItemType::oneHanded, damage, range});
+      items[key] = std::make_shared<Weapon>(Weapon{
+          name, weaponType, Item::getTypeFromStr(itemType), damage, range});
     }
   }
   return items;

@@ -26,9 +26,20 @@ public:
     return out;
   }
   ItemType getType() const { return m_type; }
+  static ItemType getTypeFromStr(std::string_view typeStr) {
+    if (typeStr == "oneHanded")
+      return ItemType::oneHanded;
+    if (typeStr == "twoHanded")
+      return ItemType::twoHanded;
+    if (typeStr == "armor")
+      return ItemType::armor;
+    if (typeStr == "consumable")
+      return ItemType::consumable;
+    return ItemType::other;
+  }
   bool isEquipped() const { return m_isEquipped; }
-  void setEquipped() { m_isEquipped = !m_isEquipped; }
-  // thanks to solene
+  void setEquipped() { m_isEquipped = true; }
+  void setUnequipped() { m_isEquipped = false; }
   virtual int getDamage() const { return 0; };
   virtual int getRange() const { return 0; }
   virtual std::shared_ptr<Item> clone() const = 0;

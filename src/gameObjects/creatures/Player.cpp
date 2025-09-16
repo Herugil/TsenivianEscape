@@ -60,12 +60,31 @@ void Player::equipItem(std::shared_ptr<Item> item) {
     if (item->getType() == Item::ItemType::oneHanded) {
       auto equippedRightHand{m_equipment.rightHand.lock()};
       if (equippedRightHand) {
-        equippedRightHand->setEquipped();
+        if (equippedRightHand->getType() == Item::ItemType::twoHanded) {
+          m_equipment.leftHand.reset();
+        }
+        equippedRightHand->setUnequipped();
         m_equipment.rightHand.reset();
         if (equippedRightHand == item)
           return;
       }
       m_equipment.rightHand = item;
+      item->setEquipped();
+    } else if (item->getType() == Item::ItemType::twoHanded) {
+      auto equippedRightHand{m_equipment.rightHand.lock()};
+      if (equippedRightHand) {
+        equippedRightHand->setUnequipped();
+        m_equipment.rightHand.reset();
+      }
+      auto equippedLeftHand{m_equipment.leftHand.lock()};
+      if (equippedLeftHand) {
+        equippedLeftHand->setUnequipped();
+        m_equipment.leftHand.reset();
+      }
+      if (equippedRightHand && equippedRightHand == item)
+        return;
+      m_equipment.rightHand = item;
+      m_equipment.leftHand = item;
       item->setEquipped();
     }
   }

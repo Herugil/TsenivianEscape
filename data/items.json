@@ -2,24 +2,35 @@
   "itemBanana": {
     "name": "banana",
     "itemType": "oneHanded",
+    "weaponType": "melee",
     "damage": 1,
     "range": 1
   },
   "itemDagger": {
     "name": "dagger",
     "itemType": "oneHanded",
+    "weaponType": "melee",
     "damage": 2,
     "range": 1
   },
   "itemSword": {
     "name": "sword",
     "itemType": "oneHanded",
+    "weaponType": "melee",
     "damage": 3,
     "range": 1
+  },
+  "itemBow": {
+    "name": "bow",
+    "itemType": "twoHanded",
+    "weaponType": "ranged",
+    "damage": 2,
+    "range": 10
   },
   "itemSpear": {
     "name": "spear",
     "itemType": "oneHanded",
+    "weaponType": "melee",
     "damage": 2,
     "range": 2
   }

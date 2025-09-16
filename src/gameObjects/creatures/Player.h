@@ -14,6 +14,7 @@ class GameSession;
 
 struct Equipment {
   std::weak_ptr<Item> rightHand{};
+  std::weak_ptr<Item> leftHand{};
   // will see the rest later..
 };
 
