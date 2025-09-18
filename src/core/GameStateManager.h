@@ -14,11 +14,15 @@ private:
   GameSession m_gameSession;
   std::ostringstream m_logsToDisplay{};
   InteractionResult m_interactionResult;
-  void handleExploration();
+  void HandleWorld();
   void handleInventory();
   void handleContainer();
   void handleDisplay();
+  void handleDisplayBlocking();
   void handleActions();
+  void handleCombatPlayerTurn();
+  void handleCombatEnemyTurn();
+  void setCombatState();
 
 public:
   GameStateManager(GameSession &&gameSession);

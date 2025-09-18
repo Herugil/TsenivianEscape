@@ -7,8 +7,11 @@ enum class GameState {
   Combat,
   Inventory,
   ActionMenu,
+  DisplayBlocking,
   Display,
   Container,
+  CombatPlayerTurn,
+  CombatEnemyTurn,
 };
 
 struct InteractionResult {

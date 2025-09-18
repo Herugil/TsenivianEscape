@@ -8,6 +8,7 @@
 #include "scripts/Action.h"
 #include "scripts/Shove.h"
 #include <memory>
+#include <sstream>
 #include <vector>
 
 class GameSession;
@@ -34,7 +35,8 @@ public:
   void equipItem(std::shared_ptr<Item> item);
   void updateActionsOnEquip();
   std::shared_ptr<Item> getItem(std::size_t index) const;
-  void shove(GameSession &gameSession, Directions::Direction direction);
+  std::ostringstream shove(GameSession &gameSession,
+                           Directions::Direction direction);
   int getMeleeDamage() const override;
   int getMeleeRange() const override;
   int getDistanceDamage() const override;

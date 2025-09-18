@@ -24,7 +24,7 @@ void GameObject::setCurrentMap(std::string_view map) { m_currentMap = map; }
 void GameObject::setPosition(const Point &point) { m_position = point; }
 
 InteractionResult GameObject::playerInteraction() {
-  return {GameState::Display, this};
+  return {GameState::DisplayBlocking, this};
 }
 const std::string &GameObject::getName() const { return m_name; }
 const std::string &GameObject::getDescription() const { return m_description; }

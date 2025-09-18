@@ -114,14 +114,19 @@ bool GameSession::enemiesInMap() const {
 }
 
 void GameSession::initializeTurnOrder() {
+  m_player->setCombat();
   if (m_turnOrder.size() <= 1) { // player is alone in initiative
     // at the start of the game
     m_turnOrder.clear();
     m_turnOrder.push_back(m_player);
     for (std::weak_ptr<Creature> npc : m_npcs) {
       if (!npc.expired()) {
-        if (npc.lock()->getCurrentMap() == m_currentMap->getName())
-          m_turnOrder.push_back(npc);
+        {
+          if (npc.lock()->getCurrentMap() == m_currentMap->getName()) {
+            npc.lock()->setCombat();
+            m_turnOrder.push_back(npc);
+          }
+        }
       }
     }
   } else {
@@ -176,6 +181,21 @@ GameSession::getEnemiesInMap() const {
   return enemies;
 }
 
+void GameSession::incrementTurnIndex() {
+  if (m_turnOrder.empty()) {
+    return;
+  }
+  if (m_currentTurnIndex >= m_turnOrder.size() - 1) {
+    m_currentTurnIndex = 0; // loop back to first player
+  } else {
+    m_currentTurnIndex++;
+  }
+}
+
+std::weak_ptr<Creature> GameSession::getActiveCreature() const {
+  return m_turnOrder[m_currentTurnIndex];
+}
+
 void GameSession::displayEnemiesInMap() const {
   auto enemies{getEnemiesInMap()};
   if (enemies.empty()) {
@@ -197,4 +217,8 @@ void GameSession::displayEnemiesInMap() const {
   }
 }
 
-void GameSession::resetInitiative() { m_turnOrder.clear(); }
+void GameSession::resetInitiative() {
+  m_player->unsetCombat();
+  m_turnOrder.clear();
+  m_currentTurnIndex = 0;
+}

@@ -19,6 +19,7 @@ class GameSession {
   // is made of weak ptrs. to ensure they're not left dangling, gameSession
   // handles their existence.
   std::unordered_map<std::string, Map> m_allMaps;
+  std::size_t m_currentTurnIndex{0};
   Map *m_currentMap{nullptr};
 
 public:
@@ -43,6 +44,8 @@ public:
   void addMap(Map &&map);
   void setCurrentMap(std::string_view mapName);
   Map &getMap(std::string_view mapName);
+  void incrementTurnIndex();
+  std::weak_ptr<Creature> getActiveCreature() const;
 
   void initializeTurnOrder();
   void resetInitiative();

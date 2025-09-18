@@ -89,4 +89,5 @@ bool isInventoryCommand(Command::command cmd);
 bool isActionMenuCommand(Command::command cmd);
 bool isShoveCommand(Command::command cmd);
 bool isShowEnemiesCommand(Command::command cmd);
+bool isSkipTurnCommand(Command::command cmd);
 } // namespace CommandHandler

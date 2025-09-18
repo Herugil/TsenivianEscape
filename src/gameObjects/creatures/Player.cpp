@@ -113,8 +113,9 @@ std::shared_ptr<Item> Player::getItem(std::size_t index) const {
   return m_inventory[i];
 }
 
-void Player::shove(GameSession &gameSession, Directions::Direction direction) {
-  m_shoveAction.playerExecute(gameSession, direction);
+std::ostringstream Player::shove(GameSession &gameSession,
+                                 Directions::Direction direction) {
+  return m_shoveAction.playerExecute(gameSession, direction);
 }
 
 int Player::getMeleeDamage() const {
