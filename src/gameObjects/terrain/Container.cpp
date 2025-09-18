@@ -1,4 +1,5 @@
 #include "gameObjects/terrain/Container.h"
+#include "core/GameState.h"
 #include "input/Input.h"
 #include "map/Point.h"
 #include <iostream>
@@ -26,10 +27,8 @@ void Container::displayContents() {
   }
 }
 
-void Container::playerInteraction(Player &player) {
-  std::cout << m_description << '\n';
-  displayContents();
-  CommandHandler::handleContainerCommands(*this, player);
+InteractionResult Container::playerInteraction() {
+  return {GameState::Container, this};
 }
 
 std::vector<std::shared_ptr<Item>> &Container::getContents() {

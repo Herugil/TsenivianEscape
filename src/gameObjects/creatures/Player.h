@@ -8,6 +8,7 @@
 #include "scripts/Action.h"
 #include "scripts/Shove.h"
 #include <memory>
+#include <sstream>
 #include <vector>
 
 class GameSession;
@@ -27,8 +28,6 @@ public:
   Player(const Point &position, std::string_view currentMap,
          int maxHealthPoints);
   void takeItem(std::shared_ptr<Item> item);
-  void inventoryMenu();
-  void actionMenu(GameSession &gameSession);
   void displayInventory(std::size_t page = 0) const;
   void displayActions() const;
   std::shared_ptr<Action> getAction(std::size_t index) const;
@@ -36,7 +35,8 @@ public:
   void equipItem(std::shared_ptr<Item> item);
   void updateActionsOnEquip();
   std::shared_ptr<Item> getItem(std::size_t index) const;
-  void shove(GameSession &gameSession, Directions::Direction direction);
+  std::ostringstream shove(GameSession &gameSession,
+                           Directions::Direction direction);
   int getMeleeDamage() const override;
   int getMeleeRange() const override;
   int getDistanceDamage() const override;

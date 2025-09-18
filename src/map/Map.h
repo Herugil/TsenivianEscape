@@ -8,6 +8,8 @@
 #include <unordered_map>
 #include <vector>
 
+struct InteractionResult;
+
 class Map {
 private:
   std::string m_name{};
@@ -33,7 +35,7 @@ public:
   bool isAvailable(const Point &point) const;
   bool checkBounds(const Point &point) const;
   friend std::ostream &operator<<(std::ostream &out, Map &map);
-  void interactPoint(const Point &point, Player &player);
+  InteractionResult interactPoint(const Point &point);
   void setIntroTextRead(); // careful to always call this when entering a level
   std::shared_ptr<GameObject> getTopObject(const Point &point) const;
   GameObject *getFloorObject(const Point &point) const;

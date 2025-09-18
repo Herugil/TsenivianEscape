@@ -7,6 +7,7 @@
 #include <string_view>
 #include <vector>
 
+struct InteractionResult;
 class Player;
 
 class Container : public GameObject {
@@ -23,6 +24,6 @@ public:
   std::vector<std::shared_ptr<Item>> &getContents();
   void displayContents();
   void clearContents();
-  void playerInteraction(Player &player) override;
+  InteractionResult playerInteraction() override;
   std::shared_ptr<Item> popItem(std::size_t index);
 };

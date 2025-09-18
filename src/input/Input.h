@@ -78,13 +78,16 @@ private:
 #endif
 };
 
-bool isMovementCommand(Command::command cmd);
-bool isInteractionCommand(Command::command cmd);
-
 namespace CommandHandler {
 Command::command getCommand(char pressedKey);
-void executeWorldCommand(GameSession &gameSession, Command::command command);
-void handleContainerCommands(Container &container, Player &player);
-void handleInventoryCommands(Player &player);
-void handleActionCommands(GameSession &gameSession);
+int getPressedKey(Command::command command);
+bool isMovementCommand(Command::command cmd);
+bool isInteractionCommand(Command::command cmd);
+bool isTakeAllCommand(Command::command cmd);
+bool isHotkeyCommand(Command::command cmd);
+bool isInventoryCommand(Command::command cmd);
+bool isActionMenuCommand(Command::command cmd);
+bool isShoveCommand(Command::command cmd);
+bool isShowEnemiesCommand(Command::command cmd);
+bool isSkipTurnCommand(Command::command cmd);
 } // namespace CommandHandler

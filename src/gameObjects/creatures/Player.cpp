@@ -18,13 +18,6 @@ void Player::takeItem(std::shared_ptr<Item> item) {
   }
 }
 
-void Player::inventoryMenu() { CommandHandler::handleInventoryCommands(*this); }
-
-void Player::actionMenu(GameSession &gameSession) {
-  displayActions();
-  CommandHandler::handleActionCommands(gameSession);
-}
-
 void Player::displayInventory(std::size_t page) const {
   std::cout << "Inventory (page): " << page << '\n';
   std::size_t lenItemsDisplay{Settings::g_itemListSize};
@@ -120,8 +113,9 @@ std::shared_ptr<Item> Player::getItem(std::size_t index) const {
   return m_inventory[i];
 }
 
-void Player::shove(GameSession &gameSession, Directions::Direction direction) {
-  m_shoveAction.playerExecute(gameSession, direction);
+std::ostringstream Player::shove(GameSession &gameSession,
+                                 Directions::Direction direction) {
+  return m_shoveAction.playerExecute(gameSession, direction);
 }
 
 int Player::getMeleeDamage() const {

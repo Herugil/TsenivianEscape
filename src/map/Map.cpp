@@ -1,4 +1,5 @@
 #include "map/Map.h"
+#include "core/GameStateManager.h"
 #include "gameObjects/terrain/Wall.h"
 #include "input/Input.h"
 #include "utils/GeometryUtils.h"
@@ -107,16 +108,19 @@ std::ostream &operator<<(std::ostream &out, Map &map) {
 
 void Map::setIntroTextRead() { m_readIntroText = false; }
 
-void Map::interactPoint(const Point &point, Player &player) {
+InteractionResult Map::interactPoint(const Point &point) {
   int x{point.getX()};
   int y{point.getY()};
   if (checkBounds(point)) {
     auto topObject = m_topLayer[x, y].lock();
     if (topObject)
-      topObject->playerInteraction(player);
+      return topObject->playerInteraction();
     else if (m_floorLayer[x, y])
-      m_floorLayer[x, y]->playerInteraction(player);
+      return m_floorLayer[x, y]->playerInteraction();
   }
+  return InteractionResult{GameState::Exploration, nullptr};
+  // this is a failsafe. state manager will change
+  // to combat state if needed after this function call
 }
 
 std::shared_ptr<GameObject> Map::getTopObject(const Point &point) const {

@@ -5,6 +5,7 @@
 #include <string>
 #include <string_view>
 
+struct InteractionResult;
 class Player;
 
 class GameObject {
@@ -28,11 +29,12 @@ public:
   void setCurrentMap(std::string_view map);
   char getSymbol() const;
   const std::string &getName() const;
+  const std::string &getDescription() const;
   bool isTraversable() const;
   bool isMoveable() const;
   void setPosition(const Point &point);
-  virtual void
-  playerInteraction(Player &player); // not const because some object states can
-                                     // be changed through this function
+  InteractionResult virtual playerInteraction(); // not const because some
+                                                 // object states can be changed
+                                                 // through this function
   virtual ~GameObject() = default;
 };

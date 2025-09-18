@@ -6,8 +6,5 @@
 #include <iostream>
 
 namespace Interface {
-void displayCombatInterface(const Player &player,
-                            std::string_view creatureName = "Your");
-void timeAndDisplayInterface(GameSession &gameSession, Creature &actor,
-                             int timeToWait = Settings::g_timeEnemyTurnMS);
+void displayCombatInterface(const Player &player);
 } // namespace Interface

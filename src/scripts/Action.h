@@ -1,6 +1,6 @@
 #pragma once
 #include "input/Directions.h"
-#include <iostream>
+#include <sstream>
 #include <string>
 #include <string_view>
 
@@ -21,13 +21,18 @@ public:
       : m_name{name}, m_needsDirectionalInput{needsDirectionalInput},
         m_needsHotkeyInput{needsHotkeyInput} {}
   std::string_view getName() const { return m_name; }
-  virtual void execute(GameSession &gameSession, Creature &actor,
-                       Creature &target) const = 0;
-  virtual void
+  virtual std::ostringstream execute(GameSession &gameSession, Creature &actor,
+                                     Creature &target) const = 0;
+  virtual std::ostringstream
   playerExecute([[maybe_unused]] GameSession &gameSession,
-                [[maybe_unused]] Directions::Direction direction) const {};
-  virtual void playerExecute([[maybe_unused]] GameSession &gameSession,
-                             [[maybe_unused]] Creature &target) const {};
+                [[maybe_unused]] Directions::Direction direction) const {
+    return {};
+  };
+  virtual std::ostringstream
+  playerExecute([[maybe_unused]] GameSession &gameSession,
+                [[maybe_unused]] Creature &target) const {
+    return {};
+  };
   // these actions arent pure virtual because most actions need
   // one of the two, not both
   bool needsDirectionalInput() const { return m_needsDirectionalInput; }
