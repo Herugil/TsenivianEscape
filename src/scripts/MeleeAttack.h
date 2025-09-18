@@ -7,9 +7,10 @@ class MeleeAttack : public Action {
 
 public:
   MeleeAttack(std::string_view name);
-  void execute(GameSession &gameSession, Creature &actor,
-               Creature &target) const override;
-  void playerExecute(GameSession &gameSession,
-                     Directions::Direction direction) const override;
+  std::ostringstream execute(GameSession &gameSession, Creature &actor,
+                             Creature &target) const override;
+  std::ostringstream
+  playerExecute(GameSession &gameSession,
+                Directions::Direction direction) const override;
   ~MeleeAttack() = default;
 };

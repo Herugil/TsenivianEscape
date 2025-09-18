@@ -29,6 +29,7 @@ public:
   void setCurrentMap(std::string_view map);
   char getSymbol() const;
   const std::string &getName() const;
+  const std::string &getDescription() const;
   bool isTraversable() const;
   bool isMoveable() const;
   void setPosition(const Point &point);

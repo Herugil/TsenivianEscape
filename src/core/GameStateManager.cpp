@@ -36,7 +36,13 @@ void GameStateManager::mainLoop() {
 void GameStateManager::handleDisplay() {
   ScreenUtils::clearScreen();
   if (m_interactionResult.interactedObject) {
-    std::cout << *(m_interactionResult.interactedObject) << '\n';
+    std::cout << m_interactionResult.interactedObject->getDescription()
+              << ".\n";
+    m_interactionResult.interactedObject = nullptr;
+  }
+  if (!m_logsToDisplay.str().empty()) {
+    std::cout << m_logsToDisplay.str();
+    m_logsToDisplay.str("");
   }
   Input::getKeyBlocking();
   ScreenUtils::clearScreen();
@@ -106,7 +112,7 @@ void GameStateManager::handleContainer() {
         dynamic_cast<Container *>(m_interactionResult.interactedObject)};
     if (container) {
       auto &player{m_gameSession.getPlayer()};
-      ScreenUtils::clearScreen();
+      std::cout << container->getDescription() << "\n";
       container->displayContents();
       auto containerCommand{
           CommandHandler::getCommand(Input::getKeyBlocking())};
@@ -140,9 +146,12 @@ void GameStateManager::handleActions() {
         auto directionCommand{
             CommandHandler::getCommand(Input::getKeyBlocking())};
         if (CommandHandler::isMovementCommand(directionCommand)) {
-          action->playerExecute(
-              m_gameSession,
-              static_cast<Directions::Direction>(directionCommand));
+          auto log{action
+                       ->playerExecute(
+                           m_gameSession,
+                           static_cast<Directions::Direction>(directionCommand))
+                       .str()};
+          m_logsToDisplay << log;
         }
       }
       if (action->needsHotkeyInput()) {
@@ -156,13 +165,17 @@ void GameStateManager::handleActions() {
           auto targetCreature{
               m_gameSession.getEnemiesInMap()[pressedKey].lock()};
           if (targetCreature) {
-            action->playerExecute(m_gameSession, *targetCreature);
+            m_logsToDisplay
+                << action->playerExecute(m_gameSession, *targetCreature).str();
           }
         }
       } else
         ; // TODO: non directional actions (easy but not implemented)
     }
   }
-  m_gameSession.cleanDeadNpcs();
-  m_currentState = GameState::Exploration;
+  m_logsToDisplay << m_gameSession.cleanDeadNpcs().str();
+  if (!m_logsToDisplay.str().empty())
+    m_currentState = GameState::Display;
+  else
+    m_currentState = GameState::Exploration;
 }

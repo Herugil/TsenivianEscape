@@ -5,21 +5,26 @@
 
 MeleeAttack::MeleeAttack(std::string_view name) : Action(name, true, false) {}
 
-void MeleeAttack::execute([[maybe_unused]] GameSession &gameSession,
-                          Creature &actor, Creature &target) const {
+std::ostringstream
+MeleeAttack::execute([[maybe_unused]] GameSession &gameSession, Creature &actor,
+                     Creature &target) const {
+  std::ostringstream result;
   if (actor.useActionPoints()) {
     if (GeometryUtils::distanceL1(actor.getPosition(), target.getPosition()) >
         actor.getMeleeRange())
-      return;
+      return result;
     int m_damage{actor.getMeleeDamage()};
     target.takeDamage(m_damage);
-    std::cout << m_damage << "  damage dealt to " << target.getName() << " by "
-              << actor.getName() << ".\n";
+    result << m_damage << "  damage dealt to " << target.getName() << " by "
+           << actor.getName() << ".\n";
   }
+  return result;
 }
 
-void MeleeAttack::playerExecute(GameSession &gameSession,
-                                Directions::Direction direction) const {
+std::ostringstream
+MeleeAttack::playerExecute(GameSession &gameSession,
+                           Directions::Direction direction) const {
+  std::ostringstream result;
   auto &player{gameSession.getPlayer()};
   int range{player.getMeleeRange()};
   auto &map{gameSession.getMap()};
@@ -29,10 +34,11 @@ void MeleeAttack::playerExecute(GameSession &gameSession,
 
     auto topObject = map.getTopObject(point);
     if (auto creature = std::dynamic_pointer_cast<Creature>(topObject)) {
-      execute(gameSession, player, *creature);
+      result << execute(gameSession, player, *creature).str();
       break;
     }
     if (!map.isAvailable(point))
-      return;
+      break;
   }
+  return result;
 }

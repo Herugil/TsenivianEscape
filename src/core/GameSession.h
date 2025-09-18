@@ -7,6 +7,7 @@
 #include "map/Map.h"
 #include "map/Point.h"
 #include <memory>
+#include <sstream>
 #include <vector>
 
 class GameSession {
@@ -30,7 +31,7 @@ public:
   void addNpc(std::shared_ptr<NonPlayableCharacter> npc);
   void addContainer(std::shared_ptr<Container> container);
   void removeContainer(std::shared_ptr<Container> container);
-  void cleanDeadNpcs();
+  std::ostringstream cleanDeadNpcs();
   const std::vector<std::shared_ptr<NonPlayableCharacter>> &getNpcs() const;
   std::vector<std::weak_ptr<Creature>> getTurnOrder() const;
   bool enemiesInMap() const;

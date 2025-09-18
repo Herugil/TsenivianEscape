@@ -5,6 +5,7 @@
 #include "map/Point.h"
 #include "utils/GeometryUtils.h"
 #include "utils/ScreenUtils.h"
+#include <sstream>
 
 GameSession::GameSession(std::shared_ptr<Player> player)
     : m_player{std::move(player)} {
@@ -81,10 +82,11 @@ void GameSession::removeContainer(std::shared_ptr<Container> container) {
   }
 }
 
-void GameSession::cleanDeadNpcs() {
+std::ostringstream GameSession::cleanDeadNpcs() {
+  std::ostringstream result;
   for (auto it{m_npcs.begin()}; it != m_npcs.end();) {
     if ((*it)->isDead()) {
-      std::cout << (*it)->getName() << " is dead.\n";
+      result << (*it)->getName() << " is dead.\n";
       auto lootableBody{std::make_shared<Container>(
           (*it)->getInventory(), (*it)->getPosition(), m_currentMap->getName(),
           (*it)->getName() + "'s body", (*it)->getDeadDescription())};
@@ -95,6 +97,7 @@ void GameSession::cleanDeadNpcs() {
     } else
       ++it;
   }
+  return result;
 }
 
 const std::vector<std::shared_ptr<NonPlayableCharacter>> &

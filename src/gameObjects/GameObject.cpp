@@ -24,9 +24,10 @@ void GameObject::setCurrentMap(std::string_view map) { m_currentMap = map; }
 void GameObject::setPosition(const Point &point) { m_position = point; }
 
 InteractionResult GameObject::playerInteraction() {
-  return {GameState::Exploration, this};
+  return {GameState::Display, this};
 }
 const std::string &GameObject::getName() const { return m_name; }
+const std::string &GameObject::getDescription() const { return m_description; }
 
 std::ostream &operator<<(std::ostream &out, const GameObject &gameObject) {
   out << gameObject.getSymbol();

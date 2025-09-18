@@ -5,27 +5,30 @@
 
 RangedAttack::RangedAttack(std::string_view name) : Action(name, false, true) {}
 
-void RangedAttack::execute([[maybe_unused]] GameSession &gameSession,
-                           Creature &actor, Creature &target) const {
+std::ostringstream
+RangedAttack::execute([[maybe_unused]] GameSession &gameSession,
+                      Creature &actor, Creature &target) const {
+  std::ostringstream result;
   if (gameSession.getMap().isPointVisible(actor.getPosition(),
                                           target.getPosition()) == false) {
-    std::cout << "Target not visible.\n";
-    return;
+    result << "Target not visible.\n";
+    return result;
   }
   if (actor.useActionPoints()) {
     if (GeometryUtils::distanceL2(actor.getPosition(), target.getPosition()) >
         actor.getDistanceRange()) {
-      std::cout << "Target was out of range, attack failed!\n";
-      return;
+      result << "Target was out of range, attack failed!\n";
+      return result;
     }
     int m_damage{actor.getDistanceDamage()};
     target.takeDamage(m_damage);
-    std::cout << m_damage << "  damage dealt to " << target.getName() << " by "
-              << actor.getName() << ".\n";
+    result << m_damage << "  damage dealt to " << target.getName() << " by "
+           << actor.getName() << ".\n";
   }
+  return result;
 }
 
-void RangedAttack::playerExecute(GameSession &gameSession,
-                                 Creature &target) const {
-  execute(gameSession, gameSession.getPlayer(), target);
+std::ostringstream RangedAttack::playerExecute(GameSession &gameSession,
+                                               Creature &target) const {
+  return execute(gameSession, gameSession.getPlayer(), target);
 }
