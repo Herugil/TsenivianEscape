@@ -35,5 +35,4 @@ void MeleeAttack::playerExecute(GameSession &gameSession,
     if (!map.isAvailable(point))
       return;
   }
-  gameSession.cleanDeadNpcs();
 }

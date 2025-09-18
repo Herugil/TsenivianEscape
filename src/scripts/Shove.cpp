@@ -51,8 +51,6 @@ void Shove::playerExecute(GameSession &gameSession,
     }
   }
   execute(gameSession, player, topObject);
-  gameSession.cleanDeadNpcs(); // not useful, for now
-  // once terrain can deal damage thisll be necessary
 }
 
 void Shove::execute([[maybe_unused]] GameSession &gameSession,

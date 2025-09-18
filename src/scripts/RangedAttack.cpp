@@ -28,5 +28,4 @@ void RangedAttack::execute([[maybe_unused]] GameSession &gameSession,
 void RangedAttack::playerExecute(GameSession &gameSession,
                                  Creature &target) const {
   execute(gameSession, gameSession.getPlayer(), target);
-  gameSession.cleanDeadNpcs();
 }

@@ -1,4 +1,5 @@
 #include "gameObjects/GameObject.h"
+#include "core/GameStateManager.h"
 #include <iostream>
 #include <string_view>
 
@@ -22,8 +23,8 @@ void GameObject::setCurrentMap(std::string_view map) { m_currentMap = map; }
 
 void GameObject::setPosition(const Point &point) { m_position = point; }
 
-void GameObject::playerInteraction([[maybe_unused]] Player &player) {
-  std::cout << m_description;
+InteractionResult GameObject::playerInteraction() {
+  return {GameState::Exploration, this};
 }
 const std::string &GameObject::getName() const { return m_name; }
 

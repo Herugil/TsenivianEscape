@@ -27,8 +27,6 @@ public:
   Player(const Point &position, std::string_view currentMap,
          int maxHealthPoints);
   void takeItem(std::shared_ptr<Item> item);
-  void inventoryMenu();
-  void actionMenu(GameSession &gameSession);
   void displayInventory(std::size_t page = 0) const;
   void displayActions() const;
   std::shared_ptr<Action> getAction(std::size_t index) const;
