@@ -1,6 +1,7 @@
 #pragma once
 #include "core/GameSession.h"
 #include "core/GameState.h"
+#include "gameObjects/items/Item.h"
 #include <sstream>
 
 class GameObject;
@@ -13,6 +14,7 @@ private:
   GameState m_currentState{GameState::Exploration};
   GameSession m_gameSession;
   std::ostringstream m_logsToDisplay{};
+  std::weak_ptr<Item> m_inspectedItem{};
   InteractionResult m_interactionResult;
   void HandleWorld();
   void handleInventory();
@@ -22,6 +24,7 @@ private:
   void handleActions();
   void handleCombatPlayerTurn();
   void handleCombatEnemyTurn();
+  void handleItemInspect();
   void setCombatState();
 
 public:

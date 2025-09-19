@@ -106,6 +106,24 @@ void Player::equipItem(std::shared_ptr<Item> item) {
   }
 }
 
+void Player::removeItem(std::shared_ptr<Item> item) {
+  if (item->isEquipped()) {
+    if (auto weapon{std::dynamic_pointer_cast<Weapon>(item)}) {
+      if (weapon->getType() == Item::ItemType::twoHanded) {
+        m_equipment.leftHand.reset();
+      } else if (m_equipment.leftHand.lock() == item) {
+        m_equipment.leftHand.reset();
+      } else
+        m_equipment.rightHand.reset();
+    }
+  }
+  item->setUnequipped();
+  auto it{std::find(m_inventory.begin(), m_inventory.end(), item)};
+  if (it != m_inventory.end())
+    m_inventory.erase(it);
+  updateActionsOnEquip();
+}
+
 std::shared_ptr<Item> Player::getItem(std::size_t index) const {
   auto i{static_cast<std::size_t>(index)};
   if (i >= m_inventory.size())
@@ -113,8 +131,8 @@ std::shared_ptr<Item> Player::getItem(std::size_t index) const {
   return m_inventory[i];
 }
 
-std::ostringstream Player::shove(GameSession &gameSession,
-                                 Directions::Direction direction) {
+std::string Player::shove(GameSession &gameSession,
+                          Directions::Direction direction) {
   return m_shoveAction.playerExecute(gameSession, direction);
 }
 

@@ -21,16 +21,15 @@ public:
       : m_name{name}, m_needsDirectionalInput{needsDirectionalInput},
         m_needsHotkeyInput{needsHotkeyInput} {}
   std::string_view getName() const { return m_name; }
-  virtual std::ostringstream execute(GameSession &gameSession, Creature &actor,
-                                     Creature &target) const = 0;
-  virtual std::ostringstream
+  virtual std::string execute(GameSession &gameSession, Creature &actor,
+                              Creature &target) const = 0;
+  virtual std::string
   playerExecute([[maybe_unused]] GameSession &gameSession,
                 [[maybe_unused]] Directions::Direction direction) const {
     return {};
   };
-  virtual std::ostringstream
-  playerExecute([[maybe_unused]] GameSession &gameSession,
-                [[maybe_unused]] Creature &target) const {
+  virtual std::string playerExecute([[maybe_unused]] GameSession &gameSession,
+                                    [[maybe_unused]] Creature &target) const {
     return {};
   };
   // these actions arent pure virtual because most actions need

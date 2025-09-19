@@ -35,6 +35,10 @@ std::vector<std::shared_ptr<Item>> &Container::getContents() {
   return m_heldItems;
 }
 
+void Container::addItem(std::shared_ptr<Item> item) {
+  m_heldItems.push_back(item);
+}
+
 std::shared_ptr<Item> Container::popItem(std::size_t index) {
   if (index >= m_heldItems.size())
     return nullptr;

@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
+#include <sstream>
 #include <string>
+
 class Item {
 public:
   enum class ItemType {
@@ -13,18 +15,17 @@ public:
 
 protected:
   std::string m_name{};
+  std::string m_id{};
   ItemType m_type{};
   bool m_isEquipped{};
+  std::string m_description{};
 
 public:
-  Item(std::string_view name, ItemType itemType = ItemType::other)
-      : m_name{name}, m_type{itemType}, m_isEquipped{false} {}
-  friend std::ostream &operator<<(std::ostream &out, const Item &item) {
-    out << item.m_name;
-    if (item.isEquipped())
-      out << "    E";
-    return out;
-  }
+  Item(std::string_view name, std::string_view id,
+       ItemType itemType = ItemType::other, std::string_view description = "")
+      : m_name{name}, m_id{id}, m_type{itemType}, m_isEquipped{false},
+        m_description{description} {}
+  const std::string &getId() const { return m_id; }
   ItemType getType() const { return m_type; }
   static ItemType getTypeFromStr(std::string_view typeStr) {
     if (typeStr == "oneHanded")
@@ -40,8 +41,18 @@ public:
   bool isEquipped() const { return m_isEquipped; }
   void setEquipped() { m_isEquipped = true; }
   void setUnequipped() { m_isEquipped = false; }
-  virtual int getDamage() const { return 0; };
-  virtual int getRange() const { return 0; }
+  virtual std::string getDisplayItem() const {
+    std::ostringstream res;
+    res << m_name << '\n'
+        << m_description << (isEquipped() ? "\nEquipped" : "");
+    return res.str();
+  };
   virtual std::shared_ptr<Item> clone() const = 0;
+  friend std::ostream &operator<<(std::ostream &out, const Item &item) {
+    out << item.m_name;
+    if (item.isEquipped())
+      out << "    E";
+    return out;
+  }
   virtual ~Item() = default;
 };

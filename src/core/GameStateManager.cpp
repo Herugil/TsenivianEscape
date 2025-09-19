@@ -48,6 +48,9 @@ void GameStateManager::mainLoop() {
     case GameState::CombatEnemyTurn:
       handleCombatEnemyTurn();
       break;
+    case GameState::ItemInspect:
+      handleItemInspect();
+      break;
     default:
       m_currentState = GameState::Exploration;
       break;
@@ -103,11 +106,8 @@ void GameStateManager::HandleWorld() {
   } else if (CommandHandler::isShoveCommand(command)) {
     auto directionCommand{CommandHandler::getCommand(Input::getKeyBlocking())};
     if (CommandHandler::isMovementCommand(directionCommand)) {
-      m_logsToDisplay << m_gameSession.getPlayer()
-                             .shove(m_gameSession,
-                                    static_cast<Directions::Direction>(
-                                        directionCommand))
-                             .str();
+      m_logsToDisplay << m_gameSession.getPlayer().shove(
+          m_gameSession, static_cast<Directions::Direction>(directionCommand));
       if (!m_logsToDisplay.str().empty())
         m_currentState = GameState::Display;
     }
@@ -160,6 +160,25 @@ void GameStateManager::handleInventory() {
     m_currentState = GameState::Exploration;
 }
 
+void GameStateManager::handleItemInspect() {
+  ScreenUtils::clearScreen();
+  if (auto item{m_inspectedItem.lock()}) {
+    std::cout << item->getDisplayItem() << "\n";
+    std::cout << "E: Equip/Unequip\n    R: Drop\n";
+    auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
+    if (CommandHandler::isInteractionCommand(command)) {
+      auto &player{m_gameSession.getPlayer()};
+      player.equipItem(item);
+    } else if (CommandHandler::isShoveCommand(command)) {
+      auto &player{m_gameSession.getPlayer()};
+      player.removeItem(item);
+      m_gameSession.dropItem(item, player.getPosition());
+    }
+  }
+  m_inspectedItem.reset();
+  m_currentState = GameState::Inventory;
+}
+
 void GameStateManager::handleContainer() {
   ScreenUtils::clearScreen();
   if (m_interactionResult.interactedObject) {
@@ -202,11 +221,9 @@ void GameStateManager::handleActions() {
         auto directionCommand{
             CommandHandler::getCommand(Input::getKeyBlocking())};
         if (CommandHandler::isMovementCommand(directionCommand)) {
-          auto log{action
-                       ->playerExecute(
-                           m_gameSession,
-                           static_cast<Directions::Direction>(directionCommand))
-                       .str()};
+          auto log{action->playerExecute(
+              m_gameSession,
+              static_cast<Directions::Direction>(directionCommand))};
           m_logsToDisplay << log;
         }
       }
@@ -222,14 +239,14 @@ void GameStateManager::handleActions() {
               m_gameSession.getEnemiesInMap()[pressedKey].lock()};
           if (targetCreature) {
             m_logsToDisplay
-                << action->playerExecute(m_gameSession, *targetCreature).str();
+                << action->playerExecute(m_gameSession, *targetCreature);
           }
         }
       } else
         ; // TODO: non directional actions (easy but not implemented)
     }
   }
-  m_logsToDisplay << m_gameSession.cleanDeadNpcs().str();
+  m_logsToDisplay << m_gameSession.cleanDeadNpcs();
   if (!m_logsToDisplay.str().empty())
     m_currentState = GameState::Display;
   else
@@ -287,8 +304,8 @@ void GameStateManager::handleCombatEnemyTurn() {
           m_currentState = GameState::Display;
         return;
       } else {
-        m_logsToDisplay << NpcCombatAI::npcActCombat(m_gameSession, enemy).str()
-                        << m_gameSession.cleanDeadNpcs().str();
+        m_logsToDisplay << NpcCombatAI::npcActCombat(m_gameSession, enemy)
+                        << m_gameSession.cleanDeadNpcs();
       }
     }
   } else
