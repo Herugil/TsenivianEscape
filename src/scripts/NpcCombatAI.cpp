@@ -11,7 +11,7 @@
 #include <queue>
 #include <sstream>
 
-std::ostringstream
+std::string
 NpcCombatAI::npcActCombat(GameSession &gameSession,
                           std::shared_ptr<NonPlayableCharacter> actor) {
   std::ostringstream res;
@@ -27,10 +27,9 @@ NpcCombatAI::npcActCombat(GameSession &gameSession,
         actor->getMeleeRange()) {
       if (!actor->canAct()) {
         actor->setSkipTurn();
-        return res;
+        return res.str();
       }
-      res << actor->executeBasicAttack(gameSession.getPlayer(), gameSession)
-                 .str();
+      res << actor->executeBasicAttack(gameSession.getPlayer(), gameSession);
       actor->clearCurrentPath();
       break;
     } else {
@@ -44,7 +43,7 @@ NpcCombatAI::npcActCombat(GameSession &gameSession,
           actor->getCurrentPath().pop_front(); // remove current point from path
         } else {
           actor->setCurrentBehavior(gameSession);
-          return res;
+          return res.str();
         }
         break;
       }
@@ -54,5 +53,5 @@ NpcCombatAI::npcActCombat(GameSession &gameSession,
     actor->setSkipTurn();
     break;
   }
-  return res;
+  return res.str();
 }

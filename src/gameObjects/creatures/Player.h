@@ -33,10 +33,10 @@ public:
   std::shared_ptr<Action> getAction(std::size_t index) const;
   void takeAllItems(Container &container);
   void equipItem(std::shared_ptr<Item> item);
+  void removeItem(std::shared_ptr<Item> item);
   void updateActionsOnEquip();
   std::shared_ptr<Item> getItem(std::size_t index) const;
-  std::ostringstream shove(GameSession &gameSession,
-                           Directions::Direction direction);
+  std::string shove(GameSession &gameSession, Directions::Direction direction);
   int getMeleeDamage() const override;
   int getMeleeRange() const override;
   int getDistanceDamage() const override;

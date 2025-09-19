@@ -25,5 +25,6 @@ public:
   void displayContents();
   void clearContents();
   InteractionResult playerInteraction() override;
+  void addItem(std::shared_ptr<Item> item);
   std::shared_ptr<Item> popItem(std::size_t index);
 };

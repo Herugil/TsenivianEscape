@@ -5,6 +5,6 @@
 #include <memory>
 
 namespace NpcCombatAI {
-std::ostringstream npcActCombat(GameSession &gameSession,
-                                std::shared_ptr<NonPlayableCharacter> actor);
+std::string npcActCombat(GameSession &gameSession,
+                         std::shared_ptr<NonPlayableCharacter> actor);
 } // namespace NpcCombatAI

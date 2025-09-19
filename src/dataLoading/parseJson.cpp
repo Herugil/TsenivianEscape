@@ -37,10 +37,12 @@ DataLoader::getAllItems() {
       std::string weaponType{value["weaponType"]};
       std::string itemType{value["itemType"]};
       std::string name{value["name"]};
+      std::string description{value["description"]};
       int damage{value["damage"]};
       int range{value["range"]};
-      items[key] = std::make_shared<Weapon>(Weapon{
-          name, weaponType, Item::getTypeFromStr(itemType), damage, range});
+      items[key] = std::make_shared<Weapon>(
+          Weapon{name, key, weaponType, description,
+                 Item::getTypeFromStr(itemType), damage, range});
     }
   }
   return items;

@@ -31,8 +31,9 @@ public:
   const Point &getPlayerPos() const;
   void addNpc(std::shared_ptr<NonPlayableCharacter> npc);
   void addContainer(std::shared_ptr<Container> container);
+  bool dropItem(std::shared_ptr<Item> item, const Point &point);
   void removeContainer(std::shared_ptr<Container> container);
-  std::ostringstream cleanDeadNpcs();
+  std::string cleanDeadNpcs();
   const std::vector<std::shared_ptr<NonPlayableCharacter>> &getNpcs() const;
   std::vector<std::weak_ptr<Creature>> getTurnOrder() const;
   bool enemiesInMap() const;
@@ -46,7 +47,6 @@ public:
   Map &getMap(std::string_view mapName);
   void incrementTurnIndex();
   std::weak_ptr<Creature> getActiveCreature() const;
-
   void initializeTurnOrder();
   void resetInitiative();
 

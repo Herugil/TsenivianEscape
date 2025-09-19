@@ -45,9 +45,8 @@ int NonPlayableCharacter::getMeleeRange() const { return m_meleeRange; }
 int NonPlayableCharacter::getDistanceDamage() const { return m_distanceDamage; }
 int NonPlayableCharacter::getDistanceRange() const { return m_distanceRange; }
 
-std::ostringstream
-NonPlayableCharacter::executeBasicAttack(Creature &target,
-                                         GameSession &gameSession) {
+std::string NonPlayableCharacter::executeBasicAttack(Creature &target,
+                                                     GameSession &gameSession) {
   auto basicAction{m_actions[0]};
   return basicAction->execute(gameSession, *this, target);
   // this should check for range, etc

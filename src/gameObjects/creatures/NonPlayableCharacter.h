@@ -41,8 +41,7 @@ public:
                        std::string_view deadDescription = "");
   std::string_view getDeadDescription() const;
   std::vector<std::shared_ptr<Item>> getInventory() const;
-  std::ostringstream executeBasicAttack(Creature &target,
-                                        GameSession &gameSession);
+  std::string executeBasicAttack(Creature &target, GameSession &gameSession);
   int getMeleeDamage() const override;
   int getMeleeRange() const override;
   int getDistanceDamage() const override;
