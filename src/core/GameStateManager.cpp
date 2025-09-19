@@ -146,7 +146,7 @@ void GameStateManager::handleInventory() {
     m_inventoryPage--;
   else if (command == Command::right &&
            m_inventoryPage < static_cast<std::size_t>(player.numObjectsHeld()) /
-                                 Settings::g_itemListSize)
+                                 (Settings::g_itemListSize + 1))
     m_inventoryPage++;
   else if (CommandHandler::isHotkeyCommand(command)) {
     auto pressedKey{
@@ -154,7 +154,8 @@ void GameStateManager::handleInventory() {
     auto item{player.getItem(m_inventoryPage * Settings::g_itemListSize +
                              pressedKey)};
     if (item) {
-      player.equipItem(item);
+      m_inspectedItem = item;
+      m_currentState = GameState::ItemInspect;
     }
   } else
     m_currentState = GameState::Exploration;
@@ -164,15 +165,20 @@ void GameStateManager::handleItemInspect() {
   ScreenUtils::clearScreen();
   if (auto item{m_inspectedItem.lock()}) {
     std::cout << item->getDisplayItem() << "\n";
-    std::cout << "E: Equip/Unequip\n    R: Drop\n";
+    std::cout << "E: Equip/Unequip   R: Drop\n";
     auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
     if (CommandHandler::isInteractionCommand(command)) {
       auto &player{m_gameSession.getPlayer()};
       player.equipItem(item);
     } else if (CommandHandler::isShoveCommand(command)) {
       auto &player{m_gameSession.getPlayer()};
-      player.removeItem(item);
-      m_gameSession.dropItem(item, player.getPosition());
+      if (m_gameSession.dropItem(item, player.getPosition()))
+        player.removeItem(item);
+      else {
+        m_logsToDisplay << "Could not drop item! No space around you.\n";
+        m_currentState = GameState::Display;
+        return;
+      }
     }
   }
   m_inspectedItem.reset();

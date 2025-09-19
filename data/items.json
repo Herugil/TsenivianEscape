@@ -1,6 +1,6 @@
 {
   "itemBanana": {
-    "name": "banana",
+    "name": "Banana",
     "itemType": "oneHanded",
     "weaponType": "melee",
     "description": "A ripe banana. Better than nothing.",
@@ -8,7 +8,7 @@
     "range": 1
   },
   "itemDagger": {
-    "name": "dagger",
+    "name": "Dagger",
     "itemType": "oneHanded",
     "weaponType": "melee",
     "description": "A typical Tsenivian dagger, with a a somewhat dulled blade.",
@@ -16,7 +16,7 @@
     "range": 1
   },
   "itemSword": {
-    "name": "sword",
+    "name": "Sword",
     "itemType": "oneHanded",
     "weaponType": "melee",
     "description": "A standard Tsenivian sword, well-balanced and sharp.",
@@ -24,7 +24,7 @@
     "range": 1
   },
   "itemBow": {
-    "name": "bow",
+    "name": "Bow",
     "itemType": "twoHanded",
     "weaponType": "ranged",
     "description": "A simple wooden bow, mostly used to hunt game.",
@@ -32,7 +32,7 @@
     "range": 10
   },
   "itemSpear": {
-    "name": "spear",
+    "name": "Spear",
     "itemType": "oneHanded",
     "description": "A long spear with a black wooden shaft.",
     "weaponType": "melee",

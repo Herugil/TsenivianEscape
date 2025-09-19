@@ -21,7 +21,8 @@ std::string Weapon::getDisplayItem() const {
       << "\nDamage: " << m_damage << "\nRange: " << m_range;
   return res.str();
 }
-static Weapon::WeaponType getTypeFromStr(std::string_view typeName) {
+
+Weapon::WeaponType Weapon::getTypeFromStr(std::string_view typeName) {
   if (typeName == "melee")
     return Weapon::melee;
   if (typeName == "ranged")

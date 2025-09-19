@@ -31,7 +31,7 @@ public:
   const Point &getPlayerPos() const;
   void addNpc(std::shared_ptr<NonPlayableCharacter> npc);
   void addContainer(std::shared_ptr<Container> container);
-  void dropItem(std::shared_ptr<Item> item, const Point &point);
+  bool dropItem(std::shared_ptr<Item> item, const Point &point);
   void removeContainer(std::shared_ptr<Container> container);
   std::string cleanDeadNpcs();
   const std::vector<std::shared_ptr<NonPlayableCharacter>> &getNpcs() const;

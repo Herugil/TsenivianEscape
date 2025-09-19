@@ -100,9 +100,9 @@ std::string GameSession::cleanDeadNpcs() {
   return result.str();
 }
 
-void GameSession::dropItem(std::shared_ptr<Item> item, const Point &point) {
-  if (m_currentMap->checkBounds(point)) {
-    return;
+bool GameSession::dropItem(std::shared_ptr<Item> item, const Point &point) {
+  if (!m_currentMap->checkBounds(point)) {
+    return false;
   }
   for (int i{0}; i < Directions::nbDirections; ++i) {
     Point adjacentPoint{
@@ -111,7 +111,7 @@ void GameSession::dropItem(std::shared_ptr<Item> item, const Point &point) {
             m_currentMap->getTopObject(adjacentPoint))})
       if (cont->getName() == "Left items bag") {
         cont->addItem(item);
-        return;
+        return true;
       }
   }
   for (int i{0}; i < Directions::nbDirections; ++i) {
@@ -119,15 +119,15 @@ void GameSession::dropItem(std::shared_ptr<Item> item, const Point &point) {
         point.getAdjacentPoint(static_cast<Directions::Direction>(i))};
     if (m_currentMap->isAvailable(adjacentPoint)) {
       std::vector<std::shared_ptr<Item>> vec{item};
-      auto cont{std::make_shared<Container>(vec, adjacentPoint,
-                                            m_currentMap->getName(),
-                                            "Left items bag"
-                                            "A bag of items left by someone")};
+      auto cont{std::make_shared<Container>(
+          vec, adjacentPoint, m_currentMap->getName(), "Left items bag",
+          "A bag of items left by someone")};
       addContainer(cont);
       m_currentMap->placeTop(cont, cont->getPosition());
-      return;
+      return true;
     }
   }
+  return false;
 }
 
 const std::vector<std::shared_ptr<NonPlayableCharacter>> &
