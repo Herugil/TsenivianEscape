@@ -15,7 +15,7 @@ std::string Dodge::execute(Creature &actor) const {
   std::ostringstream res{};
   if (actor.useActionPoints(m_cost)) {
     actor.addPassiveEffect(
-        PassiveEffect{PassiveEffect::Type::EvasionBonus, 100, 2});
+        PassiveEffect{PassiveEffect::Type::EvasionBonus, 10, 2});
     res << actor.getName() << " starts dodging.\n";
   }
   return res.str();
