@@ -34,6 +34,7 @@ constexpr char hotkey9{'9'};
 constexpr char inventory{'i'};
 constexpr char actionMenu{'a'};
 constexpr char shove{'r'};
+constexpr char attack{'f'};
 constexpr char showEnemies{'\t'};
 constexpr char skipTurn{' '};
 } // namespace CommandChar
@@ -57,6 +58,7 @@ struct Command {
     hotkey9,
     inventory,
     actionMenu,
+    attack,
     showEnemies,
     skipTurn,
     shove,
@@ -88,6 +90,7 @@ bool isHotkeyCommand(Command::command cmd);
 bool isInventoryCommand(Command::command cmd);
 bool isActionMenuCommand(Command::command cmd);
 bool isShoveCommand(Command::command cmd);
+bool isAttackCommand(Command::command cmd);
 bool isShowEnemiesCommand(Command::command cmd);
 bool isSkipTurnCommand(Command::command cmd);
 } // namespace CommandHandler

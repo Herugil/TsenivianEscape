@@ -6,6 +6,7 @@
 #include "input/Input.h"
 #include "map/Point.h"
 #include "scripts/Action.h"
+#include "scripts/MeleeAttack.h"
 #include "scripts/Shove.h"
 #include <memory>
 #include <sstream>
@@ -23,6 +24,8 @@ class Player : public Creature {
 private:
   Equipment m_equipment{};
   Shove m_shoveAction{};
+  std::shared_ptr<MeleeAttack> m_meleeAttack{
+      std::make_shared<MeleeAttack>("Attack with melee weapon")};
 
 public:
   Player(const Point &position, std::string_view currentMap,
@@ -37,6 +40,9 @@ public:
   void updateActionsOnEquip();
   std::shared_ptr<Item> getItem(std::size_t index) const;
   std::string shove(GameSession &gameSession, Directions::Direction direction);
+  std::string meleeAttack(GameSession &gameSession,
+                          Directions::Direction direction);
+
   int getMeleeDamage() const override;
   int getMeleeRange() const override;
   int getDistanceDamage() const override;

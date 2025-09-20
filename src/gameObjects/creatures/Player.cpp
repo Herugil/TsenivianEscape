@@ -64,10 +64,8 @@ void Player::updateActionsOnEquip() {
     }
   }
   // cases where no weapon or melee weapon equipped
-  m_actions.insert(
-      m_actions.begin(),
-      std::make_shared<MeleeAttack>(
-          "Attack with right hand weapon")); // should be a constant
+  m_actions.insert(m_actions.begin(),
+                   std::shared_ptr<MeleeAttack>(m_meleeAttack));
 }
 
 void Player::equipItem(std::shared_ptr<Item> item) {
@@ -134,6 +132,11 @@ std::shared_ptr<Item> Player::getItem(std::size_t index) const {
 std::string Player::shove(GameSession &gameSession,
                           Directions::Direction direction) {
   return m_shoveAction.playerExecute(gameSession, direction);
+}
+
+std::string Player::meleeAttack(GameSession &gameSession,
+                                Directions::Direction direction) {
+  return m_meleeAttack->playerExecute(gameSession, direction);
 }
 
 int Player::getMeleeDamage() const {

@@ -1,15 +1,16 @@
 #include "scripts/MeleeAttack.h"
+#include "core/GameSession.h"
 #include "map/Point.h"
 #include "utils/GeometryUtils.h"
 #include <memory>
 
-MeleeAttack::MeleeAttack(std::string_view name) : Action(name, true, false) {}
+MeleeAttack::MeleeAttack(std::string_view name) : Action(name, true, true) {}
 
 std::string MeleeAttack::execute([[maybe_unused]] GameSession &gameSession,
                                  Creature &actor, Creature &target) const {
   std::ostringstream result;
   if (actor.useActionPoints()) {
-    if (GeometryUtils::distanceL1(actor.getPosition(), target.getPosition()) >
+    if (GeometryUtils::distanceL2(actor.getPosition(), target.getPosition()) >
         actor.getMeleeRange())
       return result.str();
     int m_damage{actor.getMeleeDamage()};
@@ -18,6 +19,11 @@ std::string MeleeAttack::execute([[maybe_unused]] GameSession &gameSession,
            << actor.getName() << ".\n";
   }
   return result.str();
+}
+
+std::string MeleeAttack::playerExecute(GameSession &gameSession,
+                                       Creature &target) const {
+  return execute(gameSession, gameSession.getPlayer(), target);
 }
 
 std::string MeleeAttack::playerExecute(GameSession &gameSession,

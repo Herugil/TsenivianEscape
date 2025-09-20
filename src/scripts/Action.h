@@ -10,16 +10,20 @@ class Creature;
 class Action {
 protected:
   std::string m_name{};
-  bool m_needsDirectionalInput{};
   bool m_needsHotkeyInput{};
+  bool m_needsDirectionalInput{};
+  // if the action has both of these at true, executing it
+  // as a player in the action menu will use the hotkey one,
+  // but the directional one might be mapped to another
+  // command
   int m_cost{1}; // in some systems (pf2e) variable action cost
   // for 1 spell but not gonna bother here
 
 public:
   Action(std::string_view name, bool needsDirectionalInput,
          bool needsHotkeyInput)
-      : m_name{name}, m_needsDirectionalInput{needsDirectionalInput},
-        m_needsHotkeyInput{needsHotkeyInput} {}
+      : m_name{name}, m_needsHotkeyInput{needsHotkeyInput},
+        m_needsDirectionalInput{needsDirectionalInput} {}
   std::string_view getName() const { return m_name; }
   virtual std::string execute(GameSession &gameSession, Creature &actor,
                               Creature &target) const = 0;

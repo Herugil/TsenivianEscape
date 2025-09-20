@@ -108,6 +108,16 @@ void GameStateManager::HandleWorld() {
     if (CommandHandler::isMovementCommand(directionCommand)) {
       m_logsToDisplay << m_gameSession.getPlayer().shove(
           m_gameSession, static_cast<Directions::Direction>(directionCommand));
+      m_logsToDisplay << m_gameSession.cleanDeadNpcs();
+      if (!m_logsToDisplay.str().empty())
+        m_currentState = GameState::Display;
+    }
+  } else if (CommandHandler::isAttackCommand(command)) {
+    auto directionCommand{CommandHandler::getCommand(Input::getKeyBlocking())};
+    if (CommandHandler::isMovementCommand(directionCommand)) {
+      m_logsToDisplay << m_gameSession.getPlayer().meleeAttack(
+          m_gameSession, static_cast<Directions::Direction>(directionCommand));
+      m_logsToDisplay << m_gameSession.cleanDeadNpcs();
       if (!m_logsToDisplay.str().empty())
         m_currentState = GameState::Display;
     }
@@ -222,7 +232,21 @@ void GameStateManager::handleActions() {
     auto pressedKey{
         static_cast<std::size_t>(CommandHandler::getPressedKey(command))};
     auto action{player.getAction(pressedKey)};
-    if (action) {
+    if (action->needsHotkeyInput()) {
+      m_gameSession.displayEnemiesInMap();
+      auto hotkeyCommand{CommandHandler::getCommand(Input::getKeyBlocking())};
+      if (CommandHandler::isHotkeyCommand(hotkeyCommand)) {
+        auto pressedKey{static_cast<std::size_t>(
+            CommandHandler::getPressedKey(hotkeyCommand))};
+        if (pressedKey >= m_gameSession.getEnemiesInMap().size())
+          return;
+        auto targetCreature{m_gameSession.getEnemiesInMap()[pressedKey].lock()};
+        if (targetCreature) {
+          m_logsToDisplay << action->playerExecute(m_gameSession,
+                                                   *targetCreature);
+        }
+      }
+    } else if (action) {
       if (action->needsDirectionalInput()) {
         auto directionCommand{
             CommandHandler::getCommand(Input::getKeyBlocking())};
@@ -231,22 +255,6 @@ void GameStateManager::handleActions() {
               m_gameSession,
               static_cast<Directions::Direction>(directionCommand))};
           m_logsToDisplay << log;
-        }
-      }
-      if (action->needsHotkeyInput()) {
-        m_gameSession.displayEnemiesInMap();
-        auto hotkeyCommand{CommandHandler::getCommand(Input::getKeyBlocking())};
-        if (CommandHandler::isHotkeyCommand(hotkeyCommand)) {
-          auto pressedKey{static_cast<std::size_t>(
-              CommandHandler::getPressedKey(hotkeyCommand))};
-          if (pressedKey >= m_gameSession.getEnemiesInMap().size())
-            return;
-          auto targetCreature{
-              m_gameSession.getEnemiesInMap()[pressedKey].lock()};
-          if (targetCreature) {
-            m_logsToDisplay
-                << action->playerExecute(m_gameSession, *targetCreature);
-          }
         }
       } else
         ; // TODO: non directional actions (easy but not implemented)

@@ -114,6 +114,9 @@ bool CommandHandler::isShowEnemiesCommand(Command::command cmd) {
 bool CommandHandler::isSkipTurnCommand(Command::command cmd) {
   return cmd == Command::skipTurn;
 }
+bool CommandHandler::isAttackCommand(Command::command cmd) {
+  return cmd == Command::attack;
+}
 
 Command::command CommandHandler::getCommand(char pressedKey) {
   switch (pressedKey) {
@@ -155,6 +158,8 @@ Command::command CommandHandler::getCommand(char pressedKey) {
     return Command::skipTurn;
   case CommandChar::showEnemies:
     return Command::showEnemies;
+  case CommandChar::attack:
+    return Command::attack;
   case CommandChar::shove:
     return Command::shove;
   default:

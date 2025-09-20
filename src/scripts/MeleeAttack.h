@@ -1,7 +1,8 @@
 #pragma once
-#include "core/GameSession.h"
 #include "gameObjects/creatures/Creature.h"
 #include "scripts/Action.h"
+
+class GameSession;
 
 class MeleeAttack : public Action {
 
@@ -11,5 +12,7 @@ public:
                       Creature &target) const override;
   std::string playerExecute(GameSession &gameSession,
                             Directions::Direction direction) const override;
+  std::string playerExecute(GameSession &gameSession,
+                            Creature &target) const override;
   ~MeleeAttack() = default;
 };
