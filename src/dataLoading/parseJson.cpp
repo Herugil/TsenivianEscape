@@ -48,7 +48,28 @@ DataLoader::getAllItems() {
   return items;
 }
 
-void placeWalls(json &data, Map &map) {
+std::unordered_map<std::string, std::shared_ptr<NonPlayableCharacter>>
+DataLoader::getAllNpcs() {
+  std::unordered_map<std::string, std::shared_ptr<NonPlayableCharacter>> npcs{};
+  std::ifstream f("../data/npcs.json");
+  json data = json::parse(f);
+  for (auto &[key, value] : data.items()) {
+    int maxHealth{value["maxHealth"]};
+    int meleeHitChance{value["meleeHitChance"]};
+    int distanceHitChance{value["distanceHitChance"]};
+    std::string name{value["name"]};
+    std::string desc{value["description"]};
+    std::string descDead{value["deadDescription"]};
+
+    npcs[key] = std::make_shared<NonPlayableCharacter>(
+        ' ', Point{0, 0}, "placeholder", maxHealth, name, meleeHitChance,
+        distanceHitChance, std::vector<std::shared_ptr<Item>>{}, desc,
+        descDead);
+  }
+  return npcs;
+}
+
+void DataLoader::placeWalls(json &data, Map &map) {
   std::string wallDesc{data["wallDescription"]};
   const auto &arrWalls{data["walls"]};
   assert((arrWalls.size() % 2 == 0) &&
@@ -60,31 +81,30 @@ void placeWalls(json &data, Map &map) {
   }
 }
 
-void placeEnemies(
+void DataLoader::placeEnemies(
     json &data, Map &map, GameSession &gameSession,
+    const std::unordered_map<std::string, std::shared_ptr<NonPlayableCharacter>>
+        &npcs,
     const std::unordered_map<std::string, std::shared_ptr<Item>> &items) {
   const auto &arrEnemies{data["enemies"]};
   for (auto enemy : arrEnemies) {
-    char symbol{std::string(enemy[0])[0]}; // json doesnt have char
-    Point pos{enemy[1][0], enemy[1][1]};
-    int maxHealth{enemy[2]};
-    int meleeHitChance{enemy[3]};
-    int distanceHitChance{enemy[4]};
-    const auto &itemIds{enemy[5]};
-    std::vector<std::shared_ptr<Item>> loot{};
-    for (auto itemId : itemIds) {
+    char symbol{std::string(enemy["symbol"])[0]}; // json doesnt have char
+    Point pos{enemy["position"][0], enemy["position"][1]};
+    std::string id{enemy["id"]};
+    if (!npcs.contains(id)) {
+      std::cout << id << " not added, cant find it in npcs.\n";
+      continue;
+    }
+    auto npc = npcs.at(id)->clone();
+    for (auto itemId : enemy["inventory"]) {
       if (items.contains(itemId))
-        loot.emplace_back(items.at(itemId)->clone());
+        npc->addItemToInventory(items.at(itemId)->clone());
       else
         std::cout << itemId << " not added, cant find it in items.\n";
     }
-    std::string name{enemy[6]};
-    std::string desc{enemy[7]};
-    std::string descDead{enemy[8]};
-
-    auto npc{std::make_shared<NonPlayableCharacter>(
-        symbol, pos, map.getName(), maxHealth, name, meleeHitChance,
-        distanceHitChance, loot, desc, descDead)};
+    npc->setSymbol(symbol);
+    npc->setPosition(pos);
+    npc->setCurrentMap(map.getName());
     gameSession.addNpc(npc);
   }
 }
@@ -94,14 +114,14 @@ void placeObjects(
     const std::unordered_map<std::string, std::shared_ptr<Item>> &items) {
   const auto &arrObjects{data["gameObjects"]};
   for (auto object : arrObjects) {
-    char symbol{std::string(object[0])[0]}; // json doesnt have char
-    Point pos{object[1][0], object[1][1]};
-    const std::string type{object[2]};
-    const std::string name{object[3]};
-    const std::string desc{object[4]};
+    char symbol{std::string(object["symbol"])[0]}; // json doesnt have char
+    Point pos{object["position"][0], object["position"][1]};
+    const std::string type{object["type"]};
+    const std::string name{object["name"]};
+    const std::string desc{object["description"]};
     if (type == "container") {
       std::vector<std::shared_ptr<Item>> loot{};
-      const auto &itemIds{object[5]};
+      const auto &itemIds{object["contents"]};
       for (auto itemId : itemIds) {
         if (items.contains(itemId))
           loot.emplace_back(items.at(itemId)->clone());
@@ -111,8 +131,8 @@ void placeObjects(
       Container container{loot, pos, name, map.getName(), desc, symbol};
       map.placeFloor(std::make_unique<Container>(std::move(container)), pos);
     } else if (type == "mapChanger") {
-      const std::string nextMap{object[5]};
-      Point spawningPoint{object[6][0], object[6][1]};
+      const std::string nextMap{object["destLevel"]};
+      Point spawningPoint{object["destPosition"][0], object["destPosition"][1]};
       MapChanger obj{map.getName(), pos,  nextMap, spawningPoint,
                      symbol,        name, desc};
       map.placeFloor(std::make_unique<MapChanger>(std::move(obj)), pos);
@@ -125,6 +145,8 @@ void placeObjects(
 
 void DataLoader::populateGameSession(
     std::unordered_map<std::string, std::shared_ptr<Item>> &items,
+    std::unordered_map<std::string, std::shared_ptr<NonPlayableCharacter>>
+        &npcs,
     GameSession &gameSession) {
   std::unordered_map<std::string, Map> allMaps{};
   std::vector<std::string> allLevelNames{getLevelJsonFiles("../data/")};
@@ -145,7 +167,7 @@ void DataLoader::populateGameSession(
     gameSession.setCurrentMap(name);
 
     placeWalls(data, gameSession.getMap());
-    placeEnemies(data, gameSession.getMap(), gameSession, items);
+    placeEnemies(data, gameSession.getMap(), gameSession, npcs, items);
     placeObjects(data, gameSession.getMap(), items);
   }
 }

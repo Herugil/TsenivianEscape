@@ -10,6 +10,8 @@ GameObject::GameObject(bool isMoveable, bool isTraversable, char symbol,
       m_currentMap{currentMap}, m_position{position}, m_name{name},
       m_description{description} {}
 
+void GameObject::setSymbol(char symbol) { m_symbol = symbol; }
+
 const Point &GameObject::getPosition() const { return m_position; }
 
 bool GameObject::isTraversable() const { return m_traversable; }

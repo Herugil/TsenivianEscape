@@ -24,13 +24,13 @@
   ],
   "enemies": [],
   "gameObjects": [
-    [
-      "X",
-      [9, 5],
-      "container",
-      "hidden items in the wall",
-      "A brick goes loose, revealing some items:",
-      [
+    {
+      "symbol": "X",
+      "position": [9, 5],
+      "type": "container",
+      "name": "hidden items in the wall",
+      "description": "A brick goes loose, revealing some items:",
+      "contents": [
         "itemSword",
         "itemSpear",
         "itemBow",
@@ -42,15 +42,15 @@
         "itemBanana",
         "itemSpear"
       ]
-    ],
-    [
-      "O",
-      [8, 8],
-      "mapChanger",
-      "passage to the next room",
-      "A creaking, half open wooden door.",
-      "level2",
-      [2, 2]
-    ]
+    },
+    {
+      "symbol": "O",
+      "position": [8, 8],
+      "type": "mapChanger",
+      "name": "passage to the next room",
+      "description": "A creaking, half open wooden door.",
+      "destLevel": "level2",
+      "destPosition": [2, 2]
+    }
   ]
 }

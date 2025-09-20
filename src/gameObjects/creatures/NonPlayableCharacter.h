@@ -38,8 +38,10 @@ public:
                        std::vector<std::shared_ptr<Item>> inventory = {},
                        std::string_view description = "enemy",
                        std::string_view deadDescription = "");
+  std::shared_ptr<NonPlayableCharacter> clone() const;
   std::string_view getDeadDescription() const;
   std::vector<std::shared_ptr<Item>> getInventory() const;
+  void addItemToInventory(std::shared_ptr<Item> item);
   std::string executeBasicAttack(Creature &target, GameSession &gameSession);
   int getMeleeHitChance() const override;
   int getDistanceHitChance() const override;

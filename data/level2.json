@@ -26,57 +26,36 @@
     [4, 5]
   ],
   "enemies": [
-    [
-      "e",
-      [1, 8],
-      10,
-      50,
-      50,
-      ["itemBanana"],
-      "Gruff looking man",
-      "A gruff looking man.",
-      "A dead body."
-    ],
-    [
-      "E",
-      [8, 2],
-      10,
-      50,
-      50,
-      ["itemBanana"],
-      "Gruff looking man",
-      "A gruff looking man.",
-      "A dead body."
-    ],
-    [
-      "P",
-      [5, 2],
-      10,
-      50,
-      50,
-      ["itemBanana"],
-      "Gruff looking man",
-      "A gruff looking man.",
-      "A dead body."
-    ]
+    {
+      "symbol": "r",
+      "position": [7, 5],
+      "id": "enemyRat",
+      "inventory": []
+    },
+    {
+      "symbol": "E",
+      "position": [8, 2],
+      "id": "enemyBandit",
+      "inventory": ["itemBanana", "itemDagger"]
+    }
   ],
   "gameObjects": [
-    [
-      "X",
-      [12, 5],
-      "container",
-      "hidden items in the wall",
-      "A brick goes loose, revealing some items:",
-      ["itemDagger", "itemBanana"]
-    ],
-    [
-      "O",
-      [0, 4],
-      "mapChanger",
-      "passage to the next room",
-      "A creaking, half open wooden door.",
-      "level1",
-      [3, 2]
-    ]
+    {
+      "symbol": "X",
+      "position": [12, 5],
+      "type": "container",
+      "name": "hidden items in the wall",
+      "description": "A brick goes loose, revealing some items:",
+      "contents": ["itemSword", "itemBanana"]
+    },
+    {
+      "symbol": "O",
+      "position": [3, 2],
+      "type": "mapChanger",
+      "name": "passage to the next room",
+      "description": "A creaking, half open wooden door.",
+      "destLevel": "level1",
+      "destPosition": [3, 2]
+    }
   ]
 }

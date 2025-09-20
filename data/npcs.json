@@ -1,0 +1,20 @@
+{
+  "enemyRat": {
+    "name": "Rat",
+    "type": "waryMelee",
+    "maxHealth": 3,
+    "meleeHitChance": 50,
+    "distanceHitChance": 0,
+    "description": "An aggressive rat with tiny red eyes.",
+    "deadDescription": "A dead rat body."
+  },
+  "enemyBandit": {
+    "name": "Bandit",
+    "type": "aggressiveMelee",
+    "maxHealth": 6,
+    "meleeHitChance": 70,
+    "distanceHitChance": 50,
+    "description": "A bandit with an untidy look, holding a club.",
+    "deadDescription": "A dead bandit body."
+  }
+}

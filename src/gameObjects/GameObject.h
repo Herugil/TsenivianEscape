@@ -27,6 +27,7 @@ public:
   const Point &getPosition() const;
   const std::string &getCurrentMap() const;
   void setCurrentMap(std::string_view map);
+  void setSymbol(char symbol);
   char getSymbol() const;
   const std::string &getName() const;
   const std::string &getDescription() const;

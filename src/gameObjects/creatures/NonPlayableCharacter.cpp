@@ -25,12 +25,20 @@ NonPlayableCharacter::NonPlayableCharacter(
     m_inventory = std::move(items);
 }
 
+std::shared_ptr<NonPlayableCharacter> NonPlayableCharacter::clone() const {
+  return std::make_shared<NonPlayableCharacter>(*this);
+}
+
 std::string_view NonPlayableCharacter::getDeadDescription() const {
   return m_deadDescription;
 }
 
 std::vector<std::shared_ptr<Item>> NonPlayableCharacter::getInventory() const {
   return m_inventory;
+}
+
+void NonPlayableCharacter::addItemToInventory(std::shared_ptr<Item> item) {
+  m_inventory.push_back(std::move(item));
 }
 
 int NonPlayableCharacter::getMeleeHitChance() const { return m_meleeHitChance; }
