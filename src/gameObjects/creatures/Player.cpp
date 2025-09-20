@@ -8,9 +8,9 @@
 #include <memory>
 
 Player::Player(const Point &position, std::string_view currentMap,
-               int maxHealthPoints)
+               int maxHealthPoints, Stats stats)
     : Creature('@', position, currentMap, maxHealthPoints, "you"),
-      m_shoveAction{} {}
+      m_stats{stats}, m_shoveAction{} {}
 
 void Player::takeItem(std::shared_ptr<Item> item) {
   if (item) {
@@ -139,12 +139,23 @@ std::string Player::meleeAttack(GameSession &gameSession,
   return m_meleeAttack->playerExecute(gameSession, direction);
 }
 
+int Player::getStrength() const { return m_stats.strength; }
+int Player::getDexterity() const { return m_stats.dexterity; }
+int Player::getIntelligence() const { return m_stats.intelligence; }
+int Player::getConstitution() const { return m_stats.constitution; }
+
+int Player::getMeleeHitChance() const {
+  return Settings::g_baseHitChance + (getStrength() * 5);
+}
+int Player::getDistanceHitChance() const {
+  return Settings::g_baseHitChance + (getDexterity() * 5);
+}
 int Player::getMeleeDamage() const {
   auto rightHandItem{m_equipment.rightHand.lock()};
   if (auto rightHandWeapon = std::dynamic_pointer_cast<Weapon>(rightHandItem))
     if (rightHandWeapon->getWeaponType() == Weapon::melee)
-      return rightHandWeapon->getDamage();
-  return 1; // magic number for fist damage.. will fix later
+      return rightHandWeapon->getDamage() + getStrength();
+  return 1 + getStrength(); // magic number for fist damage.. will fix later
 }
 
 int Player::getMeleeRange() const {

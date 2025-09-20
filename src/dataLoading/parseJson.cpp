@@ -68,7 +68,9 @@ void placeEnemies(
     char symbol{std::string(enemy[0])[0]}; // json doesnt have char
     Point pos{enemy[1][0], enemy[1][1]};
     int maxHealth{enemy[2]};
-    const auto &itemIds{enemy[3]};
+    int meleeHitChance{enemy[3]};
+    int distanceHitChance{enemy[4]};
+    const auto &itemIds{enemy[5]};
     std::vector<std::shared_ptr<Item>> loot{};
     for (auto itemId : itemIds) {
       if (items.contains(itemId))
@@ -76,12 +78,13 @@ void placeEnemies(
       else
         std::cout << itemId << " not added, cant find it in items.\n";
     }
-    std::string name{enemy[4]};
-    std::string desc{enemy[5]};
-    std::string descDead{enemy[6]};
+    std::string name{enemy[6]};
+    std::string desc{enemy[7]};
+    std::string descDead{enemy[8]};
 
     auto npc{std::make_shared<NonPlayableCharacter>(
-        symbol, pos, map.getName(), maxHealth, loot, name, desc, descDead)};
+        symbol, pos, map.getName(), maxHealth, name, meleeHitChance,
+        distanceHitChance, loot, desc, descDead)};
     gameSession.addNpc(npc);
   }
 }
@@ -121,8 +124,7 @@ void placeObjects(
 }
 
 void DataLoader::populateGameSession(
-    [[maybe_unused]] std::unordered_map<std::string, std::shared_ptr<Item>>
-        &items,
+    std::unordered_map<std::string, std::shared_ptr<Item>> &items,
     GameSession &gameSession) {
   std::unordered_map<std::string, Map> allMaps{};
   std::vector<std::string> allLevelNames{getLevelJsonFiles("../data/")};

@@ -13,23 +13,16 @@
 #include <thread>
 #include <vector>
 
-NonPlayableCharacter::NonPlayableCharacter(char symbol, const Point &point,
-                                           std::string_view currentMap,
-                                           int maxHealthPoints,
-                                           std::string_view name,
-                                           std::string_view description,
-                                           std::string_view deadDescription)
-    : Creature{symbol, point, currentMap, maxHealthPoints, name, description},
-      m_deadDescription{deadDescription} {}
-
 NonPlayableCharacter::NonPlayableCharacter(
     char symbol, const Point &point, std::string_view currentMap,
-    int maxHealthPoints, std::vector<std::shared_ptr<Item>> items,
-    std::string_view name, std::string_view description,
-    std::string_view deadDescription)
-    : NonPlayableCharacter{symbol, point,       currentMap,     maxHealthPoints,
-                           name,   description, deadDescription} {
-  m_inventory = std::move(items);
+    int maxHealthPoints, std::string_view name, int m_meleeHitChance,
+    int m_distanceHitChance, std::vector<std::shared_ptr<Item>> items,
+    std::string_view description, std::string_view deadDescription)
+    : Creature{symbol, point, currentMap, maxHealthPoints, name, description},
+      m_deadDescription{deadDescription}, m_meleeHitChance{m_meleeHitChance},
+      m_distanceHitChance{m_distanceHitChance} {
+  if (!items.empty())
+    m_inventory = std::move(items);
 }
 
 std::string_view NonPlayableCharacter::getDeadDescription() const {
@@ -40,6 +33,10 @@ std::vector<std::shared_ptr<Item>> NonPlayableCharacter::getInventory() const {
   return m_inventory;
 }
 
+int NonPlayableCharacter::getMeleeHitChance() const { return m_meleeHitChance; }
+int NonPlayableCharacter::getDistanceHitChance() const {
+  return m_distanceHitChance;
+}
 int NonPlayableCharacter::getMeleeDamage() const { return m_meleeDamage; }
 int NonPlayableCharacter::getMeleeRange() const { return m_meleeRange; }
 int NonPlayableCharacter::getDistanceDamage() const { return m_distanceDamage; }

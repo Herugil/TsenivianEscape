@@ -2,6 +2,7 @@
 #include "core/GameSession.h"
 #include "map/Point.h"
 #include "utils/GeometryUtils.h"
+#include "utils/Random.h"
 #include <memory>
 
 MeleeAttack::MeleeAttack(std::string_view name) : Action(name, true, true) {}
@@ -13,10 +14,14 @@ std::string MeleeAttack::execute([[maybe_unused]] GameSession &gameSession,
     if (GeometryUtils::distanceL2(actor.getPosition(), target.getPosition()) >
         actor.getMeleeRange())
       return result.str();
-    int m_damage{actor.getMeleeDamage()};
-    target.takeDamage(m_damage);
-    result << m_damage << "  damage dealt to " << target.getName() << " by "
-           << actor.getName() << ".\n";
+    if (Random::rollD100() > actor.getMeleeHitChance()) {
+      result << actor.getName() << " missed " << target.getName() << ".\n";
+    } else {
+      int m_damage{actor.getMeleeDamage()};
+      target.takeDamage(m_damage);
+      result << m_damage << "  damage dealt to " << target.getName() << " by "
+             << actor.getName() << ".\n";
+    }
   }
   return result.str();
 }

@@ -28,6 +28,8 @@ public:
   bool isDead() const;
   void takeDamage(int damage);
   const std::string &getName() const;
+  virtual int getMeleeHitChance() const = 0;
+  virtual int getDistanceHitChance() const = 0;
   virtual int getMeleeDamage() const = 0;
   virtual int getMeleeRange() const = 0;
   virtual int getDistanceDamage() const = 0;

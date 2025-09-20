@@ -29,7 +29,9 @@
     [
       "e",
       [1, 8],
-      1,
+      10,
+      50,
+      50,
       ["itemBanana"],
       "Gruff looking man",
       "A gruff looking man.",
@@ -38,7 +40,9 @@
     [
       "E",
       [8, 2],
-      1,
+      10,
+      50,
+      50,
       ["itemBanana"],
       "Gruff looking man",
       "A gruff looking man.",
@@ -47,7 +51,9 @@
     [
       "P",
       [5, 2],
-      1,
+      10,
+      50,
+      50,
       ["itemBanana"],
       "Gruff looking man",
       "A gruff looking man.",

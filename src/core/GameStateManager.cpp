@@ -15,6 +15,9 @@ GameStateManager::GameStateManager(GameSession &&gameSession)
 
 void GameStateManager::mainLoop() {
   while (true) {
+    if (m_gameSession.getPlayer().isDead()) {
+      m_currentState = GameState::GameOver;
+    }
     switch (m_currentState) {
     case GameState::Exploration:
       m_interactionResult.interactedObject = nullptr;
@@ -51,6 +54,9 @@ void GameStateManager::mainLoop() {
     case GameState::ItemInspect:
       handleItemInspect();
       break;
+    case GameState::GameOver:
+      handleGameOver();
+      return;
     default:
       m_currentState = GameState::Exploration;
       break;
@@ -232,6 +238,8 @@ void GameStateManager::handleActions() {
     auto pressedKey{
         static_cast<std::size_t>(CommandHandler::getPressedKey(command))};
     auto action{player.getAction(pressedKey)};
+    if (!action)
+      return;
     if (action->needsHotkeyInput()) {
       m_gameSession.displayEnemiesInMap();
       auto hotkeyCommand{CommandHandler::getCommand(Input::getKeyBlocking())};
@@ -324,4 +332,11 @@ void GameStateManager::handleCombatEnemyTurn() {
     }
   } else
     m_currentState = GameState::Exploration;
+}
+
+void GameStateManager::handleGameOver() {
+  ScreenUtils::clearScreen();
+  std::cout << "Game Over! You have died.\n";
+  std::cout << "Press any key to exit.\n";
+  Input::getKeyBlocking();
 }

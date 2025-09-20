@@ -14,14 +14,22 @@
 
 class GameSession;
 
-struct Equipment {
-  std::weak_ptr<Item> rightHand{};
-  std::weak_ptr<Item> leftHand{};
-  // will see the rest later..
-};
-
 class Player : public Creature {
+public:
+  struct Equipment {
+    std::weak_ptr<Item> rightHand{};
+    std::weak_ptr<Item> leftHand{};
+    // will see the rest later..
+  };
+  struct Stats {
+    int strength{};
+    int dexterity{};
+    int intelligence{};
+    int constitution{};
+  };
+
 private:
+  Stats m_stats{};
   Equipment m_equipment{};
   Shove m_shoveAction{};
   std::shared_ptr<MeleeAttack> m_meleeAttack{
@@ -29,7 +37,7 @@ private:
 
 public:
   Player(const Point &position, std::string_view currentMap,
-         int maxHealthPoints);
+         int maxHealthPoints, Stats stats = Stats{1, 5, 1, 1});
   void takeItem(std::shared_ptr<Item> item);
   void displayInventory(std::size_t page = 0) const;
   void displayActions() const;
@@ -42,7 +50,12 @@ public:
   std::string shove(GameSession &gameSession, Directions::Direction direction);
   std::string meleeAttack(GameSession &gameSession,
                           Directions::Direction direction);
-
+  int getStrength() const;
+  int getDexterity() const;
+  int getIntelligence() const;
+  int getConstitution() const;
+  int getMeleeHitChance() const override;
+  int getDistanceHitChance() const override;
   int getMeleeDamage() const override;
   int getMeleeRange() const override;
   int getDistanceDamage() const override;

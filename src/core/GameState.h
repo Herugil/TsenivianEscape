@@ -12,7 +12,8 @@ enum class GameState {
   Container,
   CombatPlayerTurn,
   CombatEnemyTurn,
-  ItemInspect
+  ItemInspect,
+  GameOver,
 };
 
 struct InteractionResult {

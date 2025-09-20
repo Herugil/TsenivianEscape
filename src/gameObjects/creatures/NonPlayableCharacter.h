@@ -20,6 +20,8 @@ public:
 
 protected:
   std::string m_deadDescription{};
+  int m_meleeHitChance{};
+  int m_distanceHitChance{};
   int m_meleeRange{Settings::g_baseEnemyRange};
   int m_meleeDamage{Settings::g_baseEnemyDamage};
   int m_distanceRange{Settings::g_baseEnemyDistanceRange};
@@ -31,17 +33,16 @@ public:
   NonPlayableCharacter(char symbol, const Point &point,
                        std::string_view currentMap, int maxHealthPoints,
                        std::string_view name,
-                       std::string_view description = "enemy",
-                       std::string_view deadDescription = "");
-  NonPlayableCharacter(char symbol, const Point &point,
-                       std::string_view currentMap, int maxHealthPoints,
-                       std::vector<std::shared_ptr<Item>>,
-                       std::string_view name,
+                       int m_meleeHitChance = Settings::g_baseHitChance,
+                       int m_distanceHitChance = Settings::g_baseHitChance,
+                       std::vector<std::shared_ptr<Item>> inventory = {},
                        std::string_view description = "enemy",
                        std::string_view deadDescription = "");
   std::string_view getDeadDescription() const;
   std::vector<std::shared_ptr<Item>> getInventory() const;
   std::string executeBasicAttack(Creature &target, GameSession &gameSession);
+  int getMeleeHitChance() const override;
+  int getDistanceHitChance() const override;
   int getMeleeDamage() const override;
   int getMeleeRange() const override;
   int getDistanceDamage() const override;

@@ -25,6 +25,7 @@ private:
   void handleCombatPlayerTurn();
   void handleCombatEnemyTurn();
   void handleItemInspect();
+  void handleGameOver();
   void setCombatState();
 
 public:
