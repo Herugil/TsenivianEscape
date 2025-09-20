@@ -25,6 +25,16 @@ NonPlayableCharacter::NonPlayableCharacter(
     m_inventory = std::move(items);
 }
 
+NonPlayableCharacter::NonPlayableCharacter(const NonPlayableCharacter &other)
+    : Creature(other), m_deadDescription(other.m_deadDescription),
+      m_meleeHitChance(other.m_meleeHitChance),
+      m_distanceHitChance(other.m_distanceHitChance),
+      m_meleeRange(other.m_meleeRange), m_meleeDamage(other.m_meleeDamage),
+      m_distanceRange(other.m_distanceRange),
+      m_distanceDamage(other.m_distanceDamage),
+      m_currentPath(other.m_currentPath),
+      m_currentBehavior(other.m_currentBehavior) {}
+
 std::shared_ptr<NonPlayableCharacter> NonPlayableCharacter::clone() const {
   return std::make_shared<NonPlayableCharacter>(*this);
 }

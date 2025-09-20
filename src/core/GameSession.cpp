@@ -50,6 +50,7 @@ const Point &GameSession::getPlayerPos() const {
 }
 
 Player &GameSession::getPlayer() { return *m_player; }
+const Player &GameSession::getPlayer() const { return *m_player; }
 Map &GameSession::getMap() { return *m_currentMap; }
 const Map &GameSession::getMap() const { return *m_currentMap; }
 std::shared_ptr<Player> GameSession::getPlayerPtr() const { return m_player; }
@@ -147,6 +148,7 @@ void GameSession::initializeTurnOrder() {
   m_player->setCombat();
   if (m_turnOrder.size() <= 1) { // player is alone in initiative
     // at the start of the game
+    m_currentTurn = 1;
     m_turnOrder.clear();
     m_turnOrder.push_back(m_player);
     for (std::weak_ptr<Creature> npc : m_npcs) {
@@ -217,6 +219,7 @@ void GameSession::incrementTurnIndex() {
   }
   if (m_currentTurnIndex >= m_turnOrder.size() - 1) {
     m_currentTurnIndex = 0; // loop back to first player
+    incrementCurrentTurn();
   } else {
     m_currentTurnIndex++;
   }
@@ -251,4 +254,8 @@ void GameSession::resetInitiative() {
   m_player->unsetCombat();
   m_turnOrder.clear();
   m_currentTurnIndex = 0;
+  m_currentTurn = 0;
 }
+
+int GameSession::getCurrentTurn() const { return m_currentTurn; }
+void GameSession::incrementCurrentTurn() { ++m_currentTurn; }

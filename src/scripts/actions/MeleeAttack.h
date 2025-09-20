@@ -1,6 +1,6 @@
 #pragma once
 #include "gameObjects/creatures/Creature.h"
-#include "scripts/Action.h"
+#include "scripts/actions/Action.h"
 
 class GameSession;
 

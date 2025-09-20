@@ -3,14 +3,17 @@
 #include "gameObjects/items/Weapon.h"
 #include "map/Map.h"
 #include "map/Point.h"
-#include "scripts/MeleeAttack.h"
-#include "scripts/RangedAttack.h"
+#include "scripts/actions/Dodge.h"
+#include "scripts/actions/MeleeAttack.h"
+#include "scripts/actions/RangedAttack.h"
 #include <memory>
 
 Player::Player(const Point &position, std::string_view currentMap,
                int maxHealthPoints, Stats stats)
     : Creature('@', position, currentMap, maxHealthPoints, "you"),
-      m_stats{stats}, m_shoveAction{} {}
+      m_stats{stats}, m_shoveAction{} {
+  m_actions.emplace_back(std::make_shared<Dodge>(Dodge("Dodge")));
+}
 
 void Player::takeItem(std::shared_ptr<Item> item) {
   if (item) {
@@ -143,7 +146,14 @@ int Player::getStrength() const { return m_stats.strength; }
 int Player::getDexterity() const { return m_stats.dexterity; }
 int Player::getIntelligence() const { return m_stats.intelligence; }
 int Player::getConstitution() const { return m_stats.constitution; }
-
+int Player::getEvasion() const {
+  int evasion{getDexterity() * 5};
+  for (const auto &passive : m_passiveEffects) {
+    if (passive->getType() == PassiveEffect::Type::EvasionBonus)
+      evasion += passive->getValue();
+  }
+  return evasion;
+}
 int Player::getMeleeHitChance() const {
   return Settings::g_baseHitChance + (getStrength() * 5);
 }

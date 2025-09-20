@@ -1,4 +1,4 @@
-#include "scripts/MeleeAttack.h"
+#include "scripts/actions/MeleeAttack.h"
 #include "core/GameSession.h"
 #include "map/Point.h"
 #include "utils/GeometryUtils.h"
@@ -14,7 +14,7 @@ std::string MeleeAttack::execute([[maybe_unused]] GameSession &gameSession,
     if (GeometryUtils::distanceL2(actor.getPosition(), target.getPosition()) >
         actor.getMeleeRange())
       return result.str();
-    if (Random::rollD100() > actor.getMeleeHitChance()) {
+    if (Random::rollD100() > actor.getMeleeHitChance() - target.getEvasion()) {
       result << actor.getName() << " missed " << target.getName() << ".\n";
     } else {
       int m_damage{actor.getMeleeDamage()};

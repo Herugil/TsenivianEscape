@@ -147,6 +147,7 @@ void GameStateManager::HandleWorld() {
   } else if (CommandHandler::isSkipTurnCommand(command)) {
     if (m_currentState == GameState::CombatPlayerTurn) {
       m_gameSession.getPlayer().resetTurn();
+      m_gameSession.getPlayer().reduceCooldowns();
       m_gameSession.incrementTurnIndex();
       m_currentState = GameState::Exploration;
     }
@@ -254,18 +255,18 @@ void GameStateManager::handleActions() {
                                                    *targetCreature);
         }
       }
-    } else if (action) {
-      if (action->needsDirectionalInput()) {
-        auto directionCommand{
-            CommandHandler::getCommand(Input::getKeyBlocking())};
-        if (CommandHandler::isMovementCommand(directionCommand)) {
-          auto log{action->playerExecute(
-              m_gameSession,
-              static_cast<Directions::Direction>(directionCommand))};
-          m_logsToDisplay << log;
-        }
-      } else
-        ; // TODO: non directional actions (easy but not implemented)
+    } else if ((action->needsDirectionalInput())) {
+      auto directionCommand{
+          CommandHandler::getCommand(Input::getKeyBlocking())};
+      if (CommandHandler::isMovementCommand(directionCommand)) {
+        auto log{action->playerExecute(
+            m_gameSession,
+            static_cast<Directions::Direction>(directionCommand))};
+        m_logsToDisplay << log;
+      }
+    } else {
+      auto log{action->playerExecute(m_gameSession)};
+      m_logsToDisplay << log;
     }
   }
   m_logsToDisplay << m_gameSession.cleanDeadNpcs();
@@ -294,6 +295,7 @@ void GameStateManager::handleCombatPlayerTurn() {
   auto &player{m_gameSession.getPlayer()};
   ScreenUtils::clearScreen();
   m_gameSession.displayMap();
+  std::cout << "Round " << m_gameSession.getCurrentTurn() << "\n";
   std::cout << "Your turn: \n";
   Interface::displayCombatInterface(player);
   HandleWorld();
@@ -312,12 +314,14 @@ void GameStateManager::handleCombatEnemyTurn() {
             std::dynamic_pointer_cast<NonPlayableCharacter>(activeCreature)}) {
       ScreenUtils::clearScreen();
       m_gameSession.displayMap();
+      std::cout << "Round " << m_gameSession.getCurrentTurn() << "\n";
       std::cout << enemy->getName() << " turn: \n";
       Interface::displayCombatInterface(m_gameSession.getPlayer());
       std::this_thread::sleep_for(
           std::chrono::milliseconds(Settings::g_timeEnemyActionMS));
       if (enemy->getCurrentBehavior() == NonPlayableCharacter::skipTurn) {
         enemy->resetTurn();
+        enemy->reduceCooldowns();
         enemy->setDefaultBehavior();
         m_gameSession.incrementTurnIndex();
         if (m_logsToDisplay.str().empty()) {

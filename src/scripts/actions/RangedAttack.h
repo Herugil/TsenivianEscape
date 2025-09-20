@@ -1,7 +1,7 @@
 #pragma once
 #include "core/GameSession.h"
 #include "gameObjects/creatures/Creature.h"
-#include "scripts/Action.h"
+#include "scripts/actions/Action.h"
 
 class RangedAttack : public Action {
 

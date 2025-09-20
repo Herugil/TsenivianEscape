@@ -1,7 +1,7 @@
 #pragma once
 #include "gameObjects/GameObject.h"
 #include "gameObjects/creatures/Creature.h"
-#include "scripts/Action.h"
+#include "scripts/actions/Action.h"
 #include <memory>
 
 class GameSession;

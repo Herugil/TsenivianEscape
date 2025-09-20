@@ -1,4 +1,4 @@
-#include "scripts/RangedAttack.h"
+#include "scripts/actions/RangedAttack.h"
 #include "map/Point.h"
 #include "utils/GeometryUtils.h"
 #include "utils/Random.h"
@@ -18,7 +18,8 @@ std::string RangedAttack::execute([[maybe_unused]] GameSession &gameSession,
     if (GeometryUtils::distanceL2(actor.getPosition(), target.getPosition()) >
         actor.getDistanceRange()) {
       result << "Target was out of range, attack failed!\n";
-    } else if (Random::rollD100() > actor.getDistanceHitChance()) {
+    } else if (Random::rollD100() >
+               actor.getDistanceHitChance() - target.getEvasion()) {
       result << actor.getName() << " missed " << target.getName() << ".\n";
     } else {
       int m_damage{actor.getDistanceDamage()};

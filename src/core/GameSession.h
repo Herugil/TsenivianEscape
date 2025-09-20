@@ -21,6 +21,7 @@ class GameSession {
   std::unordered_map<std::string, Map> m_allMaps;
   std::size_t m_currentTurnIndex{0};
   Map *m_currentMap{nullptr};
+  int m_currentTurn{};
 
 public:
   GameSession(std::shared_ptr<Player> player);
@@ -40,6 +41,7 @@ public:
   std::shared_ptr<Player> getPlayerPtr() const; // useful in some cases where
   // player ptr is required as a parameter (eg move)
   Player &getPlayer();
+  const Player &getPlayer() const;
   Map &getMap();
   const Map &getMap() const;
   void addMap(Map &&map);
@@ -49,6 +51,8 @@ public:
   std::weak_ptr<Creature> getActiveCreature() const;
   void initializeTurnOrder();
   void resetInitiative();
+  int getCurrentTurn() const;
+  void incrementCurrentTurn();
 
   std::vector<std::weak_ptr<NonPlayableCharacter>> getEnemiesInMap() const;
   void displayEnemiesInMap() const;

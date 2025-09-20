@@ -2,7 +2,7 @@
 #include "core/GameSession.h"
 #include "gameObjects/GameObject.h"
 #include "map/Point.h"
-#include "scripts/MeleeAttack.h"
+#include "scripts/actions/MeleeAttack.h"
 
 Creature::Creature(char symbol, const Point &position,
                    std::string_view currentMap, int maxHealthPoints,
@@ -14,10 +14,26 @@ Creature::Creature(char symbol, const Point &position,
   m_healthPoints = m_maxHealthPoints;
 }
 
+Creature::Creature(const Creature &other)
+    : GameObject(other), m_inventory{}, m_actions{other.m_actions},
+      m_healthPoints{other.m_healthPoints},
+      m_maxHealthPoints{other.m_maxHealthPoints},
+      m_maxMovementPoints{other.m_maxMovementPoints},
+      m_maxActionPoints{other.m_maxActionPoints},
+      m_movementPoints{other.m_movementPoints},
+      m_actionPoints{other.m_actionPoints}, m_inCombat{other.m_inCombat} {
+  for (const auto &effect : other.m_passiveEffects) {
+    m_passiveEffects.emplace_back(std::make_unique<PassiveEffect>(*effect));
+  }
+  for (const auto &item : other.m_inventory) {
+    m_inventory.emplace_back(item->clone());
+  }
+}
+
 int Creature::getHealthPoints() const { return m_healthPoints; }
 int Creature::getMaxHealthPoints() const { return m_maxHealthPoints; }
 bool Creature::isDead() const { return m_healthPoints <= 0; }
-
+int Creature::getEvasion() const { return 0; }
 void Creature::takeDamage(int damage) { m_healthPoints -= damage; }
 
 const std::string &Creature::getName() const { return m_name; }
@@ -30,6 +46,23 @@ bool Creature::useActionPoints(int cost) {
   if (returnVal)
     m_actionPoints -= cost;
   return returnVal;
+}
+
+void Creature::reduceCooldowns() {
+  for (auto it{m_passiveEffects.begin()}; it < m_passiveEffects.end(); ++it) {
+    (*it)->applyEffect();
+    (*it)->decrementRounds();
+  }
+  m_passiveEffects.erase(
+      std::remove_if(m_passiveEffects.begin(), m_passiveEffects.end(),
+                     [](const std::unique_ptr<PassiveEffect> &ptr) {
+                       return ptr->isExpired();
+                     }),
+      m_passiveEffects.end());
+}
+
+void Creature::addPassiveEffect(const PassiveEffect &passive) {
+  m_passiveEffects.emplace_back(std::make_unique<PassiveEffect>(passive));
 }
 
 void Creature::resetTurn() {

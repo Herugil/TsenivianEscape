@@ -5,9 +5,9 @@
 #include "input/Directions.h"
 #include "input/Input.h"
 #include "map/Point.h"
-#include "scripts/Action.h"
-#include "scripts/MeleeAttack.h"
-#include "scripts/Shove.h"
+#include "scripts/actions/Action.h"
+#include "scripts/actions/MeleeAttack.h"
+#include "scripts/actions/Shove.h"
 #include <memory>
 #include <sstream>
 #include <vector>
@@ -37,7 +37,7 @@ private:
 
 public:
   Player(const Point &position, std::string_view currentMap,
-         int maxHealthPoints, Stats stats = Stats{1, 5, 1, 1});
+         int maxHealthPoints, Stats stats = Stats{1, 1, 1, 1});
   void takeItem(std::shared_ptr<Item> item);
   void displayInventory(std::size_t page = 0) const;
   void displayActions() const;
@@ -54,6 +54,7 @@ public:
   int getDexterity() const;
   int getIntelligence() const;
   int getConstitution() const;
+  int getEvasion() const override;
   int getMeleeHitChance() const override;
   int getDistanceHitChance() const override;
   int getMeleeDamage() const override;

@@ -36,6 +36,10 @@ public:
                                     [[maybe_unused]] Creature &target) const {
     return {};
   };
+  virtual std::string
+  playerExecute([[maybe_unused]] GameSession &gameSession) const {
+    return {};
+  };
   // these actions arent pure virtual because most actions need
   // one of the two, not both
   bool needsDirectionalInput() const { return m_needsDirectionalInput; }

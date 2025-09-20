@@ -2,7 +2,7 @@
 #include "core/GameSession.h"
 #include "gameObjects/items/Item.h"
 #include "input/Directions.h"
-#include "scripts/Shove.h" // meeeh
+#include "scripts/actions/Shove.h" // meeeh
 #include "utils/ScreenUtils.h"
 
 #ifndef _WIN32
