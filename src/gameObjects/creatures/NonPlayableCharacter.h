@@ -15,6 +15,7 @@ public:
   enum Behaviors {
     basicAttack,
     skipTurn,
+    flee,
     defaultBehavior,
   };
   enum AITypes {
@@ -58,11 +59,13 @@ public:
   int getDistanceDamage() const override;
   int getDistanceRange() const override;
   Behaviors getCurrentBehavior() const;
-  void setCurrentBehavior(GameSession &gameSession);
+  std::string setCurrentBehavior(GameSession &gameSession);
   void setSkipTurn();
   void setDefaultBehavior();
   std::deque<Point> &getCurrentPath();
   void setCurrentPath(GameSession &gameSession);
+  std::deque<Point> getPathFlee(GameSession &gameSession);
+  std::deque<Point> getPathAttack(GameSession &gameSession);
   void clearCurrentPath() { m_currentPath.clear(); }
   static AITypes stringToAIType(std::string_view str);
 

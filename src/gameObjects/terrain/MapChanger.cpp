@@ -27,9 +27,10 @@ void MapChanger::activateWalkOn(std::shared_ptr<GameObject> gameObject,
     gameSession.getMap().placeTop(player, m_spawningPoint);
     gameSession.displayMap();
     return;
-  } else if (auto creature{std::dynamic_pointer_cast<Creature>(gameObject)}) {
+  } else if (auto creature{
+                 std::dynamic_pointer_cast<NonPlayableCharacter>(gameObject)}) {
     for (int i{0}; i < Directions::nbDirections; ++i) {
-      auto adjPoint{creature->getPosition().getAdjacentPoint(
+      auto adjPoint{m_spawningPoint.getAdjacentPoint(
           static_cast<Directions::Direction>(i))};
       if (gameSession.getMap(m_targetMap).isAvailable(adjPoint)) {
         gameSession.getMap().removeTop(creature->getPosition());
@@ -38,6 +39,8 @@ void MapChanger::activateWalkOn(std::shared_ptr<GameObject> gameObject,
         gameSession.getMap(m_targetMap).placeTop(creature, adjPoint);
         creature->setPosition(adjPoint);
         creature->resetTurn();
+        creature->setDefaultBehavior();
+        // if creature was fleeing, it shouldnt be anymore
         return;
       }
     }

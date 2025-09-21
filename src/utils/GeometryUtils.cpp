@@ -1,4 +1,5 @@
 #include "GeometryUtils.h"
+#include "core/GameSession.h"
 #include <algorithm>
 #include <cmath>
 
@@ -101,4 +102,23 @@ std::vector<Point> GeometryUtils::drawStraightLine(const Point &p1,
       return drawStraightLineHigh(p1, p2);
     }
   }
+}
+
+std::deque<Point>
+GeometryUtils::sortPointsAndFindPath(std::vector<Point> points,
+                                     const Point &startPoint,
+                                     const GameSession &gameSession) {
+  std::sort(points.begin(), points.end(),
+            [startPoint](const Point &p1, const Point &p2) {
+              return (GeometryUtils::distanceL2(startPoint, p1) >=
+                      GeometryUtils::distanceL2(startPoint, p2));
+            });
+  for (auto safePoint : points) {
+    std::deque<Point> res{gameSession.getMap().findPath(startPoint, safePoint)};
+    if (!res.empty()) {
+      res.pop_front(); // this is the current point! unneeded
+      return res;
+    }
+  }
+  return {};
 }

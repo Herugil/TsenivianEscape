@@ -31,12 +31,6 @@
       "position": [7, 5],
       "id": "enemyRat",
       "inventory": []
-    },
-    {
-      "symbol": "E",
-      "position": [8, 2],
-      "id": "enemyBandit",
-      "inventory": ["itemBanana", "itemDagger"]
     }
   ],
   "gameObjects": [

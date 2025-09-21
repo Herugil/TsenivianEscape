@@ -1,12 +1,15 @@
 #include "gameObjects/creatures/NonPlayableCharacter.h"
+#include "AISettings.h"
 #include "core/GameSession.h"
 #include "gameObjects/creatures/Creature.h"
 #include "gameObjects/creatures/NonPlayableCharacter.h"
 #include "gameObjects/items/Item.h"
 #include "gameObjects/terrain/Container.h"
+#include "gameObjects/terrain/MapChanger.h"
 #include "input/Directions.h"
 #include "map/Point.h"
 #include "utils/GeometryUtils.h"
+#include "utils/Random.h"
 #include <algorithm>
 #include <memory>
 #include <queue>
@@ -66,17 +69,34 @@ std::string NonPlayableCharacter::executeBasicAttack(Creature &target,
                                                      GameSession &gameSession) {
   auto basicAction{m_actions[0]};
   return basicAction->execute(gameSession, *this, target);
-  // this should check for range, etc
-  // for now will hit the player anywhere on the map
 }
 
-void NonPlayableCharacter::setCurrentBehavior(
+std::string NonPlayableCharacter::setCurrentBehavior(
     [[maybe_unused]] GameSession &gameSession) {
+  std::ostringstream res{};
   if (m_actionPoints == 0) {
     m_currentBehavior = skipTurn;
-    return;
+  } else {
+    switch (m_AIType) {
+    case aggressiveMelee:
+      m_currentBehavior = basicAttack;
+      break;
+    case waryMelee:
+      if (m_healthPoints <=
+          m_maxHealthPoints * AISettings::g_waryMeleeFleeHealthPercent / 100) {
+        if (Random::rollD100() < AISettings::g_waryMeleeFleeChance) {
+          m_currentBehavior = flee;
+          res << getName() << " starts fleeing!\n";
+        } else
+          m_currentBehavior = basicAttack;
+      } else
+        m_currentBehavior = basicAttack;
+      break;
+    default:
+      m_currentBehavior = defaultBehavior;
+    }
   }
-  m_currentBehavior = basicAttack;
+  return res.str();
 }
 
 NonPlayableCharacter::Behaviors
@@ -95,37 +115,73 @@ void NonPlayableCharacter::setCurrentPath(GameSession &gameSession) {
   std::vector<Point> possiblePoints{};
   switch (m_currentBehavior) {
   case basicAttack:
-    if (GeometryUtils::distanceL1(getPosition(), gameSession.getPlayerPos()) <=
-        getMeleeRange())
-      m_currentPath.clear();
-    // enemy is already in range, no movement needed
-    for (int i{0};
-         static_cast<Directions::Direction>(i) < Directions::nbDirections;
-         ++i) {
-      Point potentialDestination{gameSession.getPlayerPos().getAdjacentPoint(
-          static_cast<Directions::Direction>(i))};
-      if (!gameSession.getMap().isAvailable(potentialDestination))
-        continue; // cant go there
-      possiblePoints.push_back(potentialDestination);
-    }
-    std::sort(possiblePoints.begin(), possiblePoints.end(),
-              [this](const Point &p1, const Point &p2) {
-                return GeometryUtils::distanceL1(getPosition(), p1) <=
-                       GeometryUtils::distanceL1(getPosition(), p2);
-              });
-    for (auto possiblePoint : possiblePoints) {
-      std::deque<Point> res{
-          gameSession.getMap().findPath(getPosition(), possiblePoint)};
-      if (!res.empty()) {
-        res.pop_front(); // this is the current point! unneeded
-        m_currentPath = res;
-        return;
-      }
-    }
-
+    m_currentPath = getPathAttack(gameSession);
+    return;
+  case flee:
+    m_currentPath = getPathFlee(gameSession);
+    return;
   default: // actor has no goal, so he doesnt really need to move..
     m_currentPath.clear(); // will remain in place
   }
+}
+
+std::deque<Point> NonPlayableCharacter::getPathFlee(GameSession &gameSession) {
+  std::vector<Point> possiblePoints{};
+  std::vector<Point> safePoints{};
+  std::vector<Point> mapChangers{};
+  std::deque<Point> path{};
+  for (int i{0}; i < gameSession.getMap().getWidth(); ++i) {
+    for (int j{0}; j < gameSession.getMap().getHeight(); ++j) {
+      Point potentialDestination{i, j};
+      if (!gameSession.getMap().isAvailable(potentialDestination))
+        continue; // cant go there
+      if (GeometryUtils::distanceL2(potentialDestination,
+                                    gameSession.getPlayerPos()) <=
+          GeometryUtils::distanceL2(getPosition(), gameSession.getPlayerPos()))
+        continue; // would get closer to player
+      if (gameSession.getMap().getFloorObject(potentialDestination)) {
+        if (auto{dynamic_cast<MapChanger *>(
+                gameSession.getMap().getFloorObject(potentialDestination))})
+          mapChangers.push_back(potentialDestination);
+        else
+          continue;
+      }
+      safePoints.push_back(potentialDestination);
+    }
+  }
+  std::sort(mapChangers.begin(), mapChangers.end(),
+            [this](const Point &p1, const Point &p2) {
+              return (GeometryUtils::distanceL2(getPosition(), p1) >=
+                      GeometryUtils::distanceL2(getPosition(), p2));
+            });
+  path = GeometryUtils::sortPointsAndFindPath(mapChangers, getPosition(),
+                                              gameSession);
+  if (!path.empty())
+    return path;
+  else
+    return GeometryUtils::sortPointsAndFindPath(safePoints, getPosition(),
+                                                gameSession);
+}
+
+std::deque<Point>
+NonPlayableCharacter::getPathAttack(GameSession &gameSession) {
+  std::vector<Point> possiblePoints{};
+  for (int i{0};
+       static_cast<Directions::Direction>(i) < Directions::nbDirections; ++i) {
+    Point potentialDestination{gameSession.getPlayerPos().getAdjacentPoint(
+        static_cast<Directions::Direction>(i))};
+    if (!gameSession.getMap().isAvailable(potentialDestination))
+      continue; // cant go there
+    possiblePoints.push_back(potentialDestination);
+  }
+  std::sort(possiblePoints.begin(), possiblePoints.end(),
+            [this](const Point &p1, const Point &p2) {
+              return GeometryUtils::distanceL1(getPosition(), p1) <=
+                     GeometryUtils::distanceL1(getPosition(), p2);
+            });
+  return GeometryUtils::sortPointsAndFindPath(possiblePoints, getPosition(),
+                                              gameSession);
+  return {};
 }
 
 NonPlayableCharacter::AITypes

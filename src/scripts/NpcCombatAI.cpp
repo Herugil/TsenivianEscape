@@ -17,7 +17,7 @@ NpcCombatAI::npcActCombat(GameSession &gameSession,
   std::ostringstream res;
   if (actor->getActionPoints() >= actor->getMaxActionPoints()) {
     // this is equivalent to starting a new turn
-    actor->setCurrentBehavior(gameSession);
+    res << actor->setCurrentBehavior(gameSession);
     actor->setCurrentPath(gameSession);
   }
   switch (actor->getCurrentBehavior()) {
@@ -30,7 +30,9 @@ NpcCombatAI::npcActCombat(GameSession &gameSession,
         return res.str();
       }
       res << actor->executeBasicAttack(gameSession.getPlayer(), gameSession);
-      actor->clearCurrentPath();
+      res << actor->setCurrentBehavior(gameSession);
+      actor->setCurrentPath(gameSession);
+      // after attack, recalculate behavior and path
       break;
     } else {
       if (!actor->getCurrentPath().empty()) {
@@ -42,11 +44,33 @@ NpcCombatAI::npcActCombat(GameSession &gameSession,
           gameSession.moveCreature(actor, direction);
           actor->getCurrentPath().pop_front(); // remove current point from path
         } else {
-          actor->setCurrentBehavior(gameSession);
+          res << actor->setCurrentBehavior(gameSession);
+          actor->setCurrentPath(gameSession);
           return res.str();
         }
         break;
       }
+    }
+  case NonPlayableCharacter::flee:
+    // the next part is so not dry, need to refactor
+    if (!actor->getCurrentPath().empty()) {
+      Point nextPoint{actor->getCurrentPath().front()};
+      Directions::Direction direction{
+          GeometryUtils::getRequiredDirection(actor->getPosition(), nextPoint)};
+      int costNextPoint{1}; // will be cost to get to nextPoint
+      if (actor->canMove(costNextPoint)) {
+        gameSession.moveCreature(actor, direction);
+        actor->getCurrentPath().pop_front(); // remove current point from path
+      } else {
+        res << actor->setCurrentBehavior(gameSession);
+        actor->setCurrentPath(gameSession);
+        return res.str();
+      }
+      break;
+    } else {
+      // no more path to flee, so just wait
+      actor->setSkipTurn();
+      return res.str();
     }
   default:
     res << actor->getName() << " doesn't know what to do!\n";
