@@ -31,6 +31,18 @@
       "position": [7, 5],
       "id": "enemyRat",
       "inventory": []
+    },
+    {
+      "symbol": "t",
+      "position": [7, 7],
+      "id": "enemyRat",
+      "inventory": []
+    },
+    {
+      "symbol": "R",
+      "position": [8, 5],
+      "id": "enemyGiantRat",
+      "inventory": ["itemBanana"]
     }
   ],
   "gameObjects": [
@@ -43,13 +55,13 @@
       "contents": ["itemSword", "itemBanana"]
     },
     {
-      "symbol": "O",
-      "position": [3, 2],
+      "symbol": " ",
+      "position": [0, 4],
       "type": "mapChanger",
       "name": "passage to the next room",
       "description": "A creaking, half open wooden door.",
       "destLevel": "level1",
-      "destPosition": [3, 2]
+      "destPosition": [8, 3]
     }
   ]
 }

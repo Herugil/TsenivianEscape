@@ -18,5 +18,15 @@
     "distanceHitChance": 50,
     "description": "A bandit with an untidy look, holding a club.",
     "deadDescription": "A dead bandit body."
+  },
+  "enemyGiantRat": {
+    "name": "Giant Rat",
+    "type": "waryMelee",
+    "maxHealth": 10,
+    "evasion": 5,
+    "meleeHitChance": 60,
+    "distanceHitChance": 0,
+    "description": "A giant rat, hungry and mean looking.",
+    "deadDescription": "A dead giant rat body."
   }
 }
