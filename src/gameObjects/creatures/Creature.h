@@ -16,6 +16,7 @@ protected:
   // this should probably be unique ptr, need to change, mb
   int m_healthPoints{};
   int m_maxHealthPoints{};
+  int m_evasion{};
   int m_maxMovementPoints{Settings::g_averageMoveSpeed};
   int m_maxActionPoints{Settings::g_numActions};
   std::vector<std::unique_ptr<PassiveEffect>> m_passiveEffects{};
@@ -25,7 +26,7 @@ protected:
 
 public:
   Creature(char symbol, const Point &position, std::string_view currentMap,
-           int maxHealthPoints, std::string_view name = "",
+           int maxHealthPoints, int evasion = 0, std::string_view name = "",
            std::string_view description = "");
   Creature(const Creature &other);
   int getHealthPoints() const;

@@ -6,9 +6,10 @@
 
 Creature::Creature(char symbol, const Point &position,
                    std::string_view currentMap, int maxHealthPoints,
-                   std::string_view name, std::string_view description)
+                   int evasion, std::string_view name,
+                   std::string_view description)
     : GameObject{true, false, symbol, currentMap, position, name, description},
-      m_maxHealthPoints{maxHealthPoints} {
+      m_maxHealthPoints{maxHealthPoints}, m_evasion{evasion} {
   m_actions.emplace_back(
       std::make_shared<MeleeAttack>("Attack with right hand weapon"));
   m_healthPoints = m_maxHealthPoints;
@@ -17,7 +18,7 @@ Creature::Creature(char symbol, const Point &position,
 Creature::Creature(const Creature &other)
     : GameObject(other), m_inventory{}, m_actions{other.m_actions},
       m_healthPoints{other.m_healthPoints},
-      m_maxHealthPoints{other.m_maxHealthPoints},
+      m_maxHealthPoints{other.m_maxHealthPoints}, m_evasion{other.m_evasion},
       m_maxMovementPoints{other.m_maxMovementPoints},
       m_maxActionPoints{other.m_maxActionPoints},
       m_movementPoints{other.m_movementPoints},
@@ -33,7 +34,7 @@ Creature::Creature(const Creature &other)
 int Creature::getHealthPoints() const { return m_healthPoints; }
 int Creature::getMaxHealthPoints() const { return m_maxHealthPoints; }
 bool Creature::isDead() const { return m_healthPoints <= 0; }
-int Creature::getEvasion() const { return 0; }
+int Creature::getEvasion() const { return m_evasion; }
 void Creature::takeDamage(int damage) { m_healthPoints -= damage; }
 
 const std::string &Creature::getName() const { return m_name; }

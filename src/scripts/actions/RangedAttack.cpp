@@ -4,7 +4,8 @@
 #include "utils/Random.h"
 #include <memory>
 
-RangedAttack::RangedAttack(std::string_view name) : Action(name, false, true) {}
+RangedAttack::RangedAttack(std::string_view name)
+    : Action(name, false, true, Stat::Dexterity) {}
 
 std::string RangedAttack::execute([[maybe_unused]] GameSession &gameSession,
                                   Creature &actor, Creature &target) const {

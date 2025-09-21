@@ -1,4 +1,5 @@
 #pragma once
+#include "gameObjects/creatures/Stats.h"
 #include "input/Directions.h"
 #include <sstream>
 #include <string>
@@ -18,12 +19,13 @@ protected:
   // command
   int m_cost{1}; // in some systems (pf2e) variable action cost
   // for 1 spell but not gonna bother here
+  Stat m_usedStat{};
 
 public:
   Action(std::string_view name, bool needsDirectionalInput,
-         bool needsHotkeyInput)
+         bool needsHotkeyInput, Stat usedStat = Stat::nbStats)
       : m_name{name}, m_needsHotkeyInput{needsHotkeyInput},
-        m_needsDirectionalInput{needsDirectionalInput} {}
+        m_needsDirectionalInput{needsDirectionalInput}, m_usedStat{usedStat} {}
   std::string_view getName() const { return m_name; }
   virtual std::string execute(GameSession &gameSession, Creature &actor,
                               Creature &target) const = 0;
@@ -44,6 +46,7 @@ public:
   // one of the two, not both
   bool needsDirectionalInput() const { return m_needsDirectionalInput; }
   bool needsHotkeyInput() const { return m_needsHotkeyInput; }
+  Stat getUsedStat() const { return m_usedStat; }
 
   virtual ~Action() = default;
   friend std::ostream &operator<<(std::ostream &out, const Action &action) {

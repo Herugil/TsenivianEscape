@@ -2,6 +2,7 @@
 #include "gameObjects/creatures/Creature.h"
 #include "gameObjects/creatures/NonPlayableCharacter.h"
 #include "gameObjects/creatures/Player.h"
+#include "gameObjects/creatures/Stats.h"
 #include "gameObjects/terrain/Container.h"
 #include "input/Directions.h"
 #include "map/Map.h"
@@ -55,5 +56,5 @@ public:
   void incrementCurrentTurn();
 
   std::vector<std::weak_ptr<NonPlayableCharacter>> getEnemiesInMap() const;
-  void displayEnemiesInMap() const;
+  void displayEnemiesInMap(Stat stat = Stat::nbStats) const;
 };

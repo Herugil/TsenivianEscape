@@ -4,7 +4,8 @@
 #include "utils/GeometryUtils.h"
 #include <memory>
 
-Shove::Shove(std::string_view name) : Action(name, true, false) {}
+Shove::Shove(std::string_view name)
+    : Action(name, true, false, Stat::Strength) {}
 
 std::string Shove::execute([[maybe_unused]] GameSession &gameSession,
                            Creature &actor,

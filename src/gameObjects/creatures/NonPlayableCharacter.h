@@ -32,9 +32,9 @@ protected:
 public:
   NonPlayableCharacter(char symbol, const Point &point,
                        std::string_view currentMap, int maxHealthPoints,
-                       std::string_view name,
-                       int m_meleeHitChance = Settings::g_baseHitChance,
-                       int m_distanceHitChance = Settings::g_baseHitChance,
+                       std::string_view name, int evasion = 0,
+                       int meleeHitChance = Settings::g_baseHitChance,
+                       int distanceHitChance = Settings::g_baseHitChance,
                        std::vector<std::shared_ptr<Item>> inventory = {},
                        std::string_view description = "enemy",
                        std::string_view deadDescription = "");

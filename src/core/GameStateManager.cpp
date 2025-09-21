@@ -242,7 +242,7 @@ void GameStateManager::handleActions() {
     if (!action)
       return;
     if (action->needsHotkeyInput()) {
-      m_gameSession.displayEnemiesInMap();
+      m_gameSession.displayEnemiesInMap(action->getUsedStat());
       auto hotkeyCommand{CommandHandler::getCommand(Input::getKeyBlocking())};
       if (CommandHandler::isHotkeyCommand(hotkeyCommand)) {
         auto pressedKey{static_cast<std::size_t>(

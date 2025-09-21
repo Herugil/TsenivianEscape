@@ -229,25 +229,45 @@ std::weak_ptr<Creature> GameSession::getActiveCreature() const {
   return m_turnOrder[m_currentTurnIndex];
 }
 
-void GameSession::displayEnemiesInMap() const {
+void GameSession::displayEnemiesInMap(Stat stat) const {
   auto enemies{getEnemiesInMap()};
+  std::ostringstream res{};
   if (enemies.empty()) {
     std::cout << "No enemies in this map.\n";
     return;
   }
-  std::cout << "Enemies in this map:\n";
+  res << "Enemies in this map:\n";
   for (std::size_t i{0}; i < enemies.size(); ++i) {
     if (auto lockedEnemy{enemies[i].lock()}) {
-      std::cout << i + 1 << ": " << lockedEnemy->getName() << "  "
-                << lockedEnemy->getSymbol() << " at distance "
-                << GeometryUtils::distanceL2(m_player->getPosition(),
-                                             lockedEnemy->getPosition());
+      res << i + 1 << ": " << lockedEnemy->getName() << "  "
+          << lockedEnemy->getSymbol() << " at distance "
+          << GeometryUtils::distanceL2(m_player->getPosition(),
+                                       lockedEnemy->getPosition())
+          << "  HP: " << lockedEnemy->getHealthPoints() << '/'
+          << lockedEnemy->getMaxHealthPoints();
       if (!m_currentMap->isPointVisible(m_player->getPosition(),
                                         lockedEnemy->getPosition()))
-        std::cout << " (not visible)";
-      std::cout << '\n';
+        res << " (not visible)";
+      if (stat != Stat::nbStats) {
+        int chanceToHit{0};
+        switch (stat) {
+        case Stat::Strength:
+          chanceToHit =
+              m_player->getMeleeHitChance() - lockedEnemy->getEvasion();
+          break;
+        case Stat::Dexterity:
+          chanceToHit =
+              m_player->getDistanceHitChance() - lockedEnemy->getEvasion();
+          break;
+        default:
+          break;
+        }
+        res << "  " << chanceToHit << '%';
+      }
+      res << '\n';
     }
   }
+  std::cout << res.str();
 }
 
 void GameSession::resetInitiative() {

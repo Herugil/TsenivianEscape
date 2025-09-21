@@ -5,12 +5,13 @@
 #include "utils/Random.h"
 #include <memory>
 
-MeleeAttack::MeleeAttack(std::string_view name) : Action(name, true, true) {}
+MeleeAttack::MeleeAttack(std::string_view name)
+    : Action(name, true, true, Stat::Strength) {}
 
 std::string MeleeAttack::execute([[maybe_unused]] GameSession &gameSession,
                                  Creature &actor, Creature &target) const {
   std::ostringstream result;
-  if (actor.useActionPoints()) {
+  if (actor.useActionPoints(m_cost)) {
     if (GeometryUtils::distanceL2(actor.getPosition(), target.getPosition()) >
         actor.getMeleeRange())
       return result.str();
