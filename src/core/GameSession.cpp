@@ -83,34 +83,6 @@ void GameSession::removeContainer(std::shared_ptr<Container> container) {
   }
 }
 
-/*std::string GameSession::cleanDeadNpcs() {
-  std::ostringstream result;
-  for (auto it{m_npcs.begin()}; it != m_npcs.end();) {
-    if ((*it)->isDead()) {
-      result << (*it)->getName() << " is dead.\n";
-      auto lootableBody{std::make_shared<Container>(
-          (*it)->getInventory(), (*it)->getPosition(), m_currentMap->getName(),
-          (*it)->getName() + "'s body", (*it)->getDeadDescription())};
-      addContainer(lootableBody);
-      m_currentMap->removeTop((*it)->getPosition());
-      m_currentMap->placeTop(lootableBody, lootableBody->getPosition());
-      it = m_npcs.erase(it);
-    } else if ((*it)->getCurrentMap() != m_currentMap->getName()) {
-      result << (*it)->getName() << " fled the area!\n";
-      m_turnOrder.erase(
-          std::remove_if(m_turnOrder.begin(), m_turnOrder.end(),
-                         [it](const std::weak_ptr<Creature> &ptr) {
-                           auto locked{ptr.lock()};
-                           return locked && locked == *it;
-                         }),
-          m_turnOrder.end());
-      ++it;
-    } else
-      ++it;
-  }
-  return result.str();
-}*/
-
 std::string GameSession::cleanDeadNpcs() {
   // this is the correct version that iterates on turnOrder only
   // to remove dead/fled npcs from there without iterating on all npcs
