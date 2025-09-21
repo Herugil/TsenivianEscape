@@ -34,6 +34,9 @@ private:
   Shove m_shoveAction{};
   std::shared_ptr<MeleeAttack> m_meleeAttack{
       std::make_shared<MeleeAttack>("Attack with melee weapon")};
+  int m_currentXP{0};
+  int m_level{1};
+  int m_xpToNextLevel{100}; // const, linear, exp ?
 
 public:
   Player(const Point &position, std::string_view currentMap,
@@ -62,5 +65,12 @@ public:
   int getDistanceDamage() const override;
   int getDistanceRange() const override;
   int numObjectsHeld() const;
+  int getCurrentXP() const;
+  int getLevel() const;
+  int getXpToNextLevel() const;
+  void addXP(int xp);
+  void displayCharacterSheet() const;
+  bool canLevelUp() const;
+  void levelUp();
   virtual ~Player() = default;
 };

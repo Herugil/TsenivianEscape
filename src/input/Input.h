@@ -35,6 +35,7 @@ constexpr char inventory{'i'};
 constexpr char actionMenu{'a'};
 constexpr char shove{'r'};
 constexpr char attack{'f'};
+constexpr char characterSheet{'c'};
 constexpr char showEnemies{'\t'};
 constexpr char skipTurn{' '};
 } // namespace CommandChar
@@ -59,6 +60,7 @@ struct Command {
     inventory,
     actionMenu,
     attack,
+    characterSheet,
     showEnemies,
     skipTurn,
     shove,
@@ -93,4 +95,5 @@ bool isShoveCommand(Command::command cmd);
 bool isAttackCommand(Command::command cmd);
 bool isShowEnemiesCommand(Command::command cmd);
 bool isSkipTurnCommand(Command::command cmd);
+bool isCharacterSheetCommand(Command::command cmd);
 } // namespace CommandHandler

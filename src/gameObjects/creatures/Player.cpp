@@ -198,3 +198,49 @@ std::shared_ptr<Action> Player::getAction(std::size_t index) const {
     return nullptr;
   return m_actions[i];
 }
+
+void Player::displayCharacterSheet() const {
+  std::cout << "Character Sheet:\n";
+  std::cout << "Name: " << getName() << '\n';
+  std::cout << "Level: " << getLevel() << '\n';
+  std::cout << "XP: " << getCurrentXP() << '/' << getXpToNextLevel() << "\n\n";
+  std::cout << "Health: " << getHealthPoints() << '/' << getMaxHealthPoints()
+            << "\n\n\n";
+  std::cout << "Strength: " << getStrength() << '\n';
+  std::cout << "Dexterity: " << getDexterity() << '\n';
+  std::cout << "Intelligence: " << getIntelligence() << '\n';
+  std::cout << "Constitution: " << getConstitution() << "\n\n";
+  std::cout << "Evasion: " << getEvasion() << "\n\n";
+  std::cout << "Equipped items:\n";
+  auto rightHandItem{m_equipment.rightHand.lock()};
+  if (rightHandItem)
+    std::cout << " Right hand: " << *rightHandItem << '\n';
+  else
+    std::cout << " Right hand: None\n";
+  auto leftHandItem{m_equipment.leftHand.lock()};
+  if (leftHandItem)
+    std::cout << " Left hand: " << *leftHandItem << '\n';
+  else
+    std::cout << " Left hand: None\n";
+}
+
+int Player::getCurrentXP() const { return m_currentXP; }
+int Player::getLevel() const { return m_level; }
+int Player::getXpToNextLevel() const { return m_xpToNextLevel; }
+void Player::addXP(int xp) { m_currentXP += xp; }
+bool Player::canLevelUp() const { return m_currentXP >= m_xpToNextLevel; }
+void Player::levelUp() {
+  // this function is a placeholder
+  // only one stat should go up,
+  // giving access to new actions or passives
+  // depending on current stat spread (ie str 2 gives a new skill
+  // but after that int 2 would give the int skill and a
+  // str/int combined skill)
+  m_level++;
+  m_currentXP -= m_xpToNextLevel;
+  m_stats.strength += 1;
+  m_stats.dexterity += 1;
+  m_stats.intelligence += 1;
+  m_stats.constitution += 1;
+  m_maxHealthPoints += 5 + getConstitution();
+}

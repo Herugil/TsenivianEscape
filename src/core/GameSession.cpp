@@ -97,6 +97,7 @@ std::string GameSession::cleanDeadNpcs() {
     } else if (auto npc = std::dynamic_pointer_cast<NonPlayableCharacter>(
                    lockedCharacter)) {
       if (npc->isDead()) {
+        m_player->addXP(npc->getXpValue());
         result << npc->getName() << " is dead.\n";
         m_currentMap->removeTop(npc->getPosition());
         if (!(npc->getInventory().empty())) {

@@ -13,6 +13,7 @@ enum class GameState {
   CombatPlayerTurn,
   CombatEnemyTurn,
   ItemInspect,
+  CharacterSheet,
   GameOver,
 };
 

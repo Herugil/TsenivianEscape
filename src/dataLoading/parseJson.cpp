@@ -62,11 +62,12 @@ DataLoader::getAllNpcs() {
     std::string desc{value["description"]};
     std::string descDead{value["deadDescription"]};
     std::string aiType{value["type"]};
+    int xpValue{value["xpValue"]};
 
     npcs[key] = std::make_shared<NonPlayableCharacter>(
         ' ', Point{0, 0}, "placeholder", maxHealth, name, evasion,
         meleeHitChance, distanceHitChance, std::vector<std::shared_ptr<Item>>{},
-        desc, descDead, aiType);
+        desc, descDead, aiType, xpValue);
   }
   return npcs;
 }

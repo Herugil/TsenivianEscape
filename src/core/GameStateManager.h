@@ -27,6 +27,7 @@ private:
   void handleItemInspect();
   void handleGameOver();
   void setCombatState();
+  void handleCharacterSheet();
 
 public:
   GameStateManager(GameSession &&gameSession);

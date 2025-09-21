@@ -117,6 +117,9 @@ bool CommandHandler::isSkipTurnCommand(Command::command cmd) {
 bool CommandHandler::isAttackCommand(Command::command cmd) {
   return cmd == Command::attack;
 }
+bool CommandHandler::isCharacterSheetCommand(Command::command cmd) {
+  return cmd == Command::characterSheet;
+}
 
 Command::command CommandHandler::getCommand(char pressedKey) {
   switch (pressedKey) {
@@ -162,6 +165,8 @@ Command::command CommandHandler::getCommand(char pressedKey) {
     return Command::attack;
   case CommandChar::shove:
     return Command::shove;
+  case CommandChar::characterSheet:
+    return Command::characterSheet;
   default:
     return Command::nbCommands;
   }

@@ -21,11 +21,12 @@ NonPlayableCharacter::NonPlayableCharacter(
     int maxHealthPoints, std::string_view name, int evasion, int meleeHitChance,
     int distanceHitChance, std::vector<std::shared_ptr<Item>> items,
     std::string_view description, std::string_view deadDescription,
-    std::string_view aiType)
+    std::string_view aiType, int xpValue)
     : Creature{symbol,  point, currentMap, maxHealthPoints,
                evasion, name,  description},
       m_deadDescription{deadDescription}, m_meleeHitChance{meleeHitChance},
-      m_distanceHitChance{distanceHitChance}, m_AIType{stringToAIType(aiType)} {
+      m_distanceHitChance{distanceHitChance}, m_AIType{stringToAIType(aiType)},
+      m_xpValue{xpValue} {
   if (!items.empty())
     m_inventory = std::move(items);
 }
@@ -38,7 +39,8 @@ NonPlayableCharacter::NonPlayableCharacter(const NonPlayableCharacter &other)
       m_distanceRange(other.m_distanceRange),
       m_distanceDamage(other.m_distanceDamage),
       m_currentPath(other.m_currentPath),
-      m_currentBehavior(other.m_currentBehavior), m_AIType(other.m_AIType) {}
+      m_currentBehavior(other.m_currentBehavior), m_AIType(other.m_AIType),
+      m_xpValue{other.m_xpValue} {}
 
 std::shared_ptr<NonPlayableCharacter> NonPlayableCharacter::clone() const {
   return std::make_shared<NonPlayableCharacter>(*this);
@@ -193,3 +195,5 @@ NonPlayableCharacter::stringToAIType(std::string_view str) {
   else
     return defaultAI;
 }
+
+int NonPlayableCharacter::getXpValue() const { return m_xpValue; }

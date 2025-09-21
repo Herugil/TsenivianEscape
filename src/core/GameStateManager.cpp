@@ -30,6 +30,10 @@ void GameStateManager::mainLoop() {
       }
       ScreenUtils::clearScreen();
       m_gameSession.displayMap();
+      if (m_gameSession.getPlayer().canLevelUp()) {
+        std::cout << "You have enough XP to level up! Press 'c' to open "
+                     "character sheet and level up.\n";
+      }
       HandleWorld();
       break;
     case GameState::DisplayBlocking:
@@ -55,6 +59,9 @@ void GameStateManager::mainLoop() {
       break;
     case GameState::ItemInspect:
       handleItemInspect();
+      break;
+    case GameState::CharacterSheet:
+      handleCharacterSheet();
       break;
     case GameState::GameOver:
       handleGameOver();
@@ -146,6 +153,8 @@ void GameStateManager::HandleWorld() {
   } else if (CommandHandler::isShowEnemiesCommand(command)) {
     m_gameSession.displayEnemiesInMap();
     Input::getKeyBlocking();
+  } else if (CommandHandler::isCharacterSheetCommand(command)) {
+    m_currentState = GameState::CharacterSheet;
   } else if (CommandHandler::isSkipTurnCommand(command)) {
     if (m_currentState == GameState::CombatPlayerTurn) {
       m_gameSession.getPlayer().resetTurn();
@@ -339,6 +348,23 @@ void GameStateManager::handleCombatEnemyTurn() {
     }
   } else
     m_currentState = GameState::Exploration;
+}
+
+void GameStateManager::handleCharacterSheet() {
+  ScreenUtils::clearScreen();
+  auto &player{m_gameSession.getPlayer()};
+  player.displayCharacterSheet();
+  if (player.canLevelUp()) {
+    std::cout << "Press 'e' to level up!\n";
+  }
+  auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
+  if (CommandHandler::isInteractionCommand(command) && player.canLevelUp()) {
+    player.levelUp();
+    std::cout << "You leveled up! Your level is now " << player.getLevel()
+              << "!\n";
+    std::cout << "Press any key to continue.\n";
+  }
+  m_currentState = GameState::Exploration;
 }
 
 void GameStateManager::handleGameOver() {

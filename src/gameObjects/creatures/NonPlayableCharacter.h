@@ -35,6 +35,7 @@ protected:
   std::deque<Point> m_currentPath{};
   Behaviors m_currentBehavior{defaultBehavior};
   AITypes m_AIType{defaultAI};
+  int m_xpValue{}; // xp given to player on kill
 
 public:
   NonPlayableCharacter(char symbol, const Point &point,
@@ -45,7 +46,7 @@ public:
                        std::vector<std::shared_ptr<Item>> inventory = {},
                        std::string_view description = "enemy",
                        std::string_view deadDescription = "",
-                       std::string_view aiType = "defaultAI");
+                       std::string_view aiType = "defaultAI", int xpValue = 50);
   NonPlayableCharacter(const NonPlayableCharacter &other);
   std::shared_ptr<NonPlayableCharacter> clone() const;
   std::string_view getDeadDescription() const;
@@ -68,6 +69,7 @@ public:
   std::deque<Point> getPathAttack(GameSession &gameSession);
   void clearCurrentPath() { m_currentPath.clear(); }
   static AITypes stringToAIType(std::string_view str);
+  int getXpValue() const;
 
   virtual ~NonPlayableCharacter() = default;
 };

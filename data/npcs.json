@@ -7,7 +7,8 @@
     "meleeHitChance": 50,
     "distanceHitChance": 0,
     "description": "An aggressive rat with tiny red eyes.",
-    "deadDescription": "A dead rat body."
+    "deadDescription": "A dead rat body.",
+    "xpValue": 20
   },
   "enemyBandit": {
     "name": "Bandit",
@@ -17,7 +18,8 @@
     "meleeHitChance": 70,
     "distanceHitChance": 50,
     "description": "A bandit with an untidy look, holding a club.",
-    "deadDescription": "A dead bandit body."
+    "deadDescription": "A dead bandit body.",
+    "xpValue": 30
   },
   "enemyGiantRat": {
     "name": "Giant Rat",
@@ -27,6 +29,7 @@
     "meleeHitChance": 60,
     "distanceHitChance": 0,
     "description": "A giant rat, hungry and mean looking.",
-    "deadDescription": "A dead giant rat body."
+    "deadDescription": "A dead giant rat body.",
+    "xpValue": 50
   }
 }
