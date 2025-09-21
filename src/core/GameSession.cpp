@@ -83,7 +83,7 @@ void GameSession::removeContainer(std::shared_ptr<Container> container) {
   }
 }
 
-std::string GameSession::cleanDeadNpcs() {
+/*std::string GameSession::cleanDeadNpcs() {
   std::ostringstream result;
   for (auto it{m_npcs.begin()}; it != m_npcs.end();) {
     if ((*it)->isDead()) {
@@ -95,8 +95,59 @@ std::string GameSession::cleanDeadNpcs() {
       m_currentMap->removeTop((*it)->getPosition());
       m_currentMap->placeTop(lootableBody, lootableBody->getPosition());
       it = m_npcs.erase(it);
+    } else if ((*it)->getCurrentMap() != m_currentMap->getName()) {
+      result << (*it)->getName() << " fled the area!\n";
+      m_turnOrder.erase(
+          std::remove_if(m_turnOrder.begin(), m_turnOrder.end(),
+                         [it](const std::weak_ptr<Creature> &ptr) {
+                           auto locked{ptr.lock()};
+                           return locked && locked == *it;
+                         }),
+          m_turnOrder.end());
+      ++it;
     } else
       ++it;
+  }
+  return result.str();
+}*/
+
+std::string GameSession::cleanDeadNpcs() {
+  // this is the correct version that iterates on turnOrder only
+  // to remove dead/fled npcs from there without iterating on all npcs
+  std::ostringstream result;
+  for (auto it{m_turnOrder.begin()}; it != m_turnOrder.end();) {
+    auto lockedCharacter{(*it).lock()};
+    if (!lockedCharacter) {
+      it = m_turnOrder.erase(it);
+    } else if (auto player =
+                   std::dynamic_pointer_cast<Player>(lockedCharacter)) {
+      ++it;
+    } else if (auto npc = std::dynamic_pointer_cast<NonPlayableCharacter>(
+                   lockedCharacter)) {
+      if (npc->isDead()) {
+        result << npc->getName() << " is dead.\n";
+        m_currentMap->removeTop(npc->getPosition());
+        if (!(npc->getInventory().empty())) {
+          auto lootableBody{std::make_shared<Container>(
+              npc->getInventory(), npc->getPosition(), m_currentMap->getName(),
+              npc->getName() + "'s body", npc->getDeadDescription())};
+          addContainer(lootableBody);
+          m_currentMap->placeTop(lootableBody, lootableBody->getPosition());
+        }
+        m_npcs.erase(
+            std::remove_if(
+                m_npcs.begin(), m_npcs.end(),
+                [npc](const std::shared_ptr<NonPlayableCharacter> &ptr) {
+                  return ptr == npc;
+                }),
+            m_npcs.end());
+        it = m_turnOrder.erase(it);
+      } else if (npc->getCurrentMap() != m_currentMap->getName()) {
+        result << npc->getName() << " fled the area!\n";
+        it = m_turnOrder.erase(it);
+      } else
+        ++it;
+    }
   }
   return result.str();
 }

@@ -17,6 +17,11 @@ public:
     skipTurn,
     defaultBehavior,
   };
+  enum AITypes {
+    aggressiveMelee,
+    waryMelee,
+    defaultAI,
+  };
 
 protected:
   std::string m_deadDescription{};
@@ -28,6 +33,7 @@ protected:
   int m_distanceDamage{Settings::g_baseEnemyDistanceDamage};
   std::deque<Point> m_currentPath{};
   Behaviors m_currentBehavior{defaultBehavior};
+  AITypes m_AIType{defaultAI};
 
 public:
   NonPlayableCharacter(char symbol, const Point &point,
@@ -37,7 +43,8 @@ public:
                        int distanceHitChance = Settings::g_baseHitChance,
                        std::vector<std::shared_ptr<Item>> inventory = {},
                        std::string_view description = "enemy",
-                       std::string_view deadDescription = "");
+                       std::string_view deadDescription = "",
+                       std::string_view aiType = "defaultAI");
   NonPlayableCharacter(const NonPlayableCharacter &other);
   std::shared_ptr<NonPlayableCharacter> clone() const;
   std::string_view getDeadDescription() const;
@@ -57,6 +64,7 @@ public:
   std::deque<Point> &getCurrentPath();
   void setCurrentPath(GameSession &gameSession);
   void clearCurrentPath() { m_currentPath.clear(); }
+  static AITypes stringToAIType(std::string_view str);
 
   virtual ~NonPlayableCharacter() = default;
 };

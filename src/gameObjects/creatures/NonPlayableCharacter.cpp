@@ -17,11 +17,12 @@ NonPlayableCharacter::NonPlayableCharacter(
     char symbol, const Point &point, std::string_view currentMap,
     int maxHealthPoints, std::string_view name, int evasion, int meleeHitChance,
     int distanceHitChance, std::vector<std::shared_ptr<Item>> items,
-    std::string_view description, std::string_view deadDescription)
+    std::string_view description, std::string_view deadDescription,
+    std::string_view aiType)
     : Creature{symbol,  point, currentMap, maxHealthPoints,
                evasion, name,  description},
       m_deadDescription{deadDescription}, m_meleeHitChance{meleeHitChance},
-      m_distanceHitChance{distanceHitChance} {
+      m_distanceHitChance{distanceHitChance}, m_AIType{stringToAIType(aiType)} {
   if (!items.empty())
     m_inventory = std::move(items);
 }
@@ -34,7 +35,7 @@ NonPlayableCharacter::NonPlayableCharacter(const NonPlayableCharacter &other)
       m_distanceRange(other.m_distanceRange),
       m_distanceDamage(other.m_distanceDamage),
       m_currentPath(other.m_currentPath),
-      m_currentBehavior(other.m_currentBehavior) {}
+      m_currentBehavior(other.m_currentBehavior), m_AIType(other.m_AIType) {}
 
 std::shared_ptr<NonPlayableCharacter> NonPlayableCharacter::clone() const {
   return std::make_shared<NonPlayableCharacter>(*this);
@@ -125,4 +126,14 @@ void NonPlayableCharacter::setCurrentPath(GameSession &gameSession) {
   default: // actor has no goal, so he doesnt really need to move..
     m_currentPath.clear(); // will remain in place
   }
+}
+
+NonPlayableCharacter::AITypes
+NonPlayableCharacter::stringToAIType(std::string_view str) {
+  if (str == "aggressiveMelee")
+    return aggressiveMelee;
+  else if (str == "waryMelee")
+    return waryMelee;
+  else
+    return defaultAI;
 }

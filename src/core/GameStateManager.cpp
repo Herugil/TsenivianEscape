@@ -24,8 +24,10 @@ void GameStateManager::mainLoop() {
       if (m_gameSession.enemiesInMap()) {
         setCombatState();
         break;
-      } else
+      } else if (m_gameSession.getPlayer().inCombat()) {
         m_gameSession.getPlayer().unsetCombat();
+        m_gameSession.resetInitiative();
+      }
       ScreenUtils::clearScreen();
       m_gameSession.displayMap();
       HandleWorld();
@@ -329,10 +331,11 @@ void GameStateManager::handleCombatEnemyTurn() {
         } else
           m_currentState = GameState::Display;
         return;
-      } else {
-        m_logsToDisplay << NpcCombatAI::npcActCombat(m_gameSession, enemy)
-                        << m_gameSession.cleanDeadNpcs();
       }
+      m_logsToDisplay << NpcCombatAI::npcActCombat(m_gameSession, enemy)
+                      << m_gameSession.cleanDeadNpcs();
+      if (!m_logsToDisplay.str().empty())
+        m_currentState = GameState::Display;
     }
   } else
     m_currentState = GameState::Exploration;

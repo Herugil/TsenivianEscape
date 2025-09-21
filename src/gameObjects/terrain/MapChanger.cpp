@@ -28,8 +28,18 @@ void MapChanger::activateWalkOn(std::shared_ptr<GameObject> gameObject,
     gameSession.displayMap();
     return;
   } else if (auto creature{std::dynamic_pointer_cast<Creature>(gameObject)}) {
-    gameSession.getMap().removeTop(creature->getPosition());
-    gameSession.getMap(m_targetMap).placeTop(creature, m_spawningPoint);
-    creature->setPosition(m_spawningPoint);
+    for (int i{0}; i < Directions::nbDirections; ++i) {
+      auto adjPoint{creature->getPosition().getAdjacentPoint(
+          static_cast<Directions::Direction>(i))};
+      if (gameSession.getMap(m_targetMap).isAvailable(adjPoint)) {
+        gameSession.getMap().removeTop(creature->getPosition());
+        creature->unsetCombat();
+        creature->setCurrentMap(m_targetMap);
+        gameSession.getMap(m_targetMap).placeTop(creature, adjPoint);
+        creature->setPosition(adjPoint);
+        creature->resetTurn();
+        return;
+      }
+    }
   }
 }
