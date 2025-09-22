@@ -32,6 +32,7 @@ public:
   int getHealthPoints() const;
   bool isDead() const;
   void takeDamage(int damage);
+  void addHealthPoints(int healthPoints);
   const std::string &getName() const;
   virtual int getEvasion() const;
   virtual int getMeleeHitChance() const = 0;
@@ -54,6 +55,8 @@ public:
   void reduceCooldowns();
   void refillActionPoints();
   void refillMovementPoints();
+  void addActionPoints(int points);
+  void addMovementPoints(int points);
   virtual ~Creature() = default;
   bool inCombat() const;
   void setCombat();

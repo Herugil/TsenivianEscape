@@ -36,6 +36,9 @@ int Creature::getMaxHealthPoints() const { return m_maxHealthPoints; }
 bool Creature::isDead() const { return m_healthPoints <= 0; }
 int Creature::getEvasion() const { return m_evasion; }
 void Creature::takeDamage(int damage) { m_healthPoints -= damage; }
+void Creature::addHealthPoints(int healthPoints) {
+  m_healthPoints = std::min(m_healthPoints + healthPoints, m_maxHealthPoints);
+}
 
 const std::string &Creature::getName() const { return m_name; }
 int Creature::getMovementPoints() const { return m_movementPoints; }
@@ -95,6 +98,12 @@ bool Creature::canMove(int cost) const {
 void Creature::refillActionPoints() { m_actionPoints = m_maxActionPoints; }
 void Creature::refillMovementPoints() {
   m_movementPoints = m_maxMovementPoints;
+}
+void Creature::addActionPoints(int points) {
+  m_actionPoints += points; // can go over max, intentional
+}
+void Creature::addMovementPoints(int points) {
+  m_movementPoints += points; // can go over max, intentional
 }
 
 bool Creature::inCombat() const { return m_inCombat; }

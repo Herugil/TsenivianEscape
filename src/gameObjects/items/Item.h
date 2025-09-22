@@ -9,7 +9,8 @@ public:
     oneHanded,
     twoHanded,
     armor,
-    consumable,
+    usableItem,
+    instantUsableItem,
     other,
   };
 
@@ -34,13 +35,24 @@ public:
       return ItemType::twoHanded;
     if (typeStr == "armor")
       return ItemType::armor;
-    if (typeStr == "consumable")
-      return ItemType::consumable;
+    if (typeStr == "usableItem")
+      return ItemType::usableItem;
+    if (typeStr == "instantUsableItem")
+      return ItemType::instantUsableItem;
     return ItemType::other;
   }
   bool isEquipped() const { return m_isEquipped; }
   void setEquipped() { m_isEquipped = true; }
   void setUnequipped() { m_isEquipped = false; }
+  bool isEquipment() const {
+    return m_type == ItemType::oneHanded || m_type == ItemType::twoHanded ||
+           m_type == ItemType::armor;
+  } // what is this design was I drunk ? Equipment should be its own class
+    // OBVIOUSLY - this will do for now
+  bool isUsable() const {
+    return m_type == ItemType::usableItem ||
+           m_type == ItemType::instantUsableItem;
+  }
   virtual std::string getDisplayItem() const {
     std::ostringstream res;
     res << m_name << '\n'

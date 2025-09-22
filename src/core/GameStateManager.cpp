@@ -1,6 +1,7 @@
 #include "core/GameStateManager.h"
 #include "Settings.h"
 #include "core/GameState.h"
+#include "gameObjects/items/UsableItem.h"
 #include "input/Input.h"
 #include "scripts/NpcCombatAI.h"
 #include "utils/Interface.h"
@@ -193,11 +194,25 @@ void GameStateManager::handleItemInspect() {
   ScreenUtils::clearScreen();
   if (auto item{m_inspectedItem.lock()}) {
     std::cout << item->getDisplayItem() << "\n";
-    std::cout << "E: Equip/Unequip   R: Drop\n";
+    if (item->isEquipment())
+      std::cout << "E: Equip/Unequip   R: Drop\n";
+    else if (item->isUsable())
+      std::cout << "E: Use   R: Drop\n";
     auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
     if (CommandHandler::isInteractionCommand(command)) {
       auto &player{m_gameSession.getPlayer()};
-      player.equipItem(item);
+      if (item->isEquipment())
+        player.equipItem(item);
+      else if (item->isUsable()) {
+        if (auto usable = std::dynamic_pointer_cast<UsableItem>(item)) {
+          m_logsToDisplay << player.useItem(usable);
+          m_logsToDisplay << m_gameSession.cleanDeadNpcs();
+          if (!m_logsToDisplay.str().empty()) {
+            m_currentState = GameState::Display;
+            return;
+          }
+        }
+      }
     } else if (CommandHandler::isShoveCommand(command)) {
       auto &player{m_gameSession.getPlayer()};
       if (m_gameSession.dropItem(item, player.getPosition()))

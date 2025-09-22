@@ -1,6 +1,7 @@
 #pragma once
 #include "gameObjects/creatures/Creature.h"
 #include "gameObjects/items/Item.h"
+#include "gameObjects/items/UsableItem.h"
 #include "gameObjects/terrain/Container.h"
 #include "input/Directions.h"
 #include "input/Input.h"
@@ -53,6 +54,7 @@ public:
   std::string shove(GameSession &gameSession, Directions::Direction direction);
   std::string meleeAttack(GameSession &gameSession,
                           Directions::Direction direction);
+  std::string useItem(std::shared_ptr<UsableItem> item);
   int getStrength() const;
   int getDexterity() const;
   int getIntelligence() const;

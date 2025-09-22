@@ -33,7 +33,7 @@
       "type": "container",
       "name": "hidden items in the wall",
       "description": "A brick goes loose, revealing some items:",
-      "contents": ["itemSword", "itemSpear", "itemBow"]
+      "contents": ["itemSword", "itemSpear", "itemBow", "itemSmallHealthPotion"]
     },
     {
       "symbol": " ",

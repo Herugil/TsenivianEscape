@@ -1,5 +1,6 @@
 #include "dataLoading/parseJson.h"
 #include "core/GameSession.h"
+#include "gameObjects/items/InstantUsableItem.h"
 #include "gameObjects/items/Item.h"
 #include "gameObjects/items/Weapon.h"
 #include "gameObjects/terrain/MapChanger.h"
@@ -43,6 +44,18 @@ DataLoader::getAllItems() {
       items[key] = std::make_shared<Weapon>(
           Weapon{name, key, weaponType, description,
                  Item::getTypeFromStr(itemType), damage, range});
+    } else if (value["itemType"] == "instantUsableItem") {
+      std::string name{value["name"]};
+      std::string description{value["description"]};
+      int costToUse{value["costToUse"]};
+      bool isUnlimitedUse{value["isUnlimitedUse"]};
+      int usesLeft{value["usesLeft"]};
+      int effectValue{value["effectValue"]};
+      InstantUsableItem::Type regenType{
+          static_cast<InstantUsableItem::Type>(value["regenType"])};
+      items[key] = std::make_shared<InstantUsableItem>(
+          InstantUsableItem{name, key, regenType, effectValue, costToUse,
+                            isUnlimitedUse, usesLeft, description});
     }
   }
   return items;

@@ -39,12 +39,6 @@
       "inventory": []
     },
     {
-      "symbol": "T",
-      "position": [7, 8],
-      "id": "enemyRat",
-      "inventory": []
-    },
-    {
       "symbol": "R",
       "position": [8, 5],
       "id": "enemyGiantRat",
@@ -62,11 +56,11 @@
     },
     {
       "symbol": " ",
-      "position": [12, 5],
+      "position": [0, 4],
       "type": "mapChanger",
       "name": "passage to the next room",
       "description": "A creaking, half open wooden door.",
-      "destLevel": "level3",
+      "destLevel": "level2",
       "destPosition": [8, 3]
     }
   ]

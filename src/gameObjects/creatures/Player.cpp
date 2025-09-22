@@ -142,6 +142,14 @@ std::string Player::meleeAttack(GameSession &gameSession,
   return m_meleeAttack->playerExecute(gameSession, direction);
 }
 
+std::string Player::useItem(std::shared_ptr<UsableItem> item) {
+  auto res{item->use(*this)};
+  if (!item->isUnlimitedUse() && item->getUsesLeft() == 0) {
+    removeItem(item);
+  }
+  return res;
+}
+
 int Player::getStrength() const { return m_stats.strength; }
 int Player::getDexterity() const { return m_stats.dexterity; }
 int Player::getIntelligence() const { return m_stats.intelligence; }

@@ -2,7 +2,7 @@
   "enemyRat": {
     "name": "Rat",
     "type": "waryMelee",
-    "maxHealth": 3,
+    "maxHealth": 2,
     "evasion": 10,
     "meleeHitChance": 50,
     "distanceHitChance": 0,

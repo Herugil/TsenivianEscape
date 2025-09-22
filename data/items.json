@@ -38,5 +38,15 @@
     "weaponType": "melee",
     "damage": 2,
     "range": 2
+  },
+  "itemSmallHealthPotion": {
+    "name": "Small Health Potion",
+    "itemType": "instantUsableItem",
+    "description": "A small vial filled with a red liquid that seems to swirl. Uncorking it releases a bitter smell. Restores 10HP.",
+    "costToUse": 1,
+    "isUnlimitedUse": false,
+    "usesLeft": 1,
+    "effectValue": 10,
+    "regenType": 0
   }
 }
