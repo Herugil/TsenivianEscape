@@ -12,9 +12,8 @@ public:
   UsableItem(std::string_view name, std::string_view id, int costToUse = 1,
              bool isUnlimitedUse = false, int usesLeft = -1,
              std::string_view description = "")
-      : Item{name, id, ItemType::usableItem, description},
-        m_costToUse{costToUse}, m_isUnlimitedUse{isUnlimitedUse},
-        m_usesLeft{usesLeft} {}
+      : Item{name, id, description}, m_costToUse{costToUse},
+        m_isUnlimitedUse{isUnlimitedUse}, m_usesLeft{usesLeft} {}
   int getCostToUse() const { return m_costToUse; }
   bool isUnlimitedUse() const { return m_isUnlimitedUse; }
   int getUsesLeft() const { return m_usesLeft; }

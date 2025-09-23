@@ -23,7 +23,7 @@ void Container::displayContents() {
   else
     std::cout << "Contains:\n";
   for (std::size_t i{0}; i < m_heldItems.size(); ++i) {
-    std::cout << i + 1 << ": " << *(m_heldItems[i]) << '\n';
+    std::cout << i + 1 << ": " << m_heldItems[i]->getDisplayForMenu() << '\n';
   }
 }
 

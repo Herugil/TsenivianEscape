@@ -42,8 +42,7 @@ DataLoader::getAllItems() {
       int damage{value["damage"]};
       int range{value["range"]};
       items[key] = std::make_shared<Weapon>(
-          Weapon{name, key, weaponType, description,
-                 Item::getTypeFromStr(itemType), damage, range});
+          Weapon{name, key, itemType, weaponType, description, damage, range});
     } else if (value["itemType"] == "instantUsableItem") {
       std::string name{value["name"]};
       std::string description{value["description"]};

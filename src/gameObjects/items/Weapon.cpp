@@ -2,10 +2,10 @@
 #include <sstream>
 
 Weapon::Weapon(std::string_view name, std::string_view id,
-               std::string_view weaponType, std::string_view description,
-               ItemType itemType, int damage, int range)
-    : Item{name, id, itemType, description}, m_damage{damage}, m_range{range},
-      m_weaponType{getTypeFromStr(weaponType)} {}
+               std::string_view equipmentType, std::string_view weaponType,
+               std::string_view description, int damage, int range)
+    : Equipment{name, id, equipmentType, description}, m_damage{damage},
+      m_range{range}, m_weaponType{getTypeFromStr(weaponType)} {}
 
 int Weapon::getDamage() const { return m_damage; }
 int Weapon::getRange() const { return m_range; }

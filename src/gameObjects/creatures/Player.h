@@ -1,5 +1,6 @@
 #pragma once
 #include "gameObjects/creatures/Creature.h"
+#include "gameObjects/items/Equipment.h"
 #include "gameObjects/items/Item.h"
 #include "gameObjects/items/UsableItem.h"
 #include "gameObjects/terrain/Container.h"
@@ -17,9 +18,9 @@ class GameSession;
 
 class Player : public Creature {
 public:
-  struct Equipment {
-    std::weak_ptr<Item> rightHand{};
-    std::weak_ptr<Item> leftHand{};
+  struct PlayerEquipment {
+    std::weak_ptr<Equipment> rightHand{};
+    std::weak_ptr<Equipment> leftHand{};
     // will see the rest later..
   };
   struct Stats {
@@ -31,7 +32,7 @@ public:
 
 private:
   Stats m_stats{};
-  Equipment m_equipment{};
+  PlayerEquipment m_equipment{};
   Shove m_shoveAction{};
   std::shared_ptr<MeleeAttack> m_meleeAttack{
       std::make_shared<MeleeAttack>("Attack with melee weapon")};
@@ -47,7 +48,7 @@ public:
   void displayActions() const;
   std::shared_ptr<Action> getAction(std::size_t index) const;
   void takeAllItems(Container &container);
-  void equipItem(std::shared_ptr<Item> item);
+  void equipItem(std::shared_ptr<Equipment> item);
   void removeItem(std::shared_ptr<Item> item);
   void updateActionsOnEquip();
   std::shared_ptr<Item> getItem(std::size_t index) const;

@@ -1,7 +1,7 @@
 #pragma once
-#include "gameObjects/items/Item.h"
+#include "gameObjects/items/Equipment.h"
 
-class Weapon : public Item {
+class Weapon : public Equipment {
 public:
   enum WeaponType {
     melee,
@@ -16,9 +16,9 @@ protected:
 
 public:
   Weapon(std::string_view name, std::string_view id,
+         std::string_view equipmentType = "oneHanded",
          std::string_view weaponType = "melee",
-         std::string_view description = "", ItemType itemType = ItemType::other,
-         int damage = 1, int range = 1);
+         std::string_view description = "", int damage = 1, int range = 1);
   int getDamage() const;
   int getRange() const;
   std::shared_ptr<Item> clone() const override;

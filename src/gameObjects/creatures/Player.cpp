@@ -1,5 +1,6 @@
 #include "gameObjects/creatures/Player.h"
 #include "Settings.h"
+#include "gameObjects/items/Equipment.h"
 #include "gameObjects/items/Weapon.h"
 #include "map/Map.h"
 #include "map/Point.h"
@@ -29,8 +30,10 @@ void Player::displayInventory(std::size_t page) const {
     lenItemsDisplay = m_inventory.size() % Settings::g_itemListSize;
   // only display remaining items
   for (std::size_t i{0}; i < lenItemsDisplay; ++i) {
-    std::cout << i + 1 << ": "
-              << *(m_inventory[page * Settings::g_itemListSize + i]) << '\n';
+    std::cout
+        << i + 1 << ": "
+        << m_inventory[page * Settings::g_itemListSize + i]->getDisplayForMenu()
+        << '\n';
   }
 }
 
@@ -71,12 +74,13 @@ void Player::updateActionsOnEquip() {
                    std::shared_ptr<MeleeAttack>(m_meleeAttack));
 }
 
-void Player::equipItem(std::shared_ptr<Item> item) {
+void Player::equipItem(std::shared_ptr<Equipment> item) {
   if (useActionPoints(1)) {
-    if (item->getType() == Item::ItemType::oneHanded) {
+    if (item->getEquipmentType() == Equipment::EquipmentType::oneHanded) {
       auto equippedRightHand{m_equipment.rightHand.lock()};
       if (equippedRightHand) {
-        if (equippedRightHand->getType() == Item::ItemType::twoHanded) {
+        if (equippedRightHand->getEquipmentType() ==
+            Equipment::EquipmentType::twoHanded) {
           m_equipment.leftHand.reset();
         }
         equippedRightHand->setUnequipped();
@@ -86,7 +90,8 @@ void Player::equipItem(std::shared_ptr<Item> item) {
       }
       m_equipment.rightHand = item;
       item->setEquipped();
-    } else if (item->getType() == Item::ItemType::twoHanded) {
+    } else if (item->getEquipmentType() ==
+               Equipment::EquipmentType::twoHanded) {
       auto equippedRightHand{m_equipment.rightHand.lock()};
       if (equippedRightHand) {
         equippedRightHand->setUnequipped();
@@ -108,17 +113,19 @@ void Player::equipItem(std::shared_ptr<Item> item) {
 }
 
 void Player::removeItem(std::shared_ptr<Item> item) {
-  if (item->isEquipped()) {
-    if (auto weapon{std::dynamic_pointer_cast<Weapon>(item)}) {
-      if (weapon->getType() == Item::ItemType::twoHanded) {
-        m_equipment.leftHand.reset();
-      } else if (m_equipment.leftHand.lock() == item) {
-        m_equipment.leftHand.reset();
-      } else
-        m_equipment.rightHand.reset();
+  if (auto equipment = std::dynamic_pointer_cast<Equipment>(item)) {
+    if (equipment->isEquipped()) {
+      if (auto weapon{std::dynamic_pointer_cast<Weapon>(item)}) {
+        if (weapon->getEquipmentType() == Equipment::EquipmentType::twoHanded) {
+          m_equipment.leftHand.reset();
+        } else if (m_equipment.leftHand.lock() == item) {
+          m_equipment.leftHand.reset();
+        } else
+          m_equipment.rightHand.reset();
+      }
     }
+    equipment->setUnequipped();
   }
-  item->setUnequipped();
   auto it{std::find(m_inventory.begin(), m_inventory.end(), item)};
   if (it != m_inventory.end())
     m_inventory.erase(it);
@@ -222,12 +229,12 @@ void Player::displayCharacterSheet() const {
   std::cout << "Equipped items:\n";
   auto rightHandItem{m_equipment.rightHand.lock()};
   if (rightHandItem)
-    std::cout << " Right hand: " << *rightHandItem << '\n';
+    std::cout << " Right hand: " << rightHandItem->getDisplayItem() << '\n';
   else
     std::cout << " Right hand: None\n";
   auto leftHandItem{m_equipment.leftHand.lock()};
   if (leftHandItem)
-    std::cout << " Left hand: " << *leftHandItem << '\n';
+    std::cout << " Left hand: " << leftHandItem->getDisplayItem() << '\n';
   else
     std::cout << " Left hand: None\n";
 }

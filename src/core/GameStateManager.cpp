@@ -194,23 +194,21 @@ void GameStateManager::handleItemInspect() {
   ScreenUtils::clearScreen();
   if (auto item{m_inspectedItem.lock()}) {
     std::cout << item->getDisplayItem() << "\n";
-    if (item->isEquipment())
+    if (auto equipment = std::dynamic_pointer_cast<Equipment>(item))
       std::cout << "E: Equip/Unequip   R: Drop\n";
-    else if (item->isUsable())
+    else if (auto usable = std::dynamic_pointer_cast<UsableItem>(item))
       std::cout << "E: Use   R: Drop\n";
     auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
     if (CommandHandler::isInteractionCommand(command)) {
       auto &player{m_gameSession.getPlayer()};
-      if (item->isEquipment())
-        player.equipItem(item);
-      else if (item->isUsable()) {
-        if (auto usable = std::dynamic_pointer_cast<UsableItem>(item)) {
-          m_logsToDisplay << player.useItem(usable);
-          m_logsToDisplay << m_gameSession.cleanDeadNpcs();
-          if (!m_logsToDisplay.str().empty()) {
-            m_currentState = GameState::Display;
-            return;
-          }
+      if (auto equipment = std::dynamic_pointer_cast<Equipment>(item))
+        player.equipItem(equipment);
+      else if (auto usable = std::dynamic_pointer_cast<UsableItem>(item)) {
+        m_logsToDisplay << player.useItem(usable);
+        m_logsToDisplay << m_gameSession.cleanDeadNpcs();
+        if (!m_logsToDisplay.str().empty()) {
+          m_currentState = GameState::Display;
+          return;
         }
       }
     } else if (CommandHandler::isShoveCommand(command)) {
