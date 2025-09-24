@@ -2,7 +2,7 @@
 #include "core/GameSession.h"
 #include "gameObjects/GameObject.h"
 #include "map/Point.h"
-#include "scripts/actions/MeleeAttack.h"
+#include "scripts/actions/BasicAttack.h"
 
 Creature::Creature(char symbol, const Point &position,
                    std::string_view currentMap, int maxHealthPoints,
@@ -10,14 +10,13 @@ Creature::Creature(char symbol, const Point &position,
                    std::string_view description)
     : GameObject{true, false, symbol, currentMap, position, name, description},
       m_maxHealthPoints{maxHealthPoints}, m_evasion{evasion} {
-  m_actions.emplace_back(
-      std::make_shared<MeleeAttack>("Attack with right hand weapon"));
+  m_actions.emplace_back(std::make_unique<BasicAttack>(
+      "Attack with right hand weapon", Stat::Strength));
   m_healthPoints = m_maxHealthPoints;
 }
 
 Creature::Creature(const Creature &other)
-    : GameObject(other), m_inventory{}, m_actions{other.m_actions},
-      m_healthPoints{other.m_healthPoints},
+    : GameObject(other), m_inventory{}, m_healthPoints{other.m_healthPoints},
       m_maxHealthPoints{other.m_maxHealthPoints}, m_evasion{other.m_evasion},
       m_maxMovementPoints{other.m_maxMovementPoints},
       m_maxActionPoints{other.m_maxActionPoints},
@@ -25,16 +24,21 @@ Creature::Creature(const Creature &other)
       m_actionPoints{other.m_actionPoints}, m_inCombat{other.m_inCombat} {
   for (const auto &effect : other.m_passiveEffects) {
     m_passiveEffects.emplace_back(std::make_unique<PassiveEffect>(*effect));
-  }
+  } // hey this is slicing
   for (const auto &item : other.m_inventory) {
     m_inventory.emplace_back(item->clone());
+  }
+  for (const auto &action : other.m_actions) {
+    m_actions.emplace_back(action->clone());
   }
 }
 
 int Creature::getHealthPoints() const { return m_healthPoints; }
 int Creature::getMaxHealthPoints() const { return m_maxHealthPoints; }
 bool Creature::isDead() const { return m_healthPoints <= 0; }
-int Creature::getEvasion() const { return m_evasion; }
+int Creature::getEvasion() const {
+  return m_evasion + getStatModifier(Stat::Evasion);
+}
 void Creature::takeDamage(int damage) { m_healthPoints -= damage; }
 void Creature::addHealthPoints(int healthPoints) {
   m_healthPoints = std::min(m_healthPoints + healthPoints, m_maxHealthPoints);
@@ -54,7 +58,7 @@ bool Creature::useActionPoints(int cost) {
 
 void Creature::reduceCooldowns() {
   for (auto it{m_passiveEffects.begin()}; it < m_passiveEffects.end(); ++it) {
-    (*it)->applyEffect();
+    (*it)->applyEffect(*this);
     (*it)->decrementRounds();
   }
   m_passiveEffects.erase(
@@ -66,7 +70,17 @@ void Creature::reduceCooldowns() {
 }
 
 void Creature::addPassiveEffect(const PassiveEffect &passive) {
-  m_passiveEffects.emplace_back(std::make_unique<PassiveEffect>(passive));
+  if (!passive.isStackable()) {
+    for (auto &existing : m_passiveEffects) {
+      if (existing->getType() == passive.getType() &&
+          existing->getId() == passive.getId()) {
+        // refresh duration
+        existing->setRoundsLeft(passive.getRoundsLeft());
+        return;
+      }
+    }
+  }
+  m_passiveEffects.emplace_back(passive.clone());
 }
 
 void Creature::resetTurn() {
@@ -109,3 +123,10 @@ void Creature::addMovementPoints(int points) {
 bool Creature::inCombat() const { return m_inCombat; }
 void Creature::setCombat() { m_inCombat = true; }
 void Creature::unsetCombat() { m_inCombat = false; }
+int Creature::getStatModifier(Stat stat) const {
+  int totalModifier{0};
+  for (const auto &effect : m_passiveEffects) {
+    totalModifier += effect->getStatModifier(stat);
+  }
+  return totalModifier;
+}

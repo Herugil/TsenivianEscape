@@ -4,16 +4,15 @@
 #include "gameObjects/items/Weapon.h"
 #include "map/Map.h"
 #include "map/Point.h"
+#include "scripts/actions/BasicAttack.h"
 #include "scripts/actions/Dodge.h"
-#include "scripts/actions/MeleeAttack.h"
-#include "scripts/actions/RangedAttack.h"
 #include <memory>
 
 Player::Player(const Point &position, std::string_view currentMap,
                int maxHealthPoints, Stats stats)
     : Creature('@', position, currentMap, maxHealthPoints, 0, "you"),
       m_stats{stats}, m_shoveAction{} {
-  m_actions.emplace_back(std::make_shared<Dodge>(Dodge("Dodge")));
+  m_actions.emplace_back(std::make_unique<Dodge>(Dodge("Dodge")));
 }
 
 void Player::takeItem(std::shared_ptr<Item> item) {
@@ -62,16 +61,18 @@ void Player::updateActionsOnEquip() {
   if (m_rightHand) {
     if (auto weapon = std::dynamic_pointer_cast<Weapon>(m_rightHand)) {
       if (weapon->getWeaponType() == Weapon::ranged) {
-        m_actions.insert(m_actions.begin(),
-                         std::make_shared<RangedAttack>(
-                             "Ranged attack with right hand weapon"));
+        m_actions.insert(
+            m_actions.begin(),
+            std::make_unique<BasicAttack>(
+                "Ranged attack with right hand weapon", Stat::Dexterity));
         return;
       }
     }
   }
   // cases where no weapon or melee weapon equipped
   m_actions.insert(m_actions.begin(),
-                   std::shared_ptr<MeleeAttack>(m_meleeAttack));
+                   std::make_unique<BasicAttack>("Attack with melee weapon",
+                                                 Stat::Strength));
 }
 
 void Player::equipItem(std::shared_ptr<Equipment> item) {
@@ -144,11 +145,6 @@ std::string Player::shove(GameSession &gameSession,
   return m_shoveAction.playerExecute(gameSession, direction);
 }
 
-std::string Player::meleeAttack(GameSession &gameSession,
-                                Directions::Direction direction) {
-  return m_meleeAttack->playerExecute(gameSession, direction);
-}
-
 std::string Player::useItem(std::shared_ptr<UsableItem> item) {
   auto res{item->use(*this)};
   if (!item->isUnlimitedUse() && item->getUsesLeft() == 0) {
@@ -157,17 +153,20 @@ std::string Player::useItem(std::shared_ptr<UsableItem> item) {
   return res;
 }
 
-int Player::getStrength() const { return m_stats.strength; }
-int Player::getDexterity() const { return m_stats.dexterity; }
-int Player::getIntelligence() const { return m_stats.intelligence; }
-int Player::getConstitution() const { return m_stats.constitution; }
+int Player::getStrength() const {
+  return m_stats.strength + getStatModifier(Stat::Strength);
+}
+int Player::getDexterity() const {
+  return m_stats.dexterity + getStatModifier(Stat::Dexterity);
+}
+int Player::getIntelligence() const {
+  return m_stats.intelligence + getStatModifier(Stat::Intelligence);
+}
+int Player::getConstitution() const {
+  return m_stats.constitution + getStatModifier(Stat::Constitution);
+}
 int Player::getEvasion() const {
-  int evasion{getDexterity() * 5};
-  for (const auto &passive : m_passiveEffects) {
-    if (passive->getType() == PassiveEffect::Type::EvasionBonus)
-      evasion += passive->getValue();
-  }
-  return evasion;
+  return getDexterity() * 5 + getStatModifier(Stat::Evasion);
 }
 int Player::getMeleeHitChance() const {
   return Settings::g_baseHitChance + (getStrength() * 5);
@@ -207,11 +206,11 @@ int Player::getDistanceRange() const {
   return 0; // no ranged weapon equipped
 }
 
-std::shared_ptr<Action> Player::getAction(std::size_t index) const {
+Action *Player::getAction(std::size_t index) {
   auto i{static_cast<std::size_t>(index)};
   if (i >= m_actions.size())
     return nullptr;
-  return m_actions[i];
+  return m_actions[i].get();
 }
 
 void Player::displayCharacterSheet() const {
@@ -229,21 +228,28 @@ void Player::displayCharacterSheet() const {
   std::cout << "Equipped items:\n";
   auto rightHandItem{m_equipment.rightHand.lock()};
   if (rightHandItem)
-    std::cout << " Right hand: " << rightHandItem->getDisplayItem() << '\n';
+    std::cout << " Right hand: " << rightHandItem->getDisplayForMenu() << '\n';
   else
     std::cout << " Right hand: None\n";
   auto leftHandItem{m_equipment.leftHand.lock()};
   if (leftHandItem)
-    std::cout << " Left hand: " << leftHandItem->getDisplayItem() << '\n';
+    std::cout << " Left hand: " << leftHandItem->getDisplayForMenu() << '\n';
   else
     std::cout << " Left hand: None\n";
+
+  std::cout << "\n\nCurrent effects:\n";
+  for (const auto &effect : m_passiveEffects) {
+    std::cout << effect->display() << '\n';
+  }
 }
 
 int Player::getCurrentXP() const { return m_currentXP; }
 int Player::getLevel() const { return m_level; }
 int Player::getXpToNextLevel() const { return m_xpToNextLevel; }
 void Player::addXP(int xp) { m_currentXP += xp; }
-bool Player::canLevelUp() const { return m_currentXP >= m_xpToNextLevel; }
+bool Player::canLevelUp() const {
+  return m_currentXP >= m_xpToNextLevel && !inCombat();
+}
 void Player::levelUp() {
   // this function is a placeholder
   // only one stat should go up,

@@ -47,7 +47,7 @@ public:
   bool needsDirectionalInput() const { return m_needsDirectionalInput; }
   bool needsHotkeyInput() const { return m_needsHotkeyInput; }
   Stat getUsedStat() const { return m_usedStat; }
-
+  virtual std::unique_ptr<Action> clone() const = 0;
   virtual ~Action() = default;
   friend std::ostream &operator<<(std::ostream &out, const Action &action) {
     out << action.getName();

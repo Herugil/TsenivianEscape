@@ -131,7 +131,7 @@ void GameStateManager::HandleWorld() {
   } else if (CommandHandler::isAttackCommand(command)) {
     auto directionCommand{CommandHandler::getCommand(Input::getKeyBlocking())};
     if (CommandHandler::isMovementCommand(directionCommand)) {
-      m_logsToDisplay << m_gameSession.getPlayer().meleeAttack(
+      m_logsToDisplay << m_gameSession.getPlayer().getAction(0)->playerExecute(
           m_gameSession, static_cast<Directions::Direction>(directionCommand));
       m_logsToDisplay << m_gameSession.cleanDeadNpcs();
       if (!m_logsToDisplay.str().empty())

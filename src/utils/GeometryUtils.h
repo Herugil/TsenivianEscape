@@ -13,5 +13,6 @@ Directions::Direction getRequiredDirection(const Point &p1, const Point &p2);
 std::vector<Point> drawStraightLine(const Point &p1, const Point &p2);
 std::deque<Point> sortPointsAndFindPath(std::vector<Point> points,
                                         const Point &startPoint,
-                                        const GameSession &gameSession);
+                                        const GameSession &gameSession,
+                                        bool closest = true);
 } // namespace GeometryUtils

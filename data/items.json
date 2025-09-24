@@ -23,12 +23,28 @@
     "damage": 3,
     "range": 1
   },
+  "itemSwordOfWrath": {
+    "name": "Sword of Wrath",
+    "itemType": "twoHanded",
+    "weaponType": "melee",
+    "description": "A large sword, with a red tinted blade. The ripple of light on the blade makes it look like a beating heart.",
+    "damage": 10,
+    "range": 1
+  },
   "itemBow": {
     "name": "Bow",
     "itemType": "twoHanded",
     "weaponType": "ranged",
     "description": "A simple wooden bow, mostly used to hunt game.",
     "damage": 2,
+    "range": 10
+  },
+  "itemBowOfFury": {
+    "name": "Bow of Fury",
+    "itemType": "twoHanded",
+    "weaponType": "ranged",
+    "description": "A great bow, black as night, heavy and powerful.",
+    "damage": 10,
     "range": 10
   },
   "itemSpear": {

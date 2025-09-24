@@ -12,7 +12,7 @@ protected:
   std::vector<std::shared_ptr<Item>> m_inventory{};
   // player needs an inventory, monsters should be lootable once they die
   // or player could pickpocket them
-  std::vector<std::shared_ptr<Action>> m_actions{};
+  std::vector<std::unique_ptr<Action>> m_actions{};
   // this should probably be unique ptr, need to change, mb
   int m_healthPoints{};
   int m_maxHealthPoints{};
@@ -61,4 +61,5 @@ public:
   bool inCombat() const;
   void setCombat();
   void unsetCombat();
+  int getStatModifier(Stat stat) const;
 };

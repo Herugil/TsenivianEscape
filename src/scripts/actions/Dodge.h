@@ -13,5 +13,8 @@ public:
                       Creature &target) const override;
   std::string execute(Creature &actor) const;
   std::string playerExecute(GameSession &gameSession) const override;
+  std::unique_ptr<Action> clone() const override {
+    return std::make_unique<Dodge>(*this);
+  };
   ~Dodge() = default;
 };

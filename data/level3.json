@@ -27,22 +27,10 @@
   ],
   "enemies": [
     {
-      "symbol": "r",
+      "symbol": "b",
       "position": [7, 5],
-      "id": "enemyRat",
+      "id": "enemyBandit",
       "inventory": []
-    },
-    {
-      "symbol": "t",
-      "position": [7, 7],
-      "id": "enemyRat",
-      "inventory": []
-    },
-    {
-      "symbol": "R",
-      "position": [8, 5],
-      "id": "enemyGiantRat",
-      "inventory": ["itemBanana"]
     }
   ],
   "gameObjects": [

@@ -8,7 +8,7 @@
 #include "input/Input.h"
 #include "map/Point.h"
 #include "scripts/actions/Action.h"
-#include "scripts/actions/MeleeAttack.h"
+#include "scripts/actions/BasicAttack.h"
 #include "scripts/actions/Shove.h"
 #include <memory>
 #include <sstream>
@@ -34,27 +34,23 @@ private:
   Stats m_stats{};
   PlayerEquipment m_equipment{};
   Shove m_shoveAction{};
-  std::shared_ptr<MeleeAttack> m_meleeAttack{
-      std::make_shared<MeleeAttack>("Attack with melee weapon")};
   int m_currentXP{0};
   int m_level{1};
   int m_xpToNextLevel{100}; // const, linear, exp ?
 
 public:
   Player(const Point &position, std::string_view currentMap,
-         int maxHealthPoints, Stats stats = Stats{1, 1, 1, 1});
+         int maxHealthPoints, Stats stats = Stats{1, 5, 1, 1});
   void takeItem(std::shared_ptr<Item> item);
   void displayInventory(std::size_t page = 0) const;
   void displayActions() const;
-  std::shared_ptr<Action> getAction(std::size_t index) const;
+  Action *getAction(std::size_t index);
   void takeAllItems(Container &container);
   void equipItem(std::shared_ptr<Equipment> item);
   void removeItem(std::shared_ptr<Item> item);
   void updateActionsOnEquip();
   std::shared_ptr<Item> getItem(std::size_t index) const;
   std::string shove(GameSession &gameSession, Directions::Direction direction);
-  std::string meleeAttack(GameSession &gameSession,
-                          Directions::Direction direction);
   std::string useItem(std::shared_ptr<UsableItem> item);
   int getStrength() const;
   int getDexterity() const;

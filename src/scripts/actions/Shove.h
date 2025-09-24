@@ -16,5 +16,8 @@ public:
                       std::shared_ptr<GameObject> target) const;
   std::string playerExecute(GameSession &gameSession,
                             Directions::Direction direction) const override;
+  std::unique_ptr<Action> clone() const override {
+    return std::make_unique<Shove>(*this);
+  };
   ~Shove() = default;
 };

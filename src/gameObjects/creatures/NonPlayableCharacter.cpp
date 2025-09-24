@@ -19,9 +19,9 @@
 NonPlayableCharacter::NonPlayableCharacter(
     char symbol, const Point &point, std::string_view currentMap,
     int maxHealthPoints, std::string_view name, int evasion, int meleeHitChance,
-    int distanceHitChance, std::vector<std::shared_ptr<Item>> items,
-    std::string_view description, std::string_view deadDescription,
-    std::string_view aiType, int xpValue)
+    int distanceHitChance, std::vector<std::unique_ptr<Action>> actions,
+    std::vector<std::shared_ptr<Item>> items, std::string_view description,
+    std::string_view deadDescription, std::string_view aiType, int xpValue)
     : Creature{symbol,  point, currentMap, maxHealthPoints,
                evasion, name,  description},
       m_deadDescription{deadDescription}, m_meleeHitChance{meleeHitChance},
@@ -29,6 +29,13 @@ NonPlayableCharacter::NonPlayableCharacter(
       m_xpValue{xpValue} {
   if (!items.empty())
     m_inventory = std::move(items);
+  if (!actions.empty()) {
+    m_actions.clear();
+    m_actions.reserve(actions.size());
+    for (auto &action : actions) {
+      m_actions.emplace_back(std::move(action));
+    }
+  }
 }
 
 NonPlayableCharacter::NonPlayableCharacter(const NonPlayableCharacter &other)
@@ -69,7 +76,7 @@ int NonPlayableCharacter::getDistanceRange() const { return m_distanceRange; }
 
 std::string NonPlayableCharacter::executeBasicAttack(Creature &target,
                                                      GameSession &gameSession) {
-  auto basicAction{m_actions[0]};
+  auto basicAction{m_actions[0].get()};
   return basicAction->execute(gameSession, *this, target);
 }
 
@@ -157,12 +164,12 @@ std::deque<Point> NonPlayableCharacter::getPathFlee(GameSession &gameSession) {
                       GeometryUtils::distanceL2(getPosition(), p2));
             });
   path = GeometryUtils::sortPointsAndFindPath(mapChangers, getPosition(),
-                                              gameSession);
+                                              gameSession, false);
   if (!path.empty())
     return path;
   else
     return GeometryUtils::sortPointsAndFindPath(safePoints, getPosition(),
-                                                gameSession);
+                                                gameSession, false);
 }
 
 std::deque<Point>
@@ -176,11 +183,6 @@ NonPlayableCharacter::getPathAttack(GameSession &gameSession) {
       continue; // cant go there
     possiblePoints.push_back(potentialDestination);
   }
-  std::sort(possiblePoints.begin(), possiblePoints.end(),
-            [this](const Point &p1, const Point &p2) {
-              return GeometryUtils::distanceL1(getPosition(), p1) <=
-                     GeometryUtils::distanceL1(getPosition(), p2);
-            });
   return GeometryUtils::sortPointsAndFindPath(possiblePoints, getPosition(),
                                               gameSession);
   return {};

@@ -4,6 +4,7 @@
 #include "gameObjects/items/Item.h"
 #include "gameObjects/items/Weapon.h"
 #include "gameObjects/terrain/MapChanger.h"
+#include "scripts/passives/CompositePassiveEffect.h"
 #include <cassert>
 #include <filesystem>
 #include <fstream>
@@ -60,6 +61,33 @@ DataLoader::getAllItems() {
   return items;
 }
 
+std::unique_ptr<PassiveEffect> parsePassiveEffect(const json &data) {
+  std::string typeStr{data["type"]};
+  PassiveEffect::Type type{PassiveEffect::typeFromString(typeStr)};
+  int duration{data["duration"]};
+  bool stackable{data["stackable"]};
+  if (data.contains("stackable")) {
+    stackable = data["stackable"];
+  }
+  std::string id{data["id"]};
+  std::string name{data["name"]};
+  if (type == PassiveEffect::Type::Composite) {
+    std::vector<std::unique_ptr<PassiveEffect>> effects{};
+    for (const auto &effectData : data["components"]) {
+      std::string effectTypeStr{effectData["type"]};
+      int effectValue{effectData["value"]};
+      effects.emplace_back(std::make_unique<PassiveEffect>(
+          PassiveEffect::typeFromString(effectTypeStr), effectValue, 0, id,
+          "component", false));
+    }
+    return std::make_unique<CompositePassiveEffect>(std::move(effects),
+                                                    duration, id, name);
+  }
+  int value{data["value"]};
+  return std::make_unique<PassiveEffect>(type, value, duration, id, name,
+                                         stackable);
+}
+
 std::unordered_map<std::string, std::shared_ptr<NonPlayableCharacter>>
 DataLoader::getAllNpcs() {
   std::unordered_map<std::string, std::shared_ptr<NonPlayableCharacter>> npcs{};
@@ -75,11 +103,28 @@ DataLoader::getAllNpcs() {
     std::string descDead{value["deadDescription"]};
     std::string aiType{value["type"]};
     int xpValue{value["xpValue"]};
-
+    std::vector<std::unique_ptr<Action>> actions{};
+    if (value.contains("actions")) {
+      for (auto &action : value["actions"]) {
+        if (action["isBasicAttack"]) {
+          std::vector<std::unique_ptr<PassiveEffect>> effects{};
+          if (action.contains("effects")) {
+            for (const auto &effectData : action["effects"]) {
+              effects.emplace_back(parsePassiveEffect(effectData));
+            }
+          }
+          std::string name{action["name"]};
+          actions.emplace_back(std::make_unique<BasicAttack>(
+              name, Stat::Strength, std::move(effects)));
+        } else {
+          std::cout << "Unknown action type for NPC " << key << "\n";
+        }
+      }
+    }
     npcs[key] = std::make_shared<NonPlayableCharacter>(
         ' ', Point{0, 0}, "placeholder", maxHealth, name, evasion,
-        meleeHitChance, distanceHitChance, std::vector<std::shared_ptr<Item>>{},
-        desc, descDead, aiType, xpValue);
+        meleeHitChance, distanceHitChance, std::move(actions),
+        std::vector<std::shared_ptr<Item>>{}, desc, descDead, aiType, xpValue);
   }
   return npcs;
 }

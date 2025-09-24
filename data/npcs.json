@@ -8,7 +8,34 @@
     "distanceHitChance": 0,
     "description": "An aggressive rat with tiny red eyes.",
     "deadDescription": "A dead rat body.",
-    "xpValue": 20
+    "xpValue": 20,
+    "actions": {
+      "meleeAttack": {
+        "name": "Rat bite",
+        "isBasicAttack": true,
+        "type": "melee",
+        "effects": [
+          {
+            "type": "composite",
+            "id": "ratBiteEffect",
+            "name": "Rat's disease",
+            "target": "enemy",
+            "stackable": false,
+            "components": [
+              {
+                "type": "damageOverTime",
+                "value": 1
+              },
+              {
+                "type": "strengthBonus",
+                "value": -1
+              }
+            ],
+            "duration": -1
+          }
+        ]
+      }
+    }
   },
   "enemyBandit": {
     "name": "Bandit",
@@ -19,7 +46,25 @@
     "distanceHitChance": 50,
     "description": "A bandit with an untidy look, holding a club.",
     "deadDescription": "A dead bandit body.",
-    "xpValue": 30
+    "xpValue": 30,
+    "actions": {
+      "rangeAttack": {
+        "name": "Bow shot",
+        "isBasicAttack": true,
+        "type": "ranged",
+        "effects": [
+          {
+            "type": "dexterityBonus",
+            "id": "banditPoisonEffect",
+            "name": "Bandit's poison",
+            "target": "enemy",
+            "stackable": false,
+            "value": -1,
+            "duration": 2
+          }
+        ]
+      }
+    }
   },
   "enemyGiantRat": {
     "name": "Giant Rat",

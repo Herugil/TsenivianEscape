@@ -43,6 +43,7 @@ public:
                        std::string_view name, int evasion = 0,
                        int meleeHitChance = Settings::g_baseHitChance,
                        int distanceHitChance = Settings::g_baseHitChance,
+                       std::vector<std::unique_ptr<Action>> actions = {},
                        std::vector<std::shared_ptr<Item>> inventory = {},
                        std::string_view description = "enemy",
                        std::string_view deadDescription = "",
