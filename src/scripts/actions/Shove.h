@@ -11,11 +11,11 @@ class Shove : public Action {
 public:
   explicit Shove(std::string_view name = "Shove");
   std::string execute(GameSession &gameSession, Creature &actor,
-                      Creature &target) const override;
+                      Creature &target) override;
   std::string execute(GameSession &gameSession, Creature &actor,
-                      std::shared_ptr<GameObject> target) const;
+                      std::shared_ptr<GameObject> target);
   std::string playerExecute(GameSession &gameSession,
-                            Directions::Direction direction) const override;
+                            Directions::Direction direction) override;
   std::unique_ptr<Action> clone() const override {
     return std::make_unique<Shove>(*this);
   };

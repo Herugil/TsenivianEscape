@@ -10,9 +10,9 @@ public:
   using Action::playerExecute;
   Dodge(std::string_view name);
   std::string execute(GameSession &gameSession, Creature &actor,
-                      Creature &target) const override;
-  std::string execute(Creature &actor) const;
-  std::string playerExecute(GameSession &gameSession) const override;
+                      Creature &target) override;
+  std::string execute(Creature &actor);
+  std::string playerExecute(GameSession &gameSession) override;
   std::unique_ptr<Action> clone() const override {
     return std::make_unique<Dodge>(*this);
   };

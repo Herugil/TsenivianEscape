@@ -43,7 +43,10 @@ int Player::numObjectsHeld() const {
 void Player::displayActions() const {
   std::cout << "Available actions: \n";
   for (std::size_t i{0}; i < m_actions.size(); ++i) {
-    std::cout << i + 1 << ": " << *(m_actions[i]) << '\n';
+    std::cout << i + 1 << ": " << *(m_actions[i]);
+    if (m_actions[i]->getCurrentCooldown() > 0)
+      std::cout << " cooldown: " << m_actions[i]->getCurrentCooldown();
+    std::cout << '\n';
   }
 }
 

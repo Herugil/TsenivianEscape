@@ -14,7 +14,7 @@ BasicAttack::BasicAttack(std::string_view name, Stat usedStat,
 }
 
 std::string BasicAttack::execute([[maybe_unused]] GameSession &gameSession,
-                                 Creature &actor, Creature &target) const {
+                                 Creature &actor, Creature &target) {
   std::ostringstream result;
   int hitChance{0};
   int damage{0};
@@ -54,12 +54,12 @@ std::string BasicAttack::execute([[maybe_unused]] GameSession &gameSession,
 }
 
 std::string BasicAttack::playerExecute(GameSession &gameSession,
-                                       Creature &target) const {
+                                       Creature &target) {
   return execute(gameSession, gameSession.getPlayer(), target);
 }
 
 std::string BasicAttack::playerExecute(GameSession &gameSession,
-                                       Directions::Direction direction) const {
+                                       Directions::Direction direction) {
   int range{0};
   if (m_usedStat == Stat::Strength) {
     range = gameSession.getPlayer().getMeleeRange();

@@ -3,24 +3,28 @@
 #include "scripts/passives/PassiveEffect.h"
 #include <sstream>
 
-Dodge::Dodge(std::string_view name) : Action{name, false, false} {}
+Dodge::Dodge(std::string_view name) : Action{name, false, false} {
+  m_cooldown = 1;
+  m_currentCooldown = 0;
+}
 
 std::string Dodge::execute([[maybe_unused]] GameSession &gameSession,
                            [[maybe_unused]] Creature &actor,
-                           [[maybe_unused]] Creature &target) const {
+                           [[maybe_unused]] Creature &target) {
   return {};
 }
 
-std::string Dodge::execute(Creature &actor) const {
+std::string Dodge::execute(Creature &actor) {
   std::ostringstream res{};
-  if (actor.useActionPoints(m_cost)) {
+  if (m_currentCooldown <= 0 && actor.useActionPoints(m_cost)) {
     actor.addPassiveEffect(PassiveEffect{PassiveEffect::Type::EvasionBonus, 10,
                                          2, "dodge", "dodge", false});
     res << actor.getName() << " starts dodging.\n";
+    m_currentCooldown = m_cooldown;
   }
   return res.str();
 }
-std::string Dodge::playerExecute(GameSession &gameSession) const {
+std::string Dodge::playerExecute(GameSession &gameSession) {
   if (gameSession.getPlayer().inCombat())
     return execute(gameSession.getPlayer());
   return {};

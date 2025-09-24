@@ -19,6 +19,8 @@ protected:
   // command
   int m_cost{1}; // in some systems (pf2e) variable action cost
   // for 1 spell but not gonna bother here
+  int m_cooldown{0};
+  int m_currentCooldown{0};
   Stat m_usedStat{};
 
 public:
@@ -28,18 +30,17 @@ public:
         m_needsDirectionalInput{needsDirectionalInput}, m_usedStat{usedStat} {}
   std::string_view getName() const { return m_name; }
   virtual std::string execute(GameSession &gameSession, Creature &actor,
-                              Creature &target) const = 0;
+                              Creature &target) = 0;
   virtual std::string
   playerExecute([[maybe_unused]] GameSession &gameSession,
-                [[maybe_unused]] Directions::Direction direction) const {
+                [[maybe_unused]] Directions::Direction direction) {
     return {};
   };
   virtual std::string playerExecute([[maybe_unused]] GameSession &gameSession,
-                                    [[maybe_unused]] Creature &target) const {
+                                    [[maybe_unused]] Creature &target) {
     return {};
   };
-  virtual std::string
-  playerExecute([[maybe_unused]] GameSession &gameSession) const {
+  virtual std::string playerExecute([[maybe_unused]] GameSession &gameSession) {
     return {};
   };
   // these actions arent pure virtual because most actions need
@@ -52,5 +53,11 @@ public:
   friend std::ostream &operator<<(std::ostream &out, const Action &action) {
     out << action.getName();
     return out;
+  }
+  int getCooldown() const { return m_cooldown; }
+  int getCurrentCooldown() const { return m_currentCooldown; }
+  void reduceCooldown() {
+    if (m_currentCooldown > 0)
+      --m_currentCooldown;
   }
 };

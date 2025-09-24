@@ -13,11 +13,11 @@ public:
   BasicAttack(std::string_view name, Stat usedStat,
               std::vector<std::unique_ptr<PassiveEffect>> applyOnHit = {});
   std::string execute(GameSession &gameSession, Creature &actor,
-                      Creature &target) const override;
+                      Creature &target) override;
   std::string playerExecute(GameSession &gameSession,
-                            Directions::Direction direction) const override;
+                            Directions::Direction direction) override;
   std::string playerExecute(GameSession &gameSession,
-                            Creature &target) const override;
+                            Creature &target) override;
   std::unique_ptr<Action> clone() const override {
     std::vector<std::unique_ptr<PassiveEffect>> effectsCloned;
     for (const auto &effect : m_applyOnHit) {

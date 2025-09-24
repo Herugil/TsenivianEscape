@@ -9,7 +9,7 @@ Shove::Shove(std::string_view name)
 
 std::string Shove::execute([[maybe_unused]] GameSession &gameSession,
                            Creature &actor,
-                           std::shared_ptr<GameObject> target) const {
+                           std::shared_ptr<GameObject> target) {
   std::ostringstream result;
   Directions::Direction shoveDirection{GeometryUtils::getRequiredDirection(
       actor.getPosition(), target->getPosition())};
@@ -28,7 +28,7 @@ std::string Shove::execute([[maybe_unused]] GameSession &gameSession,
 }
 
 std::string Shove::playerExecute(GameSession &gameSession,
-                                 Directions::Direction direction) const {
+                                 Directions::Direction direction) {
   std::ostringstream result;
   if (direction == Directions::nbDirections)
     return result.str();
@@ -60,6 +60,6 @@ std::string Shove::playerExecute(GameSession &gameSession,
 
 std::string Shove::execute([[maybe_unused]] GameSession &gameSession,
                            [[maybe_unused]] Creature &actor,
-                           [[maybe_unused]] Creature &target) const {
+                           [[maybe_unused]] Creature &target) {
   return {};
 }

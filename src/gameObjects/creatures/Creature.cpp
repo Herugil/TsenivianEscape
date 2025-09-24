@@ -67,6 +67,9 @@ void Creature::reduceCooldowns() {
                        return ptr->isExpired();
                      }),
       m_passiveEffects.end());
+  for (auto &action : m_actions) {
+    action->reduceCooldown();
+  }
 }
 
 void Creature::addPassiveEffect(const PassiveEffect &passive) {
