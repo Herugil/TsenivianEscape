@@ -52,10 +52,10 @@ public:
   std::shared_ptr<Item> getItem(std::size_t index) const;
   std::string shove(GameSession &gameSession, Directions::Direction direction);
   std::string useItem(std::shared_ptr<UsableItem> item);
-  int getStrength() const;
-  int getDexterity() const;
-  int getIntelligence() const;
-  int getConstitution() const;
+  int getStrength() const override;
+  int getDexterity() const override;
+  int getIntelligence() const override;
+  int getConstitution() const override;
   int getEvasion() const override;
   int getMeleeHitChance() const override;
   int getDistanceHitChance() const override;

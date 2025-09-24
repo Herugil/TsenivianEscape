@@ -9,10 +9,11 @@ CubeAoe::CubeAoe(std::string_view name, int radius,
       m_radius{radius}, m_damageFormula{damageFormula} {}
 
 std::string CubeAoe::playerExecute(GameSession &gameSession) {
-  return execute(gameSession, gameSession.getPlayer());
+  return execute(gameSession, gameSession.getPlayer(), gameSession.getPlayer());
 }
 
-std::string CubeAoe::execute(GameSession &gameSession, Creature &actor) {
+std::string CubeAoe::execute(GameSession &gameSession, Creature &actor,
+                             [[maybe_unused]] Creature &target) {
   std::ostringstream result;
   if (useActionResources(actor)) {
     auto &map{gameSession.getMap()};
@@ -21,14 +22,14 @@ std::string CubeAoe::execute(GameSession &gameSession, Creature &actor) {
     for (int dx = -m_radius; dx <= m_radius; ++dx) {
       for (int dy = -m_radius; dy <= m_radius; ++dy) {
         Point targetPoint{center.getX() + dx, center.getY() + dy};
+        if (targetPoint == center)
+          continue;
         if (map.isPointVisible(center, targetPoint)) {
           if (auto creature{std::dynamic_pointer_cast<Creature>(
                   map.getTopObject(targetPoint))}) {
-            if (creature.get() != &actor) {
-              creature->takeDamage(damage);
-              result << damage << " damage dealt to " << creature->getName()
-                     << " by " << actor.getName() << "'s " << m_name << ".\n";
-            }
+            creature->takeDamage(damage);
+            result << damage << " damage dealt to " << creature->getName()
+                   << " by " << actor.getName() << "'s " << m_name << ".\n";
           }
         }
       }

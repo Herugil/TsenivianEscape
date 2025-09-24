@@ -208,6 +208,8 @@ std::deque<Point> Map::findPath(const Point &startPoint,
 bool Map::isPointVisible(const Point &from, const Point &to) const {
   if (!checkBounds(from) || !checkBounds(to))
     return false;
+  if (from == to)
+    return true;
   auto linePoints{GeometryUtils::drawStraightLine(from, to)};
   linePoints.erase(linePoints.begin()); // remove starting point
   linePoints.pop_back();                // remove end point

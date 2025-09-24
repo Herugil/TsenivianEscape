@@ -35,6 +35,10 @@ Creature::Creature(const Creature &other)
 
 int Creature::getHealthPoints() const { return m_healthPoints; }
 int Creature::getMaxHealthPoints() const { return m_maxHealthPoints; }
+int Creature::getStrength() const { return 0; }
+int Creature::getDexterity() const { return 0; }
+int Creature::getIntelligence() const { return 0; }
+int Creature::getConstitution() const { return 0; }
 bool Creature::isDead() const { return m_healthPoints <= 0; }
 int Creature::getEvasion() const {
   return m_evasion + getStatModifier(Stat::Evasion);
@@ -126,6 +130,17 @@ void Creature::addMovementPoints(int points) {
 bool Creature::inCombat() const { return m_inCombat; }
 void Creature::setCombat() { m_inCombat = true; }
 void Creature::unsetCombat() { m_inCombat = false; }
+void Creature::resetOutOfCombat() {
+  for (auto it{m_passiveEffects.begin()}; it < m_passiveEffects.end();) {
+    if ((*it)->getRoundsLeft() != -1)
+      it = m_passiveEffects.erase(it);
+    else
+      ++it;
+  }
+  for (auto it{m_actions.begin()}; it < m_actions.end(); ++it) {
+    (*it)->resetCooldown();
+  }
+}
 int Creature::getStatModifier(Stat stat) const {
   int totalModifier{0};
   for (const auto &effect : m_passiveEffects) {

@@ -31,7 +31,8 @@ public:
          int maxCharges = -1, int cooldown = 0)
       : m_name{name}, m_needsHotkeyInput{needsHotkeyInput},
         m_needsDirectionalInput{needsDirectionalInput}, m_usedStat{usedStat},
-        m_cost{cost}, m_maxCharges{maxCharges}, m_cooldown{cooldown} {}
+        m_cost{cost}, m_maxCharges{maxCharges}, m_currentCharges{maxCharges},
+        m_cooldown{cooldown} {}
   std::string_view getName() const { return m_name; }
   virtual std::string execute(GameSession &gameSession, Creature &actor,
                               Creature &target) = 0;
@@ -64,6 +65,7 @@ public:
     if (m_currentCooldown > 0)
       --m_currentCooldown;
   }
+  void resetCooldown() { m_currentCooldown = 0; }
   int getCurrentCharges() const { return m_currentCharges; }
   int getMaxCharges() const { return m_maxCharges; }
   bool useActionResources(Creature &creature);

@@ -5,6 +5,7 @@
 #include "map/Map.h"
 #include "map/Point.h"
 #include "scripts/actions/BasicAttack.h"
+#include "scripts/actions/CubeAoe.h"
 #include "scripts/actions/Dodge.h"
 #include <memory>
 
@@ -13,6 +14,10 @@ Player::Player(const Point &position, std::string_view currentMap,
     : Creature('@', position, currentMap, maxHealthPoints, 0, "you"),
       m_stats{stats}, m_shoveAction{} {
   m_actions.emplace_back(std::make_unique<Dodge>(Dodge("Dodge")));
+  m_actions.emplace_back(std::make_unique<CubeAoe>(
+      "Swirling flames", 1,
+      [](const Creature &actor) { return actor.getIntelligence() + 1; }, 2, 2,
+      2));
 }
 
 void Player::takeItem(std::shared_ptr<Item> item) {
@@ -46,6 +51,9 @@ void Player::displayActions() const {
     std::cout << i + 1 << ": " << *(m_actions[i]);
     if (m_actions[i]->getCurrentCooldown() > 0)
       std::cout << " cooldown: " << m_actions[i]->getCurrentCooldown();
+    if (m_actions[i]->getMaxCharges() != -1)
+      std::cout << " charges: " << m_actions[i]->getCurrentCharges() << '/'
+                << m_actions[i]->getMaxCharges();
     std::cout << '\n';
   }
 }

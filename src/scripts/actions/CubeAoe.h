@@ -13,7 +13,8 @@ public:
           std::function<int(const Creature &actor)> damageFormula, int cost,
           int maxCharges, int cooldown);
   std::string playerExecute(GameSession &gameSession) override;
-  std::string execute(GameSession &gameSession, Creature &actor);
+  std::string execute(GameSession &gameSession, Creature &actor,
+                      [[maybe_unused]] Creature &target) override;
   std::unique_ptr<Action> clone() const override {
     return std::make_unique<CubeAoe>(*this);
   }

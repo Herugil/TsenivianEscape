@@ -25,9 +25,10 @@ void GameStateManager::mainLoop() {
       if (m_gameSession.enemiesInMap()) {
         setCombatState();
         break;
-      } else if (m_gameSession.getPlayer().inCombat()) {
+      } else {
         m_gameSession.getPlayer().unsetCombat();
         m_gameSession.resetInitiative();
+        m_gameSession.getPlayer().resetOutOfCombat();
       }
       ScreenUtils::clearScreen();
       m_gameSession.displayMap();

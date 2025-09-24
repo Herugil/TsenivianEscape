@@ -41,6 +41,10 @@ public:
   virtual int getMeleeRange() const = 0;
   virtual int getDistanceDamage() const = 0;
   virtual int getDistanceRange() const = 0;
+  virtual int getStrength() const;
+  virtual int getDexterity() const;
+  virtual int getIntelligence() const;
+  virtual int getConstitution() const;
   int getMovementPoints() const;
   int getActionPoints() const;
   int getMaxMovementPoints() const;
@@ -60,6 +64,7 @@ public:
   virtual ~Creature() = default;
   bool inCombat() const;
   void setCombat();
+  void resetOutOfCombat();
   void unsetCombat();
   int getStatModifier(Stat stat) const;
 };
