@@ -28,7 +28,7 @@ std::string BasicAttack::execute([[maybe_unused]] GameSession &gameSession,
     damage = actor.getDistanceDamage();
     range = actor.getDistanceRange();
   }
-  if (actor.useActionPoints(m_cost)) {
+  if (useActionResources(actor)) {
     if (GeometryUtils::distanceL2(actor.getPosition(), target.getPosition()) >
         range)
       return result.str();

@@ -17,17 +17,21 @@ protected:
   // as a player in the action menu will use the hotkey one,
   // but the directional one might be mapped to another
   // command
+  Stat m_usedStat{};
   int m_cost{1}; // in some systems (pf2e) variable action cost
   // for 1 spell but not gonna bother here
+  int m_maxCharges{-1};     // -1 means unlimited
+  int m_currentCharges{-1}; // -1 means unlimited
   int m_cooldown{0};
   int m_currentCooldown{0};
-  Stat m_usedStat{};
 
 public:
   Action(std::string_view name, bool needsDirectionalInput,
-         bool needsHotkeyInput, Stat usedStat = Stat::nbStats)
+         bool needsHotkeyInput, Stat usedStat = Stat::nbStats, int cost = 1,
+         int maxCharges = -1, int cooldown = 0)
       : m_name{name}, m_needsHotkeyInput{needsHotkeyInput},
-        m_needsDirectionalInput{needsDirectionalInput}, m_usedStat{usedStat} {}
+        m_needsDirectionalInput{needsDirectionalInput}, m_usedStat{usedStat},
+        m_cost{cost}, m_maxCharges{maxCharges}, m_cooldown{cooldown} {}
   std::string_view getName() const { return m_name; }
   virtual std::string execute(GameSession &gameSession, Creature &actor,
                               Creature &target) = 0;
@@ -60,4 +64,7 @@ public:
     if (m_currentCooldown > 0)
       --m_currentCooldown;
   }
+  int getCurrentCharges() const { return m_currentCharges; }
+  int getMaxCharges() const { return m_maxCharges; }
+  bool useActionResources(Creature &creature);
 };

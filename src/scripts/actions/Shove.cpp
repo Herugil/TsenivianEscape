@@ -18,7 +18,7 @@ std::string Shove::execute([[maybe_unused]] GameSession &gameSession,
       (shoveDirection == Directions::nbDirections)) {
     return result.str();
   }
-  if (actor.useActionPoints()) {
+  if (useActionResources(actor)) {
     if (target->isMoveable()) {
       gameSession.moveCreature(target, shoveDirection, true);
       result << target->getName() << " shoved by " << actor.getName() << ".\n";

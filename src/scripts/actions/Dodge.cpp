@@ -16,7 +16,7 @@ std::string Dodge::execute([[maybe_unused]] GameSession &gameSession,
 
 std::string Dodge::execute(Creature &actor) {
   std::ostringstream res{};
-  if (m_currentCooldown <= 0 && actor.useActionPoints(m_cost)) {
+  if (useActionResources(actor)) {
     actor.addPassiveEffect(PassiveEffect{PassiveEffect::Type::EvasionBonus, 10,
                                          2, "dodge", "dodge", false});
     res << actor.getName() << " starts dodging.\n";
