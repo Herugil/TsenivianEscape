@@ -6,6 +6,7 @@ enum class Stat {
   Intelligence,
   Constitution,
   Evasion,
+  Armor,
   nbStats
 };
 struct Stats {

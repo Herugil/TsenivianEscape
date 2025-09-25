@@ -64,5 +64,17 @@
     "usesLeft": 1,
     "effectValue": 10,
     "regenType": 0
+  },
+  "itemTornLeatherArmor": {
+    "name": "Leather Armor",
+    "itemType": "chestArmor",
+    "description": "A leather chest armor in poor condition, offering minimal protection.",
+    "armorValue": 2
+  },
+  "itemLeatherHelmet": {
+    "name": "Leather Helmet",
+    "itemType": "helmet",
+    "description": "A leather helmet, offering basic protection for the head.",
+    "armorValue": 1
   }
 }

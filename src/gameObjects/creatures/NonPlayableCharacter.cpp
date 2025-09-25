@@ -19,13 +19,15 @@
 NonPlayableCharacter::NonPlayableCharacter(
     char symbol, const Point &point, std::string_view currentMap,
     int maxHealthPoints, std::string_view name, int evasion, int meleeHitChance,
-    int distanceHitChance, std::vector<std::unique_ptr<Action>> actions,
+    int distanceHitChance, int meleeDamage, int distanceDamage,
+    std::vector<std::unique_ptr<Action>> actions,
     std::vector<std::shared_ptr<Item>> items, std::string_view description,
     std::string_view deadDescription, std::string_view aiType, int xpValue)
     : Creature{symbol,  point, currentMap, maxHealthPoints,
                evasion, name,  description},
       m_deadDescription{deadDescription}, m_meleeHitChance{meleeHitChance},
-      m_distanceHitChance{distanceHitChance}, m_AIType{stringToAIType(aiType)},
+      m_distanceHitChance{distanceHitChance}, m_meleeDamage{meleeDamage},
+      m_distanceDamage{distanceDamage}, m_AIType{stringToAIType(aiType)},
       m_xpValue{xpValue} {
   if (!items.empty())
     m_inventory = std::move(items);

@@ -23,7 +23,7 @@ void PassiveEffect::setRoundsLeft(int rounds) { m_roundsLeft = rounds; }
 void PassiveEffect::applyEffect(Creature &target) const {
   switch (m_type) {
   case Type::DamageOverTime:
-    target.takeDamage(m_value);
+    target.takeDamage(m_value, true);
     break;
   default:
     break;

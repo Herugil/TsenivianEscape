@@ -39,7 +39,7 @@ std::string ShovingAttack::execute(GameSession &gameSession, Creature &actor,
       result = actor.getName() + " missed " + target.getName() + ".\n";
     } else {
       int damage{m_damageFormula(actor, target)};
-      target.takeDamage(damage);
+      damage = target.takeDamage(damage);
       result = std::to_string(damage) + " damage dealt to " + target.getName() +
                " by " + actor.getName() + ".\n";
       int shoveDistance{m_shoveDistanceFormula(actor, target)};

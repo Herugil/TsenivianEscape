@@ -27,9 +27,10 @@ std::string CubeAoe::execute(GameSession &gameSession, Creature &actor,
         if (map.isPointVisible(center, targetPoint)) {
           if (auto creature{std::dynamic_pointer_cast<Creature>(
                   map.getTopObject(targetPoint))}) {
-            creature->takeDamage(damage);
-            result << damage << " damage dealt to " << creature->getName()
-                   << " by " << actor.getName() << "'s " << m_name << ".\n";
+            int inflictedDamage{creature->takeDamage(damage)};
+            result << inflictedDamage << " damage dealt to "
+                   << creature->getName() << " by " << actor.getName() << "'s "
+                   << m_name << ".\n";
           }
         }
       }

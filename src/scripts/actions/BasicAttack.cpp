@@ -40,10 +40,9 @@ std::string BasicAttack::execute([[maybe_unused]] GameSession &gameSession,
     else if (Random::rollD100() > hitChance - target.getEvasion()) {
       result << actor.getName() << " missed " << target.getName() << ".\n";
     } else {
-      int m_damage{damage};
-      target.takeDamage(m_damage);
-      result << m_damage << "  damage dealt to " << target.getName() << " by "
-             << actor.getName() << ".\n";
+      int inflictedDamage{target.takeDamage(damage)};
+      result << inflictedDamage << "  damage dealt to " << target.getName()
+             << " by " << actor.getName() << ".\n";
       for (const auto &effect : m_applyOnHit) {
         target.addPassiveEffect(*effect);
         result << target.getName() << " is affected by " << effect->getName()

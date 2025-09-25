@@ -1,5 +1,6 @@
 #include "dataLoading/parseJson.h"
 #include "core/GameSession.h"
+#include "gameObjects/items/Armor.h"
 #include "gameObjects/items/InstantUsableItem.h"
 #include "gameObjects/items/Item.h"
 #include "gameObjects/items/Weapon.h"
@@ -36,18 +37,16 @@ DataLoader::getAllItems() {
   std::ifstream f("../data/items.json");
   json data = json::parse(f);
   for (auto &[key, value] : data.items()) {
-    if (value["itemType"] == "oneHanded" || value["itemType"] == "twoHanded") {
+    std::string name{value["name"]};
+    std::string description{value["description"]};
+    std::string itemType{value["itemType"]};
+    if (itemType == "oneHanded" || itemType == "twoHanded") {
       std::string weaponType{value["weaponType"]};
-      std::string itemType{value["itemType"]};
-      std::string name{value["name"]};
-      std::string description{value["description"]};
       int damage{value["damage"]};
       int range{value["range"]};
       items[key] = std::make_shared<Weapon>(
           Weapon{name, key, itemType, weaponType, description, damage, range});
-    } else if (value["itemType"] == "instantUsableItem") {
-      std::string name{value["name"]};
-      std::string description{value["description"]};
+    } else if (itemType == "instantUsableItem") {
       int costToUse{value["costToUse"]};
       bool isUnlimitedUse{value["isUnlimitedUse"]};
       int usesLeft{value["usesLeft"]};
@@ -57,6 +56,14 @@ DataLoader::getAllItems() {
       items[key] = std::make_shared<InstantUsableItem>(
           InstantUsableItem{name, key, regenType, effectValue, costToUse,
                             isUnlimitedUse, usesLeft, description});
+    } else if (itemType == "chestArmor" || itemType == "legArmor" ||
+               itemType == "helmet" || itemType == "boots" ||
+               itemType == "gloves") {
+      std::string name{value["name"]};
+      std::string description{value["description"]};
+      int armorValue{value["armorValue"]};
+      items[key] = std::make_shared<Armor>(
+          Armor{name, key, itemType, description, armorValue});
     }
   }
   return items;
@@ -98,6 +105,8 @@ DataLoader::getAllNpcs() {
     int maxHealth{value["maxHealth"]};
     int meleeHitChance{value["meleeHitChance"]};
     int distanceHitChance{value["distanceHitChance"]};
+    int meleeDamage{value["meleeDamage"]};
+    int distanceDamage{value["distanceDamage"]};
     int evasion{value["evasion"]};
     std::string name{value["name"]};
     std::string desc{value["description"]};
@@ -124,8 +133,9 @@ DataLoader::getAllNpcs() {
     }
     npcs[key] = std::make_shared<NonPlayableCharacter>(
         ' ', Point{0, 0}, "placeholder", maxHealth, name, evasion,
-        meleeHitChance, distanceHitChance, std::move(actions),
-        std::vector<std::shared_ptr<Item>>{}, desc, descDead, aiType, xpValue);
+        meleeHitChance, distanceHitChance, meleeDamage, distanceDamage,
+        std::move(actions), std::vector<std::shared_ptr<Item>>{}, desc,
+        descDead, aiType, xpValue);
   }
   return npcs;
 }

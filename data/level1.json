@@ -44,6 +44,14 @@
       ]
     },
     {
+      "symbol": "D",
+      "position": [1, 2],
+      "type": "container",
+      "name": "Dead body",
+      "description": "The body of an older inmate, half rotten. You find some items on him:",
+      "contents": ["itemTornLeatherArmor", "itemLeatherHelmet"]
+    },
+    {
       "symbol": " ",
       "position": [9, 3],
       "type": "mapChanger",

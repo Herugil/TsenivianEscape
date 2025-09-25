@@ -31,7 +31,7 @@ public:
   Creature(const Creature &other);
   int getHealthPoints() const;
   bool isDead() const;
-  void takeDamage(int damage);
+  int takeDamage(int damage, bool ignoreArmor = false);
   void addHealthPoints(int healthPoints);
   const std::string &getName() const;
   virtual int getEvasion() const;
@@ -45,6 +45,7 @@ public:
   virtual int getDexterity() const;
   virtual int getIntelligence() const;
   virtual int getConstitution() const;
+  virtual int getArmor() const;
   int getMovementPoints() const;
   int getActionPoints() const;
   int getMaxMovementPoints() const;

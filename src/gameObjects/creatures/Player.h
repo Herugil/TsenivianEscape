@@ -22,6 +22,11 @@ public:
   struct PlayerEquipment {
     std::weak_ptr<Equipment> rightHand{};
     std::weak_ptr<Equipment> leftHand{};
+    std::weak_ptr<Equipment> chestArmor{};
+    std::weak_ptr<Equipment> legArmor{};
+    std::weak_ptr<Equipment> helmet{};
+    std::weak_ptr<Equipment> boots{};
+    std::weak_ptr<Equipment> gloves{};
     // will see the rest later..
   };
 
@@ -43,6 +48,9 @@ public:
   const std::vector<std::unique_ptr<Action>> &getAllActions();
   void takeAllItems(Container &container);
   void equipItem(std::shared_ptr<Equipment> item);
+  void handleEquipSlot(std::weak_ptr<Equipment> &currentItem,
+                       std::shared_ptr<Equipment> newItem);
+  bool checkRequirements(std::shared_ptr<Item> item) const;
   void removeItem(std::shared_ptr<Item> item);
   void updateActionsOnEquip();
   std::shared_ptr<Item> getItem(std::size_t index) const;
@@ -52,6 +60,7 @@ public:
   int getDexterity() const override;
   int getIntelligence() const override;
   int getConstitution() const override;
+  int getArmor() const override;
   Stats getStats() const;
   int getEvasion() const override;
   int getMeleeHitChance() const override;

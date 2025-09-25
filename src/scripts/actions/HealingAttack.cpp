@@ -47,10 +47,9 @@ std::string HealingAttack::execute(GameSession &gameSession, Creature &actor,
     if (Random::rollD100() > hitChance - target.getEvasion()) {
       result << actor.getName() << " missed " << target.getName() << ".\n";
     } else {
-      int m_damage{damage};
-      target.takeDamage(m_damage);
-      result << m_damage << "  damage dealt to " << target.getName() << " by "
-             << actor.getName() << ".\n";
+      int inflictedDamage{target.takeDamage(damage)};
+      result << inflictedDamage << "  damage dealt to " << target.getName()
+             << " by " << actor.getName() << ".\n";
       int healAmount{m_healAmountFunc(actor, target)};
       actor.addHealthPoints(healAmount);
       result << actor.getName() << " heals " << healAmount << " HP.\n";

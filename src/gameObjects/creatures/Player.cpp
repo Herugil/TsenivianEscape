@@ -83,7 +83,18 @@ void Player::updateActionsOnEquip() {
                                                  Stat::Strength));
 }
 
+bool Player::checkRequirements(std::shared_ptr<Item> item) const {
+  if (!item)
+    return false;
+  return getStrength() >= item->getStrReq() &&
+         getDexterity() >= item->getDexReq() &&
+         getIntelligence() >= item->getIntReq() &&
+         getConstitution() >= item->getConReq();
+} // TODO: use temporary stats or raw values?
+
 void Player::equipItem(std::shared_ptr<Equipment> item) {
+  if (!checkRequirements(item))
+    return;
   if (useActionPoints(1)) {
     if (item->getEquipmentType() == Equipment::EquipmentType::oneHanded) {
       auto equippedRightHand{m_equipment.rightHand.lock()};
@@ -116,9 +127,47 @@ void Player::equipItem(std::shared_ptr<Equipment> item) {
       m_equipment.rightHand = item;
       m_equipment.leftHand = item;
       item->setEquipped();
+    } else if (item->getEquipmentType() == Equipment::EquipmentType::shield) {
+      auto equippedLeftHand{m_equipment.leftHand.lock()};
+      if (equippedLeftHand) {
+        if (equippedLeftHand->getEquipmentType() ==
+            Equipment::EquipmentType::twoHanded) {
+          m_equipment.rightHand.reset();
+        }
+        equippedLeftHand->setUnequipped();
+        m_equipment.leftHand.reset();
+        if (equippedLeftHand == item)
+          return;
+      }
+      m_equipment.leftHand = item;
+      item->setEquipped();
+    } else if (item->getEquipmentType() ==
+               Equipment::EquipmentType::chestArmor) {
+      handleEquipSlot(m_equipment.chestArmor, item);
+    } else if (item->getEquipmentType() == Equipment::EquipmentType::legArmor) {
+      handleEquipSlot(m_equipment.legArmor, item);
+    } else if (item->getEquipmentType() == Equipment::EquipmentType::helmet) {
+      handleEquipSlot(m_equipment.helmet, item);
+    } else if (item->getEquipmentType() == Equipment::EquipmentType::boots) {
+      handleEquipSlot(m_equipment.boots, item);
+    } else if (item->getEquipmentType() == Equipment::EquipmentType::gloves) {
+      handleEquipSlot(m_equipment.gloves, item);
     }
     updateActionsOnEquip();
   }
+}
+
+void Player::handleEquipSlot(std::weak_ptr<Equipment> &currentItem,
+                             std::shared_ptr<Equipment> newItem) {
+  auto currentEquipped{currentItem.lock()};
+  if (currentEquipped) {
+    currentEquipped->setUnequipped();
+    currentItem.reset();
+    if (currentEquipped == newItem)
+      return;
+  }
+  currentItem = newItem;
+  newItem->setEquipped();
 }
 
 void Player::removeItem(std::shared_ptr<Item> item) {
@@ -172,6 +221,28 @@ int Player::getIntelligence() const {
 }
 int Player::getConstitution() const {
   return m_stats.constitution + getStatModifier(Stat::Constitution);
+}
+int Player::getArmor() const {
+  int armorValue{0};
+  auto chestArmor{m_equipment.chestArmor.lock()};
+  if (chestArmor)
+    armorValue += chestArmor->getArmorValue();
+  auto legArmor{m_equipment.legArmor.lock()};
+  if (legArmor)
+    armorValue += legArmor->getArmorValue();
+  auto helmet{m_equipment.helmet.lock()};
+  if (helmet)
+    armorValue += helmet->getArmorValue();
+  auto boots{m_equipment.boots.lock()};
+  if (boots)
+    armorValue += boots->getArmorValue();
+  auto gloves{m_equipment.gloves.lock()};
+  if (gloves)
+    armorValue += gloves->getArmorValue();
+  auto shield{m_equipment.leftHand.lock()};
+  if (shield && shield->getEquipmentType() == Equipment::EquipmentType::shield)
+    armorValue += shield->getArmorValue();
+  return armorValue + getStatModifier(Stat::Armor);
 }
 Stats Player::getStats() const {
   return m_stats; // unmodified stats
@@ -235,6 +306,7 @@ void Player::displayCharacterSheet() const {
   std::cout << "XP: " << getCurrentXP() << '/' << getXpToNextLevel() << "\n\n";
   std::cout << "Health: " << getHealthPoints() << '/' << getMaxHealthPoints()
             << "\n\n\n";
+  std::cout << "Armor: " << getArmor() << '\n';
   std::cout << "Strength: " << getStrength() << '\n';
   std::cout << "Dexterity: " << getDexterity() << '\n';
   std::cout << "Intelligence: " << getIntelligence() << '\n';

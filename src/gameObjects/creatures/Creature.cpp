@@ -39,11 +39,17 @@ int Creature::getStrength() const { return 0; }
 int Creature::getDexterity() const { return 0; }
 int Creature::getIntelligence() const { return 0; }
 int Creature::getConstitution() const { return 0; }
+int Creature::getArmor() const { return 0; }
 bool Creature::isDead() const { return m_healthPoints <= 0; }
 int Creature::getEvasion() const {
   return m_evasion + getStatModifier(Stat::Evasion);
 }
-void Creature::takeDamage(int damage) { m_healthPoints -= damage; }
+int Creature::takeDamage(int damage, bool ignoreArmor) {
+  if (!ignoreArmor)
+    damage = std::max(0, damage - getArmor());
+  m_healthPoints -= damage;
+  return damage;
+}
 void Creature::addHealthPoints(int healthPoints) {
   m_healthPoints = std::min(m_healthPoints + healthPoints, m_maxHealthPoints);
 }

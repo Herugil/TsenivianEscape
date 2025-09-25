@@ -20,8 +20,9 @@ protected:
 
 public:
   Equipment(std::string_view name, std::string_view id,
-            std::string_view equipmentType, std::string_view description = "")
-      : Item{name, id, description},
+            std::string_view equipmentType, std::string_view description = "",
+            int strReq = 0, int dexReq = 0, int intReq = 0, int conReq = 0)
+      : Item{name, id, description, strReq, dexReq, intReq, conReq},
         m_equipmentType{getTypeFromStr(equipmentType)} {}
   EquipmentType getEquipmentType() const { return m_equipmentType; }
   bool isEquipped() const { return m_isEquipped; }
@@ -36,6 +37,7 @@ public:
         << m_description << (isEquipped() ? "\nEquipped" : "");
     return res.str();
   };
+  virtual int getArmorValue() const { return 0; }
   virtual std::shared_ptr<Item> clone() const override = 0;
   static EquipmentType getTypeFromStr(std::string_view typeName) {
     if (typeName == "oneHanded")
