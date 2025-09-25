@@ -9,4 +9,8 @@ class Player;
 namespace SkillTree {
 void addSkillStatSpread(Player &player);
 std::vector<std::unique_ptr<Action>> getSkillsStatSpread(const Stats &stat);
+std::unique_ptr<Action> createBackbreakerAction();
+std::unique_ptr<Action> createSwirlingFlamesAction();
+std::unique_ptr<Action> createRejuvenatingStrikeAction();
+std::unique_ptr<Action> createHasteAction();
 } // namespace SkillTree
