@@ -40,6 +40,7 @@ public:
   void displayInventory(std::size_t page = 0) const;
   void displayActions() const;
   Action *getAction(std::size_t index);
+  const std::vector<std::unique_ptr<Action>> &getAllActions();
   void takeAllItems(Container &container);
   void equipItem(std::shared_ptr<Equipment> item);
   void removeItem(std::shared_ptr<Item> item);
@@ -66,7 +67,7 @@ public:
   void addXP(int xp);
   void displayCharacterSheet() const;
   bool canLevelUp() const;
-  void levelUp();
+  void levelUp(Stat stat);
   void addAction(std::unique_ptr<Action> action);
   virtual ~Player() = default;
 };

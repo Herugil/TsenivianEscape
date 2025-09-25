@@ -12,6 +12,8 @@ protected:
   std::function<int(const Creature &actor, const Creature &target)>
       m_hitChanceFormula;
   std::function<int(const Creature &actor)> m_rangeFormula;
+  // these should be part of base class for the most part. Would allow
+  // to display them in action menu
 
 public:
   ShovingAttack(

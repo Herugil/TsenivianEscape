@@ -28,7 +28,9 @@ private:
   void handleGameOver();
   void setCombatState();
   void handleRestMenu();
+  void handleLevelUp();
   void handleCharacterSheet();
+  void confirmLevelUp(Player &player, Stat stat, Stats playerStats);
 
 public:
   GameStateManager(GameSession &&gameSession);

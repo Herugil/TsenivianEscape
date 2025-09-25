@@ -1,10 +1,12 @@
 #include "core/GameStateManager.h"
 #include "Settings.h"
 #include "core/GameState.h"
+#include "gameObjects/creatures/Stats.h"
 #include "gameObjects/items/UsableItem.h"
 #include "gameObjects/terrain/RestingPlace.h"
 #include "input/Input.h"
 #include "scripts/NpcCombatAI.h"
+#include "skills/SkillTree.h"
 #include "utils/Interface.h"
 #include "utils/ScreenUtils.h"
 #include <chrono>
@@ -72,6 +74,9 @@ void GameStateManager::mainLoop() {
     case GameState::GameOver:
       handleGameOver();
       return;
+    case GameState::LevelUp:
+      handleLevelUp();
+      break;
     default:
       m_currentState = GameState::Exploration;
       break;
@@ -377,10 +382,8 @@ void GameStateManager::handleCharacterSheet() {
   }
   auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
   if (CommandHandler::isInteractionCommand(command) && player.canLevelUp()) {
-    player.levelUp();
-    std::cout << "You leveled up! Your level is now " << player.getLevel()
-              << "!\n";
-    std::cout << "Press any key to continue.\n";
+    m_currentState = GameState::LevelUp;
+    return;
   }
   m_currentState = GameState::Exploration;
 }
@@ -410,4 +413,81 @@ void GameStateManager::handleRestMenu() {
   }
   m_interactionResult.interactedObject = nullptr;
   m_currentState = GameState::Exploration;
+}
+
+void GameStateManager::handleLevelUp() {
+  ScreenUtils::clearScreen();
+  auto &player{m_gameSession.getPlayer()};
+  Stats playerStats{player.getStats()};
+  if (player.canLevelUp()) {
+    std::cout << "Pick a stat to increase:\n";
+    std::cout << "1: Strength" << playerStats.strength << "->"
+              << playerStats.strength + 1 << '\n';
+    std::cout << "2: Dexterity" << playerStats.dexterity << "->"
+              << playerStats.dexterity + 1 << '\n';
+    std::cout << "3: Intelligence" << playerStats.intelligence << "->"
+              << playerStats.intelligence + 1 << '\n';
+    std::cout << "4: Constitution" << playerStats.constitution << "->"
+              << playerStats.constitution + 1 << '\n';
+    auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
+    if (CommandHandler::isHotkeyCommand(command)) {
+      auto pressedKey{CommandHandler::getPressedKey(command)};
+      if (pressedKey >= 0 && pressedKey <= 3) {
+        switch (pressedKey) {
+        case 0:
+          confirmLevelUp(player, Stat::Strength, playerStats);
+          break;
+        case 1:
+          confirmLevelUp(player, Stat::Dexterity, playerStats);
+          break;
+        case 2:
+          confirmLevelUp(player, Stat::Intelligence, playerStats);
+          break;
+        case 3:
+          confirmLevelUp(player, Stat::Constitution, playerStats);
+          break;
+        default:
+          break;
+        }
+      }
+    }
+  }
+  m_currentState = GameState::CharacterSheet;
+}
+
+void GameStateManager::confirmLevelUp(Player &player, Stat stat,
+                                      Stats playerStats) {
+  auto &actions{player.getAllActions()};
+  switch (stat) {
+  case Stat::Strength:
+    playerStats.strength += 1;
+    break;
+  case Stat::Dexterity:
+    playerStats.dexterity += 1;
+    break;
+  case Stat::Intelligence:
+    playerStats.intelligence += 1;
+    break;
+  case Stat::Constitution:
+    playerStats.constitution += 1;
+    break;
+  default:
+    return;
+  }
+  std::cout << "Confirm? (press E) \nYou would get: \n";
+  for (const auto &action : SkillTree::getSkillsStatSpread(playerStats)) {
+    auto isNew{std::find_if(actions.begin(), actions.end(),
+                            [actionName = action->getName()](
+                                const std::unique_ptr<Action> &a) {
+                              return a->getName() == actionName;
+                            }) == actions.end()};
+    if (isNew) {
+      std::cout << action->getName() << '\n';
+    }
+  }
+  auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
+  if (CommandHandler::isInteractionCommand(command)) {
+    player.levelUp(stat);
+    return;
+  }
 }

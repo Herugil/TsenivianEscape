@@ -15,6 +15,7 @@ enum class GameState {
   ItemInspect,
   CharacterSheet,
   RestMenu,
+  LevelUp,
   GameOver,
 };
 

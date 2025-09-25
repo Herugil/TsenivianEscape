@@ -1,5 +1,6 @@
 #include "skills/SkillTree.h"
 #include "gameObjects/creatures/Player.h"
+#include "scripts/actions/CubeAoe.h"
 #include "scripts/actions/ShovingAttack.h"
 
 std::vector<std::unique_ptr<Action>>
@@ -20,6 +21,12 @@ SkillTree::getSkillsStatSpread(const Stats &stat) {
           return actor.getMeleeHitChance() - target.getEvasion();
         },
         [](const Creature &actor) { return actor.getStrength(); }, 1, 4, 1));
+  } else if (stat.strength == 1 && stat.dexterity == 1 &&
+             stat.intelligence == 2 && stat.constitution == 1) {
+    actions.emplace_back(std::make_unique<CubeAoe>(
+        "Swirling flames", 1,
+        [](const Creature &actor) { return actor.getIntelligence() + 3; }, 2, 2,
+        2));
   }
   return actions;
 }

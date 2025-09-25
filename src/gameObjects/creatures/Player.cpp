@@ -15,10 +15,6 @@ Player::Player(const Point &position, std::string_view currentMap,
     : Creature('@', position, currentMap, maxHealthPoints, 0, "you"),
       m_stats{stats}, m_shoveAction{} {
   m_actions.emplace_back(std::make_unique<Dodge>(Dodge("Dodge")));
-  m_actions.emplace_back(std::make_unique<CubeAoe>(
-      "Swirling flames", 1,
-      [](const Creature &actor) { return actor.getIntelligence() + 1; }, 2, 2,
-      2));
 }
 
 void Player::takeItem(std::shared_ptr<Item> item) {
@@ -228,6 +224,10 @@ Action *Player::getAction(std::size_t index) {
   return m_actions[i].get();
 }
 
+const std::vector<std::unique_ptr<Action>> &Player::getAllActions() {
+  return m_actions;
+}
+
 void Player::displayCharacterSheet() const {
   std::cout << "Character Sheet:\n";
   std::cout << "Name: " << getName() << '\n';
@@ -277,19 +277,26 @@ void Player::addAction(std::unique_ptr<Action> action) {
   }
 }
 
-void Player::levelUp() {
-  // this function is a placeholder
-  // only one stat should go up,
-  // giving access to new actions or passives
-  // depending on current stat spread (ie str 2 gives a new skill
-  // but after that int 2 would give the int skill and a
-  // str/int combined skill)
+void Player::levelUp(Stat stat) {
   m_level++;
   m_currentXP -= m_xpToNextLevel;
-  m_stats.strength += 1;
-  // m_stats.dexterity += 1;
-  // m_stats.intelligence += 1;
-  // m_stats.constitution += 1;
-  m_maxHealthPoints += 5 + getConstitution();
+  switch (stat) {
+  case Stat::Strength:
+    m_stats.strength += 1;
+    break;
+  case Stat::Dexterity:
+    m_stats.dexterity += 1;
+    break;
+  case Stat::Intelligence:
+    m_stats.intelligence += 1;
+    break;
+  case Stat::Constitution:
+    m_stats.constitution += 1;
+    m_maxHealthPoints += m_level; // each con point gives 1 extra hp per level
+    break;
+  default:
+    break;
+  }
+  m_maxHealthPoints += 5; // each level gives 5 extra hp
   SkillTree::addSkillStatSpread(*this);
 }
