@@ -11,7 +11,8 @@ protected:
 
 public:
   BasicAttack(std::string_view name, Stat usedStat,
-              std::vector<std::unique_ptr<PassiveEffect>> applyOnHit = {});
+              std::vector<std::unique_ptr<PassiveEffect>> applyOnHit = {},
+              int cost = 1, int maxCharges = -1, int cooldown = 0);
   std::string execute(GameSession &gameSession, Creature &actor,
                       Creature &target) override;
   std::string playerExecute(GameSession &gameSession,
@@ -24,7 +25,8 @@ public:
       effectsCloned.emplace_back(effect->clone());
     }
     return std::make_unique<BasicAttack>(m_name, m_usedStat,
-                                         std::move(effectsCloned));
+                                         std::move(effectsCloned), m_cost,
+                                         m_maxCharges, m_cooldown);
   };
   ~BasicAttack() = default;
 };

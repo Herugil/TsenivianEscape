@@ -31,4 +31,5 @@ public:
   std::string playerExecute(GameSession &gameSession,
                             Creature &target) override;
   std::unique_ptr<Action> clone() const override;
+  virtual ~ShovingAttack() = default;
 };

@@ -6,8 +6,9 @@
 #include <memory>
 
 BasicAttack::BasicAttack(std::string_view name, Stat usedStat,
-                         std::vector<std::unique_ptr<PassiveEffect>> applyOnHit)
-    : Action(name, true, true, usedStat) {
+                         std::vector<std::unique_ptr<PassiveEffect>> applyOnHit,
+                         int cost, int maxCharges, int cooldown)
+    : Action(name, true, true, usedStat, cost, maxCharges, cooldown) {
   for (auto &effect : applyOnHit) {
     m_applyOnHit.emplace_back(effect->clone());
   }
