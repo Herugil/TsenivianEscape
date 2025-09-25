@@ -14,6 +14,7 @@ enum class GameState {
   CombatEnemyTurn,
   ItemInspect,
   CharacterSheet,
+  RestMenu,
   GameOver,
 };
 

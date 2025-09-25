@@ -50,6 +50,13 @@
       "description": "A creaking, half open wooden door.",
       "destLevel": "level2",
       "destPosition": [8, 3]
+    },
+    {
+      "symbol": "Z",
+      "position": [6, 5],
+      "type": "restingPlace",
+      "name": "Tranquil spot",
+      "description": "A tranquil spot below a broken statue. You feel confident you can lock the doors to this room and rest here."
     }
   ]
 }

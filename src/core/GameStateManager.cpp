@@ -2,6 +2,7 @@
 #include "Settings.h"
 #include "core/GameState.h"
 #include "gameObjects/items/UsableItem.h"
+#include "gameObjects/terrain/RestingPlace.h"
 #include "input/Input.h"
 #include "scripts/NpcCombatAI.h"
 #include "utils/Interface.h"
@@ -64,6 +65,9 @@ void GameStateManager::mainLoop() {
       break;
     case GameState::CharacterSheet:
       handleCharacterSheet();
+      break;
+    case GameState::RestMenu:
+      handleRestMenu();
       break;
     case GameState::GameOver:
       handleGameOver();
@@ -386,4 +390,24 @@ void GameStateManager::handleGameOver() {
   std::cout << "Game Over! You have died.\n";
   std::cout << "Press any key to exit.\n";
   Input::getKeyBlocking();
+}
+
+void GameStateManager::handleRestMenu() {
+  ScreenUtils::clearScreen();
+  auto &player{m_gameSession.getPlayer()};
+  if (auto restingPlace =
+          dynamic_cast<RestingPlace *>(m_interactionResult.interactedObject)) {
+    std::cout << restingPlace->getDescription() << "\n";
+    std::cout << "R: Rest   Any other key: Leave\n";
+    auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
+    if (CommandHandler::isShoveCommand(command)) {
+      restingPlace->rest(player);
+      std::cout << "You wake up feeling refreshed.\n";
+      m_currentState = GameState::Exploration;
+      m_interactionResult.interactedObject = nullptr;
+      return;
+    }
+  }
+  m_interactionResult.interactedObject = nullptr;
+  m_currentState = GameState::Exploration;
 }

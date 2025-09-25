@@ -2,6 +2,7 @@
 
 - Add more actions and passive effects for npcs and player (rat should have disease bite),
   player should have new actions with a number of uses between rests (tomorrow)
+  done
 - Implement resting mechanic through a bed game object (tomorrow too, fingers crossed)
 - Refine level up system so that depending on the picked stat, a new action or passive effect is added (from wednesday)
 - Add shields and armor (probably flat damage reduction) (done by the end of the week)

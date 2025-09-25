@@ -17,6 +17,7 @@ void PassiveEffect::decrementRounds() {
     --m_roundsLeft;
 }
 bool PassiveEffect::isStackable() const { return m_stackable; }
+bool PassiveEffect::expiresOnRest() const { return m_expiresOnRest; }
 const std::string &PassiveEffect::getId() const { return m_id; }
 void PassiveEffect::setRoundsLeft(int rounds) { m_roundsLeft = rounds; }
 void PassiveEffect::applyEffect(Creature &target) const {

@@ -4,6 +4,7 @@
 #include "gameObjects/items/Item.h"
 #include "gameObjects/items/Weapon.h"
 #include "gameObjects/terrain/MapChanger.h"
+#include "gameObjects/terrain/RestingPlace.h"
 #include "scripts/passives/CompositePassiveEffect.h"
 #include <cassert>
 #include <filesystem>
@@ -196,6 +197,9 @@ void placeObjects(
       MapChanger obj{map.getName(), pos,  nextMap, spawningPoint,
                      symbol,        name, desc};
       map.placeFloor(std::make_unique<MapChanger>(std::move(obj)), pos);
+    } else if (type == "restingPlace") {
+      RestingPlace obj{map.getName(), pos, symbol, name, desc};
+      map.placeFloor(std::make_unique<RestingPlace>(std::move(obj)), pos);
     } else {
       GameObject obj{false, false, symbol, map.getName(), pos, name, desc};
       map.placeFloor(std::make_unique<GameObject>(std::move(obj)), pos);

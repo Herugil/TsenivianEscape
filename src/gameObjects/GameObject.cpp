@@ -29,7 +29,7 @@ InteractionResult GameObject::playerInteraction() {
   return {GameState::DisplayBlocking, this};
 }
 const std::string &GameObject::getName() const { return m_name; }
-const std::string &GameObject::getDescription() const { return m_description; }
+std::string GameObject::getDescription() const { return m_description; }
 
 std::ostream &operator<<(std::ostream &out, const GameObject &gameObject) {
   out << gameObject.getSymbol();

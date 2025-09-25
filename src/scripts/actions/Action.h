@@ -66,6 +66,10 @@ public:
       --m_currentCooldown;
   }
   void resetCooldown() { m_currentCooldown = 0; }
+  void refillCharges() {
+    if (m_maxCharges != -1)
+      m_currentCharges = m_maxCharges;
+  }
   int getCurrentCharges() const { return m_currentCharges; }
   int getMaxCharges() const { return m_maxCharges; }
   bool useActionResources(Creature &creature);

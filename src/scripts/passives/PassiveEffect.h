@@ -25,7 +25,7 @@ protected:
   std::string m_id{};
   std::string m_name{};
   bool m_stackable{false};
-  bool m_expiresOnRest{false};
+  bool m_expiresOnRest{true};
 
 public:
   PassiveEffect(Type type, int value, int rounds, std::string_view id,
@@ -39,6 +39,7 @@ public:
   void setRoundsLeft(int rounds);
   virtual void applyEffect(Creature &target) const;
   bool isExpired() const;
+  bool expiresOnRest() const;
   static Type typeFromString(std::string_view type);
   virtual int getStatModifier(Stat stat) const;
   const std::string &getName() const;

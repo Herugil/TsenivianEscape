@@ -30,7 +30,7 @@ public:
   void setSymbol(char symbol);
   char getSymbol() const;
   const std::string &getName() const;
-  const std::string &getDescription() const;
+  virtual std::string getDescription() const;
   bool isTraversable() const;
   bool isMoveable() const;
   void setPosition(const Point &point);

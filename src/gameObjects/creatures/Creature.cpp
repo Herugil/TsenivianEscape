@@ -76,6 +76,21 @@ void Creature::reduceCooldowns() {
   }
 }
 
+void Creature::removePassives() {
+  for (auto it{m_passiveEffects.begin()}; it < m_passiveEffects.end();) {
+    if ((*it)->expiresOnRest())
+      it = m_passiveEffects.erase(it);
+    else
+      ++it;
+  }
+}
+
+void Creature::refillSkillCharges() {
+  for (auto &action : m_actions) {
+    action->refillCharges();
+  }
+}
+
 void Creature::addPassiveEffect(const PassiveEffect &passive) {
   if (!passive.isStackable()) {
     for (auto &existing : m_passiveEffects) {

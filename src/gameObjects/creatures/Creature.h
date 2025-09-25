@@ -57,6 +57,8 @@ public:
   bool canMove(int cost = 1) const;
   void addPassiveEffect(const PassiveEffect &passive);
   void reduceCooldowns();
+  void removePassives();
+  void refillSkillCharges();
   void refillActionPoints();
   void refillMovementPoints();
   void addActionPoints(int points);
