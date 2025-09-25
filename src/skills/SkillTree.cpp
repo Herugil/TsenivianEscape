@@ -8,13 +8,13 @@
 std::vector<std::unique_ptr<Action>>
 SkillTree::getSkillsStatSpread(const Stats &stat) {
   std::vector<std::unique_ptr<Action>> actions;
-  if (stat.strength == 2)
+  if (stat.strength >= 2)
     actions.push_back(createBackbreakerAction());
-  if (stat.intelligence == 2)
+  if (stat.intelligence >= 2)
     actions.push_back(createSwirlingFlamesAction());
-  if (stat.constitution == 2)
+  if (stat.constitution >= 2)
     actions.push_back(createRejuvenatingStrikeAction());
-  if (stat.dexterity == 2)
+  if (stat.dexterity >= 2)
     actions.push_back(createHasteAction());
   return actions;
 }

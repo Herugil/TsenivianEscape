@@ -20,11 +20,19 @@ NpcCombatAI::npcActCombat(GameSession &gameSession,
     res << actor->setCurrentBehavior(gameSession);
     actor->setCurrentPath(gameSession);
   }
+  int range{};
+  if (actor->getAIType() == NonPlayableCharacter::aggressiveMelee)
+    range = actor->getMeleeRange();
+  else if (actor->getAIType() == NonPlayableCharacter::aggressiveRanged)
+    range = actor->getDistanceRange();
+  else
+    range = actor->getMeleeRange();
   switch (actor->getCurrentBehavior()) {
   case NonPlayableCharacter::basicAttack:
     if (GeometryUtils::distanceL2(actor->getPosition(),
-                                  gameSession.getPlayerPos()) <=
-        actor->getMeleeRange()) {
+                                  gameSession.getPlayerPos()) <= range &&
+        gameSession.getMap().isPointVisible(actor->getPosition(),
+                                            gameSession.getPlayerPos())) {
       if (!actor->canAct()) {
         actor->setSkipTurn();
         return res.str();

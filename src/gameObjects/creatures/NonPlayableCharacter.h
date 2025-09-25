@@ -21,6 +21,7 @@ public:
   enum AITypes {
     aggressiveMelee,
     waryMelee,
+    aggressiveRanged,
     defaultAI,
   };
 
@@ -72,6 +73,7 @@ public:
   std::deque<Point> getPathAttack(GameSession &gameSession);
   void clearCurrentPath() { m_currentPath.clear(); }
   static AITypes stringToAIType(std::string_view str);
+  AITypes getAIType() const { return m_AIType; }
   int getXpValue() const;
 
   virtual ~NonPlayableCharacter() = default;

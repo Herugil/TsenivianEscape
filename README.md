@@ -5,7 +5,7 @@
   done
 - Implement resting mechanic through a bed game object (tomorrow too, fingers crossed) done!
 - Refine level up system so that depending on the picked stat, a new action or passive effect is added: done
-- Add shields and armor (probably flat damage reduction) (done by the end of the week)
+- Add shields and armor (probably flat damage reduction) done except shields but easy to add
 - maybe take the opportunity to refactor item class which kind of sucks (need a dedicated equipment class) done!
 - Quest system (same)
 - Unlockable game objects (removes one item with matching id from inventory) (same)

@@ -124,8 +124,18 @@ DataLoader::getAllNpcs() {
             }
           }
           std::string name{action["name"]};
+          Stat usedStat{Stat::Strength};
+          if (action.contains("type")) {
+            std::string type{action["type"]};
+            if (type == "melee")
+              usedStat = Stat::Strength;
+            else if (type == "ranged")
+              usedStat = Stat::Dexterity;
+            else
+              usedStat = Stat::Strength; // default to melee
+          }
           actions.emplace_back(std::make_unique<BasicAttack>(
-              name, Stat::Strength, std::move(effects)));
+              name, usedStat, std::move(effects)));
         } else {
           std::cout << "Unknown action type for NPC " << key << "\n";
         }

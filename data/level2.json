@@ -27,9 +27,9 @@
   ],
   "enemies": [
     {
-      "symbol": "r",
+      "symbol": "b",
       "position": [7, 5],
-      "id": "enemyRat",
+      "id": "enemyBandit",
       "inventory": []
     },
     {

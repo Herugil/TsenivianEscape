@@ -90,6 +90,7 @@ std::string NonPlayableCharacter::setCurrentBehavior(
   } else {
     switch (m_AIType) {
     case aggressiveMelee:
+    case aggressiveRanged:
       m_currentBehavior = basicAttack;
       break;
     case waryMelee:
@@ -196,6 +197,8 @@ NonPlayableCharacter::stringToAIType(std::string_view str) {
     return aggressiveMelee;
   else if (str == "waryMelee")
     return waryMelee;
+  else if (str == "aggressiveRanged")
+    return aggressiveRanged; // currently no ranged AI implemented
   else
     return defaultAI;
 }
