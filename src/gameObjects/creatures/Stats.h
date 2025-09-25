@@ -8,3 +8,9 @@ enum class Stat {
   Evasion,
   nbStats
 };
+struct Stats {
+  int strength{};
+  int dexterity{};
+  int intelligence{};
+  int constitution{};
+};

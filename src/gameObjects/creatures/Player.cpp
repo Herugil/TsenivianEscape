@@ -7,6 +7,7 @@
 #include "scripts/actions/BasicAttack.h"
 #include "scripts/actions/CubeAoe.h"
 #include "scripts/actions/Dodge.h"
+#include "skills/SkillTree.h"
 #include <memory>
 
 Player::Player(const Point &position, std::string_view currentMap,
@@ -176,6 +177,9 @@ int Player::getIntelligence() const {
 int Player::getConstitution() const {
   return m_stats.constitution + getStatModifier(Stat::Constitution);
 }
+Stats Player::getStats() const {
+  return m_stats; // unmodified stats
+}
 int Player::getEvasion() const {
   return getDexterity() * 5 + getStatModifier(Stat::Evasion);
 }
@@ -261,6 +265,18 @@ void Player::addXP(int xp) { m_currentXP += xp; }
 bool Player::canLevelUp() const {
   return m_currentXP >= m_xpToNextLevel && !inCombat();
 }
+
+void Player::addAction(std::unique_ptr<Action> action) {
+  std::string_view actionName{action->getName()};
+  auto it{std::find_if(m_actions.begin(), m_actions.end(),
+                       [actionName](const std::unique_ptr<Action> &a) {
+                         return a->getName() == actionName;
+                       })};
+  if (it == m_actions.end()) {
+    m_actions.emplace_back(std::move(action));
+  }
+}
+
 void Player::levelUp() {
   // this function is a placeholder
   // only one stat should go up,
@@ -271,8 +287,9 @@ void Player::levelUp() {
   m_level++;
   m_currentXP -= m_xpToNextLevel;
   m_stats.strength += 1;
-  m_stats.dexterity += 1;
-  m_stats.intelligence += 1;
-  m_stats.constitution += 1;
+  // m_stats.dexterity += 1;
+  // m_stats.intelligence += 1;
+  // m_stats.constitution += 1;
   m_maxHealthPoints += 5 + getConstitution();
+  SkillTree::addSkillStatSpread(*this);
 }

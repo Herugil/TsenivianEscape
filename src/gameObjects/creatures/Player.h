@@ -1,5 +1,6 @@
 #pragma once
 #include "gameObjects/creatures/Creature.h"
+#include "gameObjects/creatures/Stats.h"
 #include "gameObjects/items/Equipment.h"
 #include "gameObjects/items/Item.h"
 #include "gameObjects/items/UsableItem.h"
@@ -23,24 +24,18 @@ public:
     std::weak_ptr<Equipment> leftHand{};
     // will see the rest later..
   };
-  struct Stats {
-    int strength{};
-    int dexterity{};
-    int intelligence{};
-    int constitution{};
-  };
 
 private:
   Stats m_stats{};
   PlayerEquipment m_equipment{};
   Shove m_shoveAction{};
-  int m_currentXP{0};
+  int m_currentXP{100};
   int m_level{1};
   int m_xpToNextLevel{100}; // const, linear, exp ?
 
 public:
   Player(const Point &position, std::string_view currentMap,
-         int maxHealthPoints, Stats stats = Stats{1, 5, 1, 1});
+         int maxHealthPoints, Stats stats = Stats{1, 1, 1, 1});
   void takeItem(std::shared_ptr<Item> item);
   void displayInventory(std::size_t page = 0) const;
   void displayActions() const;
@@ -56,6 +51,7 @@ public:
   int getDexterity() const override;
   int getIntelligence() const override;
   int getConstitution() const override;
+  Stats getStats() const;
   int getEvasion() const override;
   int getMeleeHitChance() const override;
   int getDistanceHitChance() const override;
@@ -71,5 +67,6 @@ public:
   void displayCharacterSheet() const;
   bool canLevelUp() const;
   void levelUp();
+  void addAction(std::unique_ptr<Action> action);
   virtual ~Player() = default;
 };

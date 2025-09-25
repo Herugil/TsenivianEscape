@@ -69,7 +69,7 @@
   "enemyGiantRat": {
     "name": "Giant Rat",
     "type": "waryMelee",
-    "maxHealth": 10,
+    "maxHealth": 20,
     "evasion": 5,
     "meleeHitChance": 60,
     "distanceHitChance": 0,
