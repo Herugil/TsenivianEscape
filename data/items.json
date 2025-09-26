@@ -76,5 +76,17 @@
     "itemType": "helmet",
     "description": "A leather helmet, offering basic protection for the head.",
     "armorValue": 1
+  },
+  "itemRustyKeyLevel1": {
+    "name": "Rusty Key",
+    "description": "A simple rusty iron key."
+  },
+  "itemPickaxe": {
+    "name": "Pickaxe",
+    "itemType": "twoHanded",
+    "description": "A sturdy pickaxe, useful for mining.",
+    "weaponType": "melee",
+    "damage": 3,
+    "range": 1
   }
 }

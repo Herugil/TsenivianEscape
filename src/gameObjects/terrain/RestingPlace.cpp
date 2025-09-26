@@ -19,7 +19,9 @@ std::string RestingPlace::getDescription() const {
   std::string result{};
   if (m_hasBeenUsed) {
     result = m_description +
-             "\n It has already been used. You cannot rest here again.\n";
+             "\n It has already been used. You cannot rest here again"; // todo:
+    // inconsistencies in formatting (display blocking expects description
+    // without newlines and periods)
   } else {
     result = m_description +
              "\n You can rest here for the night, and refill "

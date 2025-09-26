@@ -8,12 +8,18 @@
 MapChanger::MapChanger(std::string_view currentMap, Point position,
                        std::string_view targetMap, Point spawningPoint,
                        char symbol, std::string_view name,
-                       std::string_view description)
+                       std::string_view description, bool locked,
+                       std::string_view keyId)
     : WalkOnObject(currentMap, position, symbol, name, description),
-      m_targetMap{targetMap}, m_spawningPoint{spawningPoint} {}
+      m_targetMap{targetMap}, m_spawningPoint{spawningPoint} {
+  m_locked = locked;
+  m_keyId = keyId;
+}
 
 void MapChanger::activateWalkOn(std::shared_ptr<GameObject> gameObject,
                                 GameSession &gameSession) {
+  if (m_locked)
+    return;
   if (gameSession.getMap().getName() == m_targetMap) {
     return;
   }

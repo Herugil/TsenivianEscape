@@ -169,3 +169,9 @@ int Creature::getStatModifier(Stat stat) const {
   }
   return totalModifier;
 }
+const std::vector<std::shared_ptr<Item>> &Creature::getInventory() const {
+  return m_inventory;
+}
+std::vector<std::shared_ptr<Item>> &Creature::getInventory() {
+  return m_inventory;
+}

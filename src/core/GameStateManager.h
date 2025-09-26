@@ -28,6 +28,7 @@ private:
   void handleGameOver();
   void setCombatState();
   void handleRestMenu();
+  void handleUnlockMenu();
   void handleLevelUp();
   void handleCharacterSheet();
   void confirmLevelUp(Player &player, Stat stat, Stats playerStats);

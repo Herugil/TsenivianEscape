@@ -102,8 +102,9 @@ std::string GameSession::cleanDeadNpcs() {
         m_currentMap->removeTop(npc->getPosition());
         if (!(npc->getInventory().empty())) {
           auto lootableBody{std::make_shared<Container>(
-              npc->getInventory(), npc->getPosition(), m_currentMap->getName(),
-              npc->getName() + "'s body", npc->getDeadDescription())};
+              std::move(npc->getInventory()), npc->getPosition(),
+              m_currentMap->getName(), npc->getName() + "'s body",
+              npc->getDeadDescription())};
           addContainer(lootableBody);
           m_currentMap->placeTop(lootableBody, lootableBody->getPosition());
         }
@@ -145,8 +146,8 @@ bool GameSession::dropItem(std::shared_ptr<Item> item, const Point &point) {
     if (m_currentMap->isAvailable(adjacentPoint)) {
       std::vector<std::shared_ptr<Item>> vec{item};
       auto cont{std::make_shared<Container>(
-          vec, adjacentPoint, m_currentMap->getName(), "Left items bag",
-          "A bag of items left by someone")};
+          std::move(vec), adjacentPoint, m_currentMap->getName(),
+          "Left items bag", "A bag of items left by someone")};
       addContainer(cont);
       m_currentMap->placeTop(cont, cont->getPosition());
       return true;

@@ -157,6 +157,33 @@ void Player::equipItem(std::shared_ptr<Equipment> item) {
   }
 }
 
+void Player::unequipItemToDrop(std::shared_ptr<Equipment> item) {
+  if (!item || !item->isEquipped())
+    return;
+  if (item == m_equipment.rightHand.lock()) {
+    if (item->getEquipmentType() == Equipment::EquipmentType::twoHanded) {
+      m_equipment.leftHand.reset();
+    }
+    m_equipment.rightHand.reset();
+  } else if (item == m_equipment.leftHand.lock()) {
+    if (item->getEquipmentType() == Equipment::EquipmentType::twoHanded) {
+      m_equipment.rightHand.reset();
+    }
+    m_equipment.leftHand.reset();
+  } else if (item == m_equipment.chestArmor.lock()) {
+    m_equipment.chestArmor.reset();
+  } else if (item == m_equipment.legArmor.lock()) {
+    m_equipment.legArmor.reset();
+  } else if (item == m_equipment.helmet.lock()) {
+    m_equipment.helmet.reset();
+  } else if (item == m_equipment.boots.lock()) {
+    m_equipment.boots.reset();
+  } else if (item == m_equipment.gloves.lock()) {
+    m_equipment.gloves.reset();
+  }
+  item->setUnequipped();
+}
+
 void Player::handleEquipSlot(std::weak_ptr<Equipment> &currentItem,
                              std::shared_ptr<Equipment> newItem) {
   auto currentEquipped{currentItem.lock()};
@@ -171,19 +198,8 @@ void Player::handleEquipSlot(std::weak_ptr<Equipment> &currentItem,
 }
 
 void Player::removeItem(std::shared_ptr<Item> item) {
-  if (auto equipment = std::dynamic_pointer_cast<Equipment>(item)) {
-    if (equipment->isEquipped()) {
-      if (auto weapon{std::dynamic_pointer_cast<Weapon>(item)}) {
-        if (weapon->getEquipmentType() == Equipment::EquipmentType::twoHanded) {
-          m_equipment.leftHand.reset();
-        } else if (m_equipment.leftHand.lock() == item) {
-          m_equipment.leftHand.reset();
-        } else
-          m_equipment.rightHand.reset();
-      }
-    }
-    equipment->setUnequipped();
-  }
+  if (auto equipment = std::dynamic_pointer_cast<Equipment>(item))
+    unequipItemToDrop(equipment);
   auto it{std::find(m_inventory.begin(), m_inventory.end(), item)};
   if (it != m_inventory.end())
     m_inventory.erase(it);

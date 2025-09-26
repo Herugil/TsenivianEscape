@@ -57,7 +57,7 @@
       "position": [12, 5],
       "type": "container",
       "name": "hidden items in the wall",
-      "description": "A brick goes loose, revealing some items:",
+      "description": "A brick you could dig out of the wall with the appropriate tools.",
       "contents": ["itemSword", "itemBanana"]
     },
     {

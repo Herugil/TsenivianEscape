@@ -27,10 +27,13 @@ public:
     res << m_name << '\n' << m_description << '\n';
     return res.str();
   };
-  virtual std::shared_ptr<Item> clone() const = 0;
+  virtual std::shared_ptr<Item> clone() const {
+    return std::make_shared<Item>(*this);
+  };
   int getStrReq() const { return m_strReq; }
   int getDexReq() const { return m_dexReq; }
   int getIntReq() const { return m_intReq; }
   int getConReq() const { return m_conReq; }
+  const std::string &getName() const { return m_name; }
   virtual ~Item() = default;
 };

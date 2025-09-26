@@ -8,13 +8,15 @@
 
 Container::Container(const Point &point, std::string_view currentMap,
                      std::string_view name, std::string_view description,
-                     char symbol)
-    : GameObject(true, false, symbol, currentMap, point, name, description) {}
-Container::Container(std::vector<std::shared_ptr<Item>> items,
+                     char symbol, bool locked, std::string_view keyId)
+    : GameObject(true, false, symbol, currentMap, point, name, description,
+                 locked, keyId) {}
+Container::Container(std::vector<std::shared_ptr<Item>> &&items,
                      const Point &point, std::string_view currentMap,
                      std::string_view name, std::string_view description,
-                     char symbol)
-    : GameObject(true, false, symbol, currentMap, point, name, description),
+                     char symbol, bool locked, std::string_view keyId)
+    : GameObject(true, false, symbol, currentMap, point, name, description,
+                 locked, keyId),
       m_heldItems{std::move(items)} {}
 
 void Container::displayContents() {
@@ -28,6 +30,8 @@ void Container::displayContents() {
 }
 
 InteractionResult Container::playerInteraction() {
+  if (m_locked)
+    return {GameState::UnlockMenu, this};
   return {GameState::Container, this};
 }
 

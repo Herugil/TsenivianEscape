@@ -32,7 +32,7 @@
       "position": [9, 5],
       "type": "container",
       "name": "hidden items in the wall",
-      "description": "A brick goes loose, revealing some items:",
+      "description": "A brick you could dig out of the wall with the appropriate tools.",
       "contents": [
         "itemSword",
         "itemSpear",
@@ -41,7 +41,9 @@
         "itemSwordOfWrath",
         "itemSmallHealthPotion",
         "itemBowOfFury"
-      ]
+      ],
+      "locked": true,
+      "keyId": "itemPickaxe"
     },
     {
       "symbol": "D",
@@ -49,16 +51,23 @@
       "type": "container",
       "name": "Dead body",
       "description": "The body of an older inmate, half rotten. You find some items on him:",
-      "contents": ["itemTornLeatherArmor", "itemLeatherHelmet"]
+      "contents": [
+        "itemTornLeatherArmor",
+        "itemLeatherHelmet",
+        "itemRustyKeyLevel1",
+        "itemPickaxe"
+      ]
     },
     {
-      "symbol": " ",
+      "symbol": "D",
       "position": [9, 3],
       "type": "mapChanger",
       "name": "passage to the next room",
-      "description": "A creaking, half open wooden door.",
+      "description": "A surprisingly sturdy wooden door, with a rusty keyhole.",
       "destLevel": "level2",
-      "destPosition": [1, 4]
+      "destPosition": [1, 4],
+      "locked": true,
+      "keyId": "itemRustyKeyLevel1"
     }
   ]
 }

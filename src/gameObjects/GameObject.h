@@ -17,13 +17,16 @@ protected:
   Point m_position{};
   std::string m_name{};
   std::string m_description{};
+  bool m_locked{false};
+  std::string m_keyId{};
 
 private:
 public:
   explicit GameObject(bool isMoveable = false, bool isTraversable = false,
                       char symbol = ' ', std::string_view currentMap = "",
                       Point position = Point(), std::string_view name = "",
-                      std::string_view description = "");
+                      std::string_view description = "", bool locked = false,
+                      std::string_view keyId = "");
   const Point &getPosition() const;
   const std::string &getCurrentMap() const;
   void setCurrentMap(std::string_view map);
@@ -34,6 +37,8 @@ public:
   bool isTraversable() const;
   bool isMoveable() const;
   void setPosition(const Point &point);
+  const std::string &getKeyId() const;
+  void unlock();
   InteractionResult virtual playerInteraction(); // not const because some
                                                  // object states can be changed
                                                  // through this function

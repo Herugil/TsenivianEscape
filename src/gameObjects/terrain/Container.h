@@ -17,10 +17,12 @@ private:
 public:
   Container(const Point &point, std::string_view name,
             std::string_view currentMap, std::string_view description = "",
-            char symbol = 'c');
-  Container(std::vector<std::shared_ptr<Item>> items, const Point &point,
+            char symbol = 'c', bool locked = false,
+            std::string_view keyId = "");
+  Container(std::vector<std::shared_ptr<Item>> &&items, const Point &point,
             std::string_view currentMap, std::string_view name,
-            std::string_view description = "", char symbol = 'c');
+            std::string_view description = "", char symbol = 'c',
+            bool locked = false, std::string_view keyId = "");
   std::vector<std::shared_ptr<Item>> &getContents();
   void displayContents();
   void clearContents();

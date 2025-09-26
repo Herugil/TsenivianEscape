@@ -39,7 +39,9 @@ DataLoader::getAllItems() {
   for (auto &[key, value] : data.items()) {
     std::string name{value["name"]};
     std::string description{value["description"]};
-    std::string itemType{value["itemType"]};
+    std::string itemType{};
+    if (value.contains("itemType"))
+      itemType = value["itemType"];
     if (itemType == "oneHanded" || itemType == "twoHanded") {
       std::string weaponType{value["weaponType"]};
       int damage{value["damage"]};
@@ -64,6 +66,8 @@ DataLoader::getAllItems() {
       int armorValue{value["armorValue"]};
       items[key] = std::make_shared<Armor>(
           Armor{name, key, itemType, description, armorValue});
+    } else {
+      items[key] = std::make_shared<Item>(name, key, description);
     }
   }
   return items;
@@ -200,6 +204,12 @@ void placeObjects(
     const std::string type{object["type"]};
     const std::string name{object["name"]};
     const std::string desc{object["description"]};
+    bool locked{false};
+    std::string keyId{};
+    if (object.contains("locked")) {
+      locked = object["locked"];
+      keyId = object["keyId"];
+    }
     if (type == "container") {
       std::vector<std::shared_ptr<Item>> loot{};
       const auto &itemIds{object["contents"]};
@@ -209,19 +219,23 @@ void placeObjects(
         else
           std::cout << itemId << " not added, cant find it in items.\n";
       }
-      Container container{loot, pos, name, map.getName(), desc, symbol};
+      Container container{
+          std::move(loot), pos,    map.getName(), name, desc,
+          symbol,          locked, keyId,
+      };
       map.placeFloor(std::make_unique<Container>(std::move(container)), pos);
     } else if (type == "mapChanger") {
       const std::string nextMap{object["destLevel"]};
       Point spawningPoint{object["destPosition"][0], object["destPosition"][1]};
-      MapChanger obj{map.getName(), pos,  nextMap, spawningPoint,
-                     symbol,        name, desc};
+      MapChanger obj{map.getName(), pos,  nextMap, spawningPoint, symbol,
+                     name,          desc, locked,  keyId};
       map.placeFloor(std::make_unique<MapChanger>(std::move(obj)), pos);
     } else if (type == "restingPlace") {
       RestingPlace obj{map.getName(), pos, symbol, name, desc};
       map.placeFloor(std::make_unique<RestingPlace>(std::move(obj)), pos);
     } else {
-      GameObject obj{false, false, symbol, map.getName(), pos, name, desc};
+      GameObject obj{false, false, symbol, map.getName(), pos,
+                     name,  desc,  locked, keyId};
       map.placeFloor(std::make_unique<GameObject>(std::move(obj)), pos);
     }
   }

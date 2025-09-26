@@ -46,15 +46,14 @@ public:
                        int distanceHitChance = Settings::g_baseHitChance,
                        int meleeDamage = Settings::g_baseEnemyDamage,
                        int distanceDamage = Settings::g_baseEnemyDamage,
-                       std::vector<std::unique_ptr<Action>> actions = {},
-                       std::vector<std::shared_ptr<Item>> inventory = {},
+                       std::vector<std::unique_ptr<Action>> &&actions = {},
+                       std::vector<std::shared_ptr<Item>> &&inventory = {},
                        std::string_view description = "enemy",
                        std::string_view deadDescription = "",
                        std::string_view aiType = "defaultAI", int xpValue = 50);
   NonPlayableCharacter(const NonPlayableCharacter &other);
   std::shared_ptr<NonPlayableCharacter> clone() const;
   std::string_view getDeadDescription() const;
-  std::vector<std::shared_ptr<Item>> getInventory() const;
   void addItemToInventory(std::shared_ptr<Item> item);
   std::string executeBasicAttack(Creature &target, GameSession &gameSession);
   int getMeleeHitChance() const override;

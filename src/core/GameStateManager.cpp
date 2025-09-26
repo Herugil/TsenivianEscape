@@ -77,6 +77,9 @@ void GameStateManager::mainLoop() {
     case GameState::LevelUp:
       handleLevelUp();
       break;
+    case GameState::UnlockMenu:
+      handleUnlockMenu();
+      break;
     default:
       m_currentState = GameState::Exploration;
       break;
@@ -208,6 +211,8 @@ void GameStateManager::handleItemInspect() {
       std::cout << "E: Equip/Unequip   R: Drop\n";
     else if (auto usable = std::dynamic_pointer_cast<UsableItem>(item))
       std::cout << "E: Use   R: Drop\n";
+    else
+      std::cout << "R: Drop\n";
     auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
     if (CommandHandler::isInteractionCommand(command)) {
       auto &player{m_gameSession.getPlayer()};
@@ -410,6 +415,38 @@ void GameStateManager::handleRestMenu() {
       m_interactionResult.interactedObject = nullptr;
       return;
     }
+  }
+  m_interactionResult.interactedObject = nullptr;
+  m_currentState = GameState::Exploration;
+}
+
+void GameStateManager::handleUnlockMenu() {
+  auto interactedObject{m_interactionResult.interactedObject};
+  std::cout << interactedObject->getDescription() << "\n";
+  std::cout << "This object is locked. You need a key to unlock it.\n";
+  std::string keyId{interactedObject->getKeyId()};
+  auto &player{m_gameSession.getPlayer()};
+  auto it{std::find_if(player.getInventory().begin(),
+                       player.getInventory().end(),
+                       [&keyId](const std::shared_ptr<Item> &item) {
+                         return item->getId() == keyId;
+                       })};
+  if (it != player.getInventory().end()) {
+    std::cout << "Use " << (*it)->getName()
+              << " to unlock? (E: yes, any other "
+                 "key: no)\n";
+    auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
+    if (CommandHandler::isInteractionCommand(command)) {
+      m_interactionResult.interactedObject->unlock();
+      player.removeItem(*it);
+      m_logsToDisplay << "You unlocked " << interactedObject->getName()
+                      << ".\n";
+      m_interactionResult.interactedObject = nullptr;
+      m_currentState = GameState::Display;
+      return;
+    }
+  } else {
+    Input::getKeyBlocking();
   }
   m_interactionResult.interactedObject = nullptr;
   m_currentState = GameState::Exploration;

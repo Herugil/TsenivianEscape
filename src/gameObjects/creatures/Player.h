@@ -78,5 +78,6 @@ public:
   bool canLevelUp() const;
   void levelUp(Stat stat);
   void addAction(std::unique_ptr<Action> action);
+  void unequipItemToDrop(std::shared_ptr<Equipment> item);
   virtual ~Player() = default;
 };

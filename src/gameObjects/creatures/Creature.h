@@ -69,5 +69,7 @@ public:
   void setCombat();
   void resetOutOfCombat();
   void unsetCombat();
+  const std::vector<std::shared_ptr<Item>> &getInventory() const;
+  std::vector<std::shared_ptr<Item>> &getInventory();
   int getStatModifier(Stat stat) const;
 };

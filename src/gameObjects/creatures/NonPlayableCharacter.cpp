@@ -20,8 +20,8 @@ NonPlayableCharacter::NonPlayableCharacter(
     char symbol, const Point &point, std::string_view currentMap,
     int maxHealthPoints, std::string_view name, int evasion, int meleeHitChance,
     int distanceHitChance, int meleeDamage, int distanceDamage,
-    std::vector<std::unique_ptr<Action>> actions,
-    std::vector<std::shared_ptr<Item>> items, std::string_view description,
+    std::vector<std::unique_ptr<Action>> &&actions,
+    std::vector<std::shared_ptr<Item>> &&items, std::string_view description,
     std::string_view deadDescription, std::string_view aiType, int xpValue)
     : Creature{symbol,  point, currentMap, maxHealthPoints,
                evasion, name,  description},
@@ -57,10 +57,6 @@ std::shared_ptr<NonPlayableCharacter> NonPlayableCharacter::clone() const {
 
 std::string_view NonPlayableCharacter::getDeadDescription() const {
   return m_deadDescription;
-}
-
-std::vector<std::shared_ptr<Item>> NonPlayableCharacter::getInventory() const {
-  return m_inventory;
 }
 
 void NonPlayableCharacter::addItemToInventory(std::shared_ptr<Item> item) {
