@@ -19,20 +19,8 @@ HealingAttack::HealingAttack(
 std::string HealingAttack::execute(GameSession &gameSession, Creature &actor,
                                    Creature &target) {
   std::ostringstream result;
-  int hitChance{0};
-  int damage{0};
-  int range{0};
-  if (m_usedStat == Stat::Strength) {
-    hitChance = actor.getMeleeHitChance();
-    damage = actor.getMeleeDamage();
-    range = actor.getMeleeRange();
-  } else if (m_usedStat == Stat::Dexterity) {
-    hitChance = actor.getDistanceHitChance();
-    damage = actor.getDistanceDamage();
-    range = actor.getDistanceRange();
-  } // that part needs to use function parameters in the constructor
   if (GeometryUtils::distanceL2(actor.getPosition(), target.getPosition()) >
-      range)
+      getRange(actor))
     return result.str();
   if (gameSession.getMap().isPointVisible(actor.getPosition(),
                                           target.getPosition()) == false) {
@@ -44,10 +32,10 @@ std::string HealingAttack::execute(GameSession &gameSession, Creature &actor,
   // no nice way to know if it hit or not without parsing the string which is
   // also terrible
   if (useActionResources(actor)) {
-    if (Random::rollD100() > hitChance - target.getEvasion()) {
+    if (Random::rollD100() > getHitChance(actor, target)) {
       result << actor.getName() << " missed " << target.getName() << ".\n";
     } else {
-      int inflictedDamage{target.takeDamage(damage)};
+      int inflictedDamage{target.takeDamage(getDamage(actor))};
       result << inflictedDamage << "  damage dealt to " << target.getName()
              << " by " << actor.getName() << ".\n";
       int healAmount{m_healAmountFunc(actor, target)};
@@ -66,4 +54,32 @@ std::string HealingAttack::execute(GameSession &gameSession, Creature &actor,
 std::string HealingAttack::playerExecute(GameSession &gameSession,
                                          Creature &target) {
   return execute(gameSession, gameSession.getPlayer(), target);
+}
+
+int HealingAttack::getRange(Creature &actor) const {
+  if (m_usedStat == Stat::Strength) {
+    return actor.getMeleeRange();
+  } else if (m_usedStat == Stat::Dexterity) {
+    return actor.getDistanceRange();
+  }
+  return 0;
+}
+
+int HealingAttack::getDamage(Creature &actor) const {
+  if (m_usedStat == Stat::Strength) {
+    return actor.getMeleeDamage();
+  } else if (m_usedStat == Stat::Dexterity) {
+    return actor.getDistanceDamage();
+  }
+  return 0;
+}
+
+int HealingAttack::getHitChance(Creature &actor, Creature &target) const {
+  int hitChance{0};
+  if (m_usedStat == Stat::Strength) {
+    hitChance = actor.getMeleeHitChance();
+  } else if (m_usedStat == Stat::Dexterity) {
+    hitChance = actor.getDistanceHitChance();
+  }
+  return hitChance - target.getEvasion();
 }

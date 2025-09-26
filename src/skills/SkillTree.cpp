@@ -32,9 +32,8 @@ std::unique_ptr<Action> SkillTree::createBackbreakerAction() {
       [](const Creature &actor, const Creature &target) {
         return actor.getStrength() - target.getStrength();
       },
-      [](const Creature &actor, const Creature &target) {
-        return actor.getMeleeDamage() + actor.getStrength() -
-               target.getConstitution(); // placeholder will be armor later
+      [](const Creature &actor) {
+        return actor.getMeleeDamage() + actor.getStrength();
       },
       [](const Creature &actor, const Creature &target) {
         return actor.getMeleeHitChance() - target.getEvasion();

@@ -27,5 +27,8 @@ public:
         m_name, m_cost, m_maxCharges, m_cooldown, m_usedStat, m_healAmountFunc,
         std::move(effects));
   }
+  int getRange(Creature &actor) const override;
+  int getDamage(Creature &actor) const override;
+  int getHitChance(Creature &actor, Creature &target) const override;
   virtual ~HealingAttack() = default;
 };

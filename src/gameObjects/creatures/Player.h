@@ -36,7 +36,7 @@ private:
   Shove m_shoveAction{};
   int m_currentXP{100};
   int m_level{1};
-  int m_xpToNextLevel{100}; // const, linear, exp ?
+  int m_xpToNextLevel{100}; // const, linear exp ?
 
 public:
   Player(const Point &position, std::string_view currentMap,

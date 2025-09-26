@@ -70,6 +70,12 @@ public:
     if (m_maxCharges != -1)
       m_currentCharges = m_maxCharges;
   }
+  virtual int getRange([[maybe_unused]] Creature &actor) const { return 0; }
+  virtual int getDamage([[maybe_unused]] Creature &actor) const { return 0; }
+  virtual int getHitChance([[maybe_unused]] Creature &actor,
+                           [[maybe_unused]] Creature &target) const {
+    return 0;
+  }
   int getCurrentCharges() const { return m_currentCharges; }
   int getMaxCharges() const { return m_maxCharges; }
   bool useActionResources(Creature &creature);

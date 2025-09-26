@@ -18,5 +18,6 @@ public:
   std::unique_ptr<Action> clone() const override {
     return std::make_unique<CubeAoe>(*this);
   }
+  int getDamage(Creature &actor) const override;
   virtual ~CubeAoe() = default;
 };

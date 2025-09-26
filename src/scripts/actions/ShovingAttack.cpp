@@ -8,8 +8,7 @@ ShovingAttack::ShovingAttack(
     std::string_view name,
     std::function<int(const Creature &actor, const Creature &target)>
         shoveDistanceFormula,
-    std::function<int(const Creature &actor, const Creature &target)>
-        damageFormula,
+    std::function<int(const Creature &actor)> damageFormula,
     std::function<int(const Creature &actor, const Creature &target)>
         hitChanceFormula,
     std::function<int(const Creature &actor)> rangeFormula, int cost,
@@ -38,10 +37,9 @@ std::string ShovingAttack::execute(GameSession &gameSession, Creature &actor,
                m_hitChanceFormula(actor, target) - target.getEvasion()) {
       result = actor.getName() + " missed " + target.getName() + ".\n";
     } else {
-      int damage{m_damageFormula(actor, target)};
-      damage = target.takeDamage(damage);
-      result = std::to_string(damage) + " damage dealt to " + target.getName() +
-               " by " + actor.getName() + ".\n";
+      result = std::to_string(target.takeDamage(getDamage(actor))) +
+               " damage dealt to " + target.getName() + " by " +
+               actor.getName() + ".\n";
       int shoveDistance{m_shoveDistanceFormula(actor, target)};
       for (int i = 0; i < shoveDistance; ++i) {
         auto creature{gameSession.getMap().getTopObject(target.getPosition())};
@@ -61,4 +59,14 @@ std::string ShovingAttack::playerExecute(GameSession &gameSession,
 
 std::unique_ptr<Action> ShovingAttack::clone() const {
   return std::make_unique<ShovingAttack>(*this);
+}
+
+int ShovingAttack::getRange(Creature &actor) const {
+  return m_rangeFormula(actor);
+}
+int ShovingAttack::getDamage(Creature &actor) const {
+  return m_damageFormula(actor);
+}
+int ShovingAttack::getHitChance(Creature &actor, Creature &target) const {
+  return m_hitChanceFormula(actor, target);
 }

@@ -7,8 +7,7 @@ class ShovingAttack : public Action {
 protected:
   std::function<int(const Creature &actor, const Creature &target)>
       m_shoveDistanceFormula;
-  std::function<int(const Creature &actor, const Creature &target)>
-      m_damageFormula;
+  std::function<int(const Creature &actor)> m_damageFormula;
   std::function<int(const Creature &actor, const Creature &target)>
       m_hitChanceFormula;
   std::function<int(const Creature &actor)> m_rangeFormula;
@@ -20,8 +19,7 @@ public:
       std::string_view name,
       std::function<int(const Creature &actor, const Creature &target)>
           shoveDistanceFormula,
-      std::function<int(const Creature &actor, const Creature &target)>
-          damageFormula,
+      std::function<int(const Creature &actor)> damageFormula,
       std::function<int(const Creature &actor, const Creature &target)>
           hitChanceFormula,
       std::function<int(const Creature &actor)> rangeFormula, int cost = 1,
@@ -31,5 +29,8 @@ public:
   std::string playerExecute(GameSession &gameSession,
                             Creature &target) override;
   std::unique_ptr<Action> clone() const override;
+  int getRange(Creature &actor) const override;
+  int getDamage(Creature &actor) const override;
+  int getHitChance(Creature &actor, Creature &target) const override;
   virtual ~ShovingAttack() = default;
 };
