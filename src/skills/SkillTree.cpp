@@ -75,5 +75,7 @@ std::unique_ptr<Action> SkillTree::createActionByName(std::string_view name) {
     return SkillTree::createRejuvenatingStrikeAction();
   if (name == "Haste")
     return SkillTree::createHasteAction();
+  if (name == "Dodge")
+    return SkillTree::createDodgeAction();
   return nullptr;
 }
