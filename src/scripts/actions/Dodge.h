@@ -2,6 +2,7 @@
 #include "gameObjects/creatures/Creature.h"
 #include "scripts/actions/Action.h"
 
+using json = nlohmann::json;
 class GameSession;
 
 class Dodge : public Action {
@@ -16,5 +17,6 @@ public:
   std::unique_ptr<Action> clone() const override {
     return std::make_unique<Dodge>(*this);
   };
+  json toJson() const override;
   ~Dodge() = default;
 };

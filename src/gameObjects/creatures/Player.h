@@ -8,6 +8,7 @@
 #include "input/Directions.h"
 #include "input/Input.h"
 #include "map/Point.h"
+#include "nlohmann/json.hpp"
 #include "scripts/actions/Action.h"
 #include "scripts/actions/BasicAttack.h"
 #include "scripts/actions/Shove.h"
@@ -15,6 +16,7 @@
 #include <sstream>
 #include <vector>
 
+using json = nlohmann::json;
 class GameSession;
 
 class Player : public Creature {
@@ -79,5 +81,6 @@ public:
   void levelUp(Stat stat);
   void addAction(std::unique_ptr<Action> action);
   void unequipItemToDrop(std::shared_ptr<Equipment> item);
+  json toJson() const override;
   virtual ~Player() = default;
 };

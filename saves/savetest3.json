@@ -1,0 +1,211 @@
+{
+  "allMaps": {
+    "level1": {
+      "floorLayer": [
+        {
+          "contents": [],
+          "currentMap": "level1",
+          "description": "The body of an older inmate, half rotten. You find some items on him:",
+          "isMoveable": true,
+          "locked": false,
+          "name": "Dead body",
+          "position": [1, 2],
+          "symbol": "D",
+          "traversable": false
+        },
+        {
+          "currentMap": "level1",
+          "description": "A surprisingly sturdy wooden door, with a rusty keyhole.",
+          "isMoveable": false,
+          "locked": false,
+          "name": "passage to the next room",
+          "position": [9, 3],
+          "symbol": "D",
+          "traversable": true
+        },
+        {
+          "contents": [
+            {
+              "id": "itemSword"
+            },
+            {
+              "id": "itemSpear"
+            },
+            {
+              "id": "itemBow"
+            }
+          ],
+          "currentMap": "level1",
+          "description": "A brick you could dig out of the wall with the appropriate tools.",
+          "isMoveable": true,
+          "locked": false,
+          "name": "hidden items in the wall",
+          "position": [9, 5],
+          "symbol": "X",
+          "traversable": false
+        }
+      ],
+      "introTextRead": false
+    },
+    "level2": {
+      "floorLayer": [
+        {
+          "currentMap": "level2",
+          "description": "A creaking, half open wooden door.",
+          "isMoveable": false,
+          "locked": false,
+          "name": "passage to the next room",
+          "position": [12, 5],
+          "symbol": " ",
+          "traversable": true
+        }
+      ],
+      "introTextRead": false
+    },
+    "level3": {
+      "floorLayer": [
+        {
+          "currentMap": "level3",
+          "description": "A creaking, half open wooden door.",
+          "isMoveable": false,
+          "locked": false,
+          "name": "passage to the next room",
+          "position": [0, 4],
+          "symbol": " ",
+          "traversable": true
+        },
+        {
+          "currentMap": "level3",
+          "description": "A tranquil spot below a broken statue. You feel confident you can lock the doors to this room and rest here.",
+          "hasBeenUsed": false,
+          "isMoveable": false,
+          "locked": false,
+          "name": "Tranquil spot",
+          "position": [6, 5],
+          "symbol": "Z",
+          "traversable": true
+        },
+        {
+          "contents": [
+            {
+              "id": "itemSword"
+            },
+            {
+              "id": "itemBanana"
+            }
+          ],
+          "currentMap": "level3",
+          "description": "A brick you could dig out of the wall with the appropriate tools.",
+          "isMoveable": true,
+          "locked": false,
+          "name": "hidden items in the wall",
+          "position": [12, 5],
+          "symbol": "X",
+          "traversable": false
+        }
+      ],
+      "introTextRead": true
+    },
+    "placeholder": {
+      "floorLayer": [],
+      "introTextRead": true
+    }
+  },
+  "containers": [],
+  "currentMap": "level2",
+  "npcs": [
+    {
+      "currentMap": "level3",
+      "healthPoints": 7,
+      "id": "enemyGiantRat",
+      "inventory": [
+        {
+          "id": "itemBanana"
+        }
+      ],
+      "position": [8, 2],
+      "symbol": "R"
+    },
+    {
+      "currentMap": "level3",
+      "healthPoints": 6,
+      "id": "enemyBandit",
+      "inventory": [],
+      "position": [7, 5],
+      "symbol": "b"
+    }
+  ],
+  "player": {
+    "actionPoints": 2,
+    "actions": [
+      {
+        "effects": [],
+        "name": "Attack with melee weapon",
+        "type": "melee"
+      },
+      {
+        "name": "Dodge"
+      },
+      {
+        "currentCharges": 1,
+        "name": "Swirling flames"
+      }
+    ],
+    "currentHealthPoints": 15,
+    "currentMap": "level2",
+    "currentXP": 70,
+    "equipment": {
+      "boots": null,
+      "chestArmor": {
+        "id": "itemTornLeatherArmor"
+      },
+      "gloves": null,
+      "helmet": {
+        "id": "itemLeatherHelmet"
+      },
+      "leftHand": null,
+      "legArmor": null,
+      "rightHand": {
+        "id": "itemSword"
+      }
+    },
+    "inventory": [
+      {
+        "id": "itemSword"
+      },
+      {
+        "id": "itemTornLeatherArmor"
+      },
+      {
+        "id": "itemLeatherHelmet"
+      },
+      {
+        "id": "itemSmallHealthPotion",
+        "usesLeft": 1
+      },
+      {
+        "id": "itemSwordOfWrath"
+      },
+      {
+        "id": "itemBowOfFury"
+      }
+    ],
+    "level": 2,
+    "maxActionPoints": 2,
+    "maxHealthPoints": 15,
+    "name": "you",
+    "passiveEffects": [],
+    "position": {
+      "x": 8,
+      "y": 6
+    },
+    "stats": {
+      "constitution": 1,
+      "dexterity": 1,
+      "intelligence": 2,
+      "strength": 1
+    },
+    "type": "Player",
+    "xpToNextLevel": 100
+  }
+}

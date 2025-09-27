@@ -3,11 +3,13 @@
 #include "gameObjects/creatures/Player.h"
 #include "map/Layer.h"
 #include "map/Point.h"
+#include "nlohmann/json.hpp"
 #include <iostream>
 #include <memory>
 #include <unordered_map>
 #include <vector>
 
+using json = nlohmann::json;
 struct InteractionResult;
 
 class Map {
@@ -19,6 +21,7 @@ private:
   bool m_readIntroText{true};
   Layer<std::unique_ptr<GameObject>> m_floorLayer;
   Layer<std::weak_ptr<GameObject>> m_topLayer;
+  bool m_visited{false};
 
 public:
   Map(std::string_view mapName, int width = 10, int height = 10,
@@ -36,7 +39,6 @@ public:
   bool checkBounds(const Point &point) const;
   friend std::ostream &operator<<(std::ostream &out, Map &map);
   InteractionResult interactPoint(const Point &point);
-  void setIntroTextRead(); // careful to always call this when entering a level
   std::shared_ptr<GameObject> getTopObject(const Point &point) const;
   GameObject *getFloorObject(const Point &point) const;
   std::deque<Point> reconstructPath(std::unordered_map<Point, Point> cameFrom,
@@ -45,6 +47,10 @@ public:
                              const Point &endPoint) const;
   bool isPointVisible(const Point &from, const Point &to) const;
   void printIntroText();
+  bool hasBeenVisited() const;
+  void setVisited();
+
+  json toJson() const;
 };
 
 std::ostream &operator<<(std::ostream &out, const GameObject &gameObject);

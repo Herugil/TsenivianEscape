@@ -112,6 +112,7 @@ DataLoader::getAllNpcs() {
     int meleeDamage{value["meleeDamage"]};
     int distanceDamage{value["distanceDamage"]};
     int evasion{value["evasion"]};
+    std::string id{key};
     std::string name{value["name"]};
     std::string desc{value["description"]};
     std::string descDead{value["deadDescription"]};
@@ -146,7 +147,7 @@ DataLoader::getAllNpcs() {
       }
     }
     npcs[key] = std::make_shared<NonPlayableCharacter>(
-        ' ', Point{0, 0}, "placeholder", maxHealth, name, evasion,
+        id, ' ', Point{0, 0}, "placeholder", maxHealth, name, evasion,
         meleeHitChance, distanceHitChance, meleeDamage, distanceDamage,
         std::move(actions), std::vector<std::shared_ptr<Item>>{}, desc,
         descDead, aiType, xpValue);

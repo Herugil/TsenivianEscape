@@ -3,6 +3,8 @@
 #include "scripts/actions/Action.h"
 #include <functional>
 
+using json = nlohmann::json;
+
 class CubeAoe : public Action {
 protected:
   int m_radius;
@@ -19,5 +21,7 @@ public:
     return std::make_unique<CubeAoe>(*this);
   }
   int getDamage(Creature &actor) const override;
+
+  json toJson() const override;
   virtual ~CubeAoe() = default;
 };

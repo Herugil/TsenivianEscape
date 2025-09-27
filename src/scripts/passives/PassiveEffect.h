@@ -1,8 +1,11 @@
 #pragma once
 #include "gameObjects/creatures/Stats.h"
+#include "nlohmann/json.hpp"
 #include <memory>
 #include <string>
 #include <string_view>
+
+using json = nlohmann::json;
 
 class Creature;
 
@@ -46,5 +49,8 @@ public:
   virtual std::unique_ptr<PassiveEffect> clone() const;
   virtual std::string display() const;
   static std::string typeToString(Type type);
+
+  virtual json toJson() const;
+
   virtual ~PassiveEffect() = default;
 };

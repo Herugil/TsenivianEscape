@@ -12,23 +12,24 @@
 #include "utils/Random.h"
 #include <algorithm>
 #include <memory>
+#include <nlohmann/json.hpp>
 #include <queue>
 #include <thread>
 #include <vector>
 
 NonPlayableCharacter::NonPlayableCharacter(
-    char symbol, const Point &point, std::string_view currentMap,
-    int maxHealthPoints, std::string_view name, int evasion, int meleeHitChance,
-    int distanceHitChance, int meleeDamage, int distanceDamage,
-    std::vector<std::unique_ptr<Action>> &&actions,
+    std::string_view id, char symbol, const Point &point,
+    std::string_view currentMap, int maxHealthPoints, std::string_view name,
+    int evasion, int meleeHitChance, int distanceHitChance, int meleeDamage,
+    int distanceDamage, std::vector<std::unique_ptr<Action>> &&actions,
     std::vector<std::shared_ptr<Item>> &&items, std::string_view description,
     std::string_view deadDescription, std::string_view aiType, int xpValue)
     : Creature{symbol,  point, currentMap, maxHealthPoints,
                evasion, name,  description},
-      m_deadDescription{deadDescription}, m_meleeHitChance{meleeHitChance},
-      m_distanceHitChance{distanceHitChance}, m_meleeDamage{meleeDamage},
-      m_distanceDamage{distanceDamage}, m_AIType{stringToAIType(aiType)},
-      m_xpValue{xpValue} {
+      m_id{id}, m_deadDescription{deadDescription},
+      m_meleeHitChance{meleeHitChance}, m_distanceHitChance{distanceHitChance},
+      m_meleeDamage{meleeDamage}, m_distanceDamage{distanceDamage},
+      m_AIType{stringToAIType(aiType)}, m_xpValue{xpValue} {
   if (!items.empty())
     m_inventory = std::move(items);
   if (!actions.empty()) {
@@ -41,7 +42,8 @@ NonPlayableCharacter::NonPlayableCharacter(
 }
 
 NonPlayableCharacter::NonPlayableCharacter(const NonPlayableCharacter &other)
-    : Creature(other), m_deadDescription(other.m_deadDescription),
+    : Creature(other), m_id{other.m_id},
+      m_deadDescription(other.m_deadDescription),
       m_meleeHitChance(other.m_meleeHitChance),
       m_distanceHitChance(other.m_distanceHitChance),
       m_meleeRange(other.m_meleeRange), m_meleeDamage(other.m_meleeDamage),
@@ -200,3 +202,23 @@ NonPlayableCharacter::stringToAIType(std::string_view str) {
 }
 
 int NonPlayableCharacter::getXpValue() const { return m_xpValue; }
+
+json NonPlayableCharacter::toJson() const {
+  json j;
+  j["id"] = m_id;
+  j["healthPoints"] = m_healthPoints;
+  j["inventory"] = json::array();
+  j["currentMap"] = m_currentMap;
+  j["symbol"] = std::string(1, m_symbol);
+  j["position"] = json::array({m_position.getX(), m_position.getY()});
+  for (const auto &item : m_inventory) {
+    j["inventory"].push_back(item->toJson());
+  }
+  for (const auto &action : m_actions) {
+    if (action->getMaxCharges() != -1) {
+      j["actions"].push_back({{"name", action->getName()},
+                              {"currentCharges", action->getCurrentCharges()}});
+    }
+  }
+  return j;
+}

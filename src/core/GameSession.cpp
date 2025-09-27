@@ -7,6 +7,8 @@
 #include "utils/ScreenUtils.h"
 #include <sstream>
 
+using json = nlohmann::json;
+
 GameSession::GameSession(std::shared_ptr<Player> player)
     : m_player{std::move(player)} {
   m_allMaps.emplace("placeholder", Map{"placeholder"});
@@ -30,7 +32,7 @@ void GameSession::moveCreature(std::shared_ptr<GameObject> gameObject,
     if (forced)
       canMove = gameObject->isMoveable();
     else if (auto creature{std::dynamic_pointer_cast<Creature>(gameObject)})
-      canMove = creature->useMovementPoints();
+      canMove = !creature->inCombat() || creature->useMovementPoints();
     if (canMove) {
       m_currentMap->placeTop(gameObject, adjPoint);
       m_currentMap->removeTop(currentPos);
@@ -304,3 +306,30 @@ void GameSession::resetInitiative() {
 
 int GameSession::getCurrentTurn() const { return m_currentTurn; }
 void GameSession::incrementCurrentTurn() { ++m_currentTurn; }
+
+json GameSession::toJson() const {
+  // can't save in combat, so turn order doesn't have to be saved
+  // only player and world info need to be saved
+
+  json j;
+  j["player"] = m_player->toJson();
+  j["currentMap"] = m_currentMap->getName();
+  json allMaps;
+  for (const auto &[name, map] : m_allMaps) {
+    if (map.hasBeenVisited())
+      allMaps[name] = map.toJson();
+  }
+  j["allMaps"] = allMaps;
+  j["npcs"] = json::array();
+  for (const auto &npc : m_npcs) {
+    std::string npcCurrentMap{npc->getCurrentMap()};
+    if (m_allMaps.at(npcCurrentMap).hasBeenVisited())
+      j["npcs"].push_back(npc->toJson());
+  }
+  j["containers"] = json::array();
+  for (const auto &container : m_sessionOwnedContainers) {
+    j["containers"].push_back(container->toJson());
+  }
+  j["player"] = m_player->toJson();
+  return j;
+}

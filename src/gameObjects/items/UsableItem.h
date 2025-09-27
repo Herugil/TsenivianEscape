@@ -19,5 +19,12 @@ public:
   int getUsesLeft() const { return m_usesLeft; }
   std::shared_ptr<Item> clone() const override = 0;
   virtual std::string use(Creature &user) = 0;
+  json toJson() const override {
+    json j;
+    j["id"] = m_id;
+    if (!m_isUnlimitedUse)
+      j["usesLeft"] = m_usesLeft;
+    return j;
+  }
   virtual ~UsableItem() = default;
 };

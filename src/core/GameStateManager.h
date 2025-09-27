@@ -32,6 +32,7 @@ private:
   void handleLevelUp();
   void handleCharacterSheet();
   void confirmLevelUp(Player &player, Stat stat, Stats playerStats);
+  void saveGame(std::string_view filename) const;
 
 public:
   GameStateManager(GameSession &&gameSession);

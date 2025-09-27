@@ -3,6 +3,8 @@
 #include "scripts/actions/Action.h"
 #include "scripts/passives/PassiveEffect.h"
 
+using json = nlohmann::json;
+
 class GameSession;
 
 class BasicAttack : public Action {
@@ -31,5 +33,8 @@ public:
   int getRange(Creature &actor) const override;
   int getDamage(Creature &actor) const override;
   int getHitChance(Creature &actor, Creature &target) const override;
+
+  json toJson() const override;
+
   ~BasicAttack() = default;
 };

@@ -42,3 +42,17 @@ std::string CompositePassiveEffect::display() const {
   result += ") - " + std::to_string(getRoundsLeft()) + " rounds left";
   return result;
 }
+
+nlohmann::json CompositePassiveEffect::toJson() const {
+  nlohmann::json j;
+  j["type"] = "Composite";
+  j["duration"] = m_roundsLeft;
+  j["stackable"] = m_stackable;
+  j["id"] = m_id;
+  j["name"] = m_name;
+  j["components"] = nlohmann::json::array();
+  for (const auto &effect : m_effects) {
+    j["components"].push_back(effect->toJson());
+  }
+  return j;
+}

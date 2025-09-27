@@ -4,6 +4,7 @@
 #include "gameObjects/items/Weapon.h"
 #include "map/Map.h"
 #include "map/Point.h"
+#include "nlohmann/json.hpp"
 #include "scripts/actions/BasicAttack.h"
 #include "scripts/actions/CubeAoe.h"
 #include "scripts/actions/Dodge.h"
@@ -387,4 +388,67 @@ void Player::levelUp(Stat stat) {
   }
   m_maxHealthPoints += 5; // each level gives 5 extra hp
   SkillTree::addSkillStatSpread(*this);
+}
+
+using json = nlohmann::json;
+json Player::toJson() const {
+  json j;
+  j["type"] = "Player";
+  j["position"] = {{"x", getPosition().getX()}, {"y", getPosition().getY()}};
+  j["currentMap"] = getCurrentMap();
+  j["maxHealthPoints"] = getMaxHealthPoints();
+  j["currentHealthPoints"] = getHealthPoints();
+  j["actionPoints"] = getActionPoints();
+  j["maxActionPoints"] = getMaxActionPoints();
+  j["name"] = getName();
+  j["stats"] = {{"strength", m_stats.strength},
+                {"dexterity", m_stats.dexterity},
+                {"intelligence", m_stats.intelligence},
+                {"constitution", m_stats.constitution}};
+  j["currentXP"] = m_currentXP;
+  j["level"] = m_level;
+  j["xpToNextLevel"] = m_xpToNextLevel;
+
+  // Inventory
+  j["inventory"] = json::array();
+  for (const auto &item : m_inventory) {
+    if (item) {
+      j["inventory"].push_back(item->toJson());
+    }
+  }
+
+  // Equipment
+  auto serializeEquipmentSlot = [](const std::weak_ptr<Equipment> &slot) {
+    if (auto eq = slot.lock()) {
+      return eq->toJson();
+    }
+    return json(nullptr);
+  };
+
+  j["equipment"] = {
+      {"rightHand", serializeEquipmentSlot(m_equipment.rightHand)},
+      {"leftHand", serializeEquipmentSlot(m_equipment.leftHand)},
+      {"chestArmor", serializeEquipmentSlot(m_equipment.chestArmor)},
+      {"legArmor", serializeEquipmentSlot(m_equipment.legArmor)},
+      {"helmet", serializeEquipmentSlot(m_equipment.helmet)},
+      {"boots", serializeEquipmentSlot(m_equipment.boots)},
+      {"gloves", serializeEquipmentSlot(m_equipment.gloves)}};
+
+  // Actions
+  j["actions"] = json::array();
+  for (const auto &action : m_actions) {
+    if (action) {
+      j["actions"].push_back(action->toJson());
+    }
+  }
+
+  // Passive Effects
+  j["passiveEffects"] = json::array();
+  for (const auto &effect : m_passiveEffects) {
+    if (effect) {
+      j["passiveEffects"].push_back(effect->toJson());
+    }
+  }
+
+  return j;
 }

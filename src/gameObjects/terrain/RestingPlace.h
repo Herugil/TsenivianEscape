@@ -2,6 +2,8 @@
 
 #include "gameObjects/GameObject.h"
 
+using json = nlohmann::json;
+
 class Player;
 
 class RestingPlace : public GameObject {
@@ -15,5 +17,8 @@ public:
   InteractionResult playerInteraction() override;
   std::string getDescription() const override;
   std::string rest(Player &player);
+
+  json toJson() const override;
+
   virtual ~RestingPlace() = default;
 };

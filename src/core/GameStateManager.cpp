@@ -10,6 +10,7 @@
 #include "utils/Interface.h"
 #include "utils/ScreenUtils.h"
 #include <chrono>
+#include <fstream>
 #include <thread>
 
 GameStateManager::GameStateManager(GameSession &&gameSession)
@@ -176,6 +177,20 @@ void GameStateManager::HandleWorld() {
       m_gameSession.incrementTurnIndex();
       m_currentState = GameState::Exploration;
     }
+  } else if (CommandHandler::isSaveGameCommand(
+                 command)) { // this is a temporary key, just to test saving
+    ScreenUtils::clearScreen();
+    if (m_gameSession.getPlayer().inCombat()) {
+      m_logsToDisplay << "You cannot save the game while in combat!\n";
+      m_currentState = GameState::Display;
+      return;
+    }
+    std::string filename;
+    std::cout << "Enter filename to save the game: ";
+    std::getline(std::cin, filename);
+    saveGame(filename);
+    m_logsToDisplay << "Game saved to " << filename << "\n";
+    m_currentState = GameState::Display;
   }
 }
 
@@ -527,4 +542,26 @@ void GameStateManager::confirmLevelUp(Player &player, Stat stat,
     player.levelUp(stat);
     return;
   }
+}
+
+void GameStateManager::saveGame(std::string_view filename) const {
+  std::string safeFileName{filename};
+  safeFileName.erase(std::remove_if(safeFileName.begin(), safeFileName.end(),
+                                    [](char c) {
+                                      return (c == '.' || c == '/' ||
+                                              c == '\\');
+                                    }),
+                     safeFileName.end());
+  // prevent user from saving into other directories
+  std::string fileNameStr{"../saves/"};
+  fileNameStr += safeFileName;
+  fileNameStr += ".json";
+  std::ofstream file{fileNameStr.data()};
+  if (!file.is_open()) {
+    std::cerr << "Could not open file for saving: " << safeFileName << '\n';
+    return;
+  }
+  json j = m_gameSession.toJson();
+  file << j.dump(4);
+  file.close();
 }

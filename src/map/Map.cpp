@@ -88,7 +88,7 @@ void Map::placeWalls(const Point &bottomLeft, const Point &topRight,
 std::ostream &operator<<(std::ostream &out, Map &map) {
   if (map.m_readIntroText) {
     map.printIntroText();
-    map.setIntroTextRead();
+    map.setVisited();
   }
   for (int row{0}; row < map.m_height; ++row) {
     for (int col{0}; col < map.m_width; ++col) {
@@ -106,7 +106,12 @@ std::ostream &operator<<(std::ostream &out, Map &map) {
   return out;
 }
 
-void Map::setIntroTextRead() { m_readIntroText = false; }
+void Map::setVisited() {
+  m_readIntroText = false;
+  m_visited = true;
+}
+
+bool Map::hasBeenVisited() const { return m_visited; }
 
 InteractionResult Map::interactPoint(const Point &point) {
   int x{point.getX()};
@@ -229,4 +234,22 @@ void Map::printIntroText() {
   std::cout << "Press any key to continue...\n";
   Input::getKeyBlocking();
   ScreenUtils::clearScreen();
+}
+
+json Map::toJson() const {
+  json j;
+  j["introTextRead"] = m_readIntroText;
+  // every object in the top layer is owned by GameSession
+  // therefore only floor layer needs to be saved
+  j["floorLayer"] = json::array();
+  for (int y{0}; y < m_height; ++y) {
+    for (int x{0}; x < m_width; ++x) {
+      if (m_floorLayer[x, y]) {
+        json floorTileJson = m_floorLayer[x, y]->toJson();
+        if (!floorTileJson.is_null())
+          j["floorLayer"].push_back(floorTileJson);
+      }
+    }
+  }
+  return j;
 }

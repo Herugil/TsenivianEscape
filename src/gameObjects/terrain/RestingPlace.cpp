@@ -2,6 +2,8 @@
 #include "core/GameState.h"
 #include "gameObjects/creatures/Player.h"
 
+using json = nlohmann::json;
+
 RestingPlace::RestingPlace(std::string_view currentMap, Point position,
                            char symbol, std::string_view name,
                            std::string_view description)
@@ -44,4 +46,10 @@ std::string RestingPlace::rest(Player &player) {
              "refilled, and your ailments healed.\n";
   }
   return result;
+}
+
+json RestingPlace::toJson() const {
+  json j = GameObject::toJson();
+  j["hasBeenUsed"] = m_hasBeenUsed;
+  return j;
 }

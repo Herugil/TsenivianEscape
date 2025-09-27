@@ -3,6 +3,8 @@
 #include "scripts/passives/PassiveEffect.h"
 #include <sstream>
 
+using json = nlohmann::json;
+
 Dodge::Dodge(std::string_view name) : Action{name, false, false} {
   m_cooldown = 1;
   m_currentCooldown = 0;
@@ -28,4 +30,10 @@ std::string Dodge::playerExecute(GameSession &gameSession) {
   if (gameSession.getPlayer().inCombat())
     return execute(gameSession.getPlayer());
   return {};
+}
+
+json Dodge::toJson() const {
+  json j;
+  j["name"] = m_name;
+  return j;
 }

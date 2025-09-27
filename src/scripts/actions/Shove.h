@@ -4,6 +4,8 @@
 #include "scripts/actions/Action.h"
 #include <memory>
 
+using json = nlohmann::json;
+
 class GameSession;
 
 class Shove : public Action {
@@ -19,5 +21,7 @@ public:
   std::unique_ptr<Action> clone() const override {
     return std::make_unique<Shove>(*this);
   };
+
+  json toJson() const override;
   ~Shove() = default;
 };

@@ -60,3 +60,15 @@ std::unique_ptr<Action> SkillTree::createRejuvenatingStrikeAction() {
 std::unique_ptr<Action> SkillTree::createHasteAction() {
   return std::make_unique<Haste>(1, 0, 2, 1, "Haste");
 }
+
+std::unique_ptr<Action> SkillTree::createActionByName(std::string_view name) {
+  if (name == "Backbreaker")
+    return SkillTree::createBackbreakerAction();
+  if (name == "Swirling flames")
+    return SkillTree::createSwirlingFlamesAction();
+  if (name == "Rejuvenating Strike")
+    return SkillTree::createRejuvenatingStrikeAction();
+  if (name == "Haste")
+    return SkillTree::createHasteAction();
+  return nullptr;
+}

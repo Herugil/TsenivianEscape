@@ -4,6 +4,8 @@
 #include "utils/GeometryUtils.h"
 #include "utils/Random.h"
 
+using json = nlohmann::json;
+
 ShovingAttack::ShovingAttack(
     std::string_view name,
     std::function<int(const Creature &actor, const Creature &target)>
@@ -69,4 +71,11 @@ int ShovingAttack::getDamage(Creature &actor) const {
 }
 int ShovingAttack::getHitChance(Creature &actor, Creature &target) const {
   return m_hitChanceFormula(actor, target);
+}
+
+json ShovingAttack::toJson() const {
+  json j;
+  j["name"] = m_name;
+  j["currentCharges"] = m_currentCharges;
+  return j;
 }

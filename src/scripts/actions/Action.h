@@ -1,9 +1,12 @@
 #pragma once
 #include "gameObjects/creatures/Stats.h"
 #include "input/Directions.h"
+#include "nlohmann/json.hpp"
 #include <sstream>
 #include <string>
 #include <string_view>
+
+using json = nlohmann::json;
 
 class GameSession;
 class Creature;
@@ -54,7 +57,6 @@ public:
   bool needsHotkeyInput() const { return m_needsHotkeyInput; }
   Stat getUsedStat() const { return m_usedStat; }
   virtual std::unique_ptr<Action> clone() const = 0;
-  virtual ~Action() = default;
   friend std::ostream &operator<<(std::ostream &out, const Action &action) {
     out << action.getName();
     return out;
@@ -79,4 +81,8 @@ public:
   int getCurrentCharges() const { return m_currentCharges; }
   int getMaxCharges() const { return m_maxCharges; }
   bool useActionResources(Creature &creature);
+
+  virtual json toJson() const = 0;
+
+  virtual ~Action() = default;
 };

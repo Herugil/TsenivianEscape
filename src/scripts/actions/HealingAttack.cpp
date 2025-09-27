@@ -83,3 +83,10 @@ int HealingAttack::getHitChance(Creature &actor, Creature &target) const {
   }
   return hitChance - target.getEvasion();
 }
+
+json HealingAttack::toJson() const {
+  json j;
+  j["name"] = m_name;
+  j["currentCharges"] = m_currentCharges;
+  return j;
+}

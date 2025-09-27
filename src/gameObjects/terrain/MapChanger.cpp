@@ -43,6 +43,8 @@ void MapChanger::activateWalkOn(std::shared_ptr<GameObject> gameObject,
         creature->unsetCombat();
         creature->setCurrentMap(m_targetMap);
         gameSession.getMap(m_targetMap).placeTop(creature, adjPoint);
+        // if a creature changed maps, map state should be saved
+        gameSession.getMap(m_targetMap).setVisited();
         creature->setPosition(adjPoint);
         creature->resetTurn();
         creature->setDefaultBehavior();

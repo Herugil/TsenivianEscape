@@ -1,7 +1,10 @@
 #pragma once
+#include "nlohmann/json.hpp"
 #include <iostream>
 #include <sstream>
 #include <string>
+
+using json = nlohmann::json;
 
 class Item {
 protected:
@@ -35,5 +38,10 @@ public:
   int getIntReq() const { return m_intReq; }
   int getConReq() const { return m_conReq; }
   const std::string &getName() const { return m_name; }
+  virtual json toJson() const {
+    json j;
+    j["id"] = m_id;
+    return j;
+  }
   virtual ~Item() = default;
 };

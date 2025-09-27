@@ -29,3 +29,10 @@ std::string Haste::playerExecute(GameSession &gameSession) {
 std::unique_ptr<Action> Haste::clone() const {
   return std::make_unique<Haste>(*this);
 }
+
+json Haste::toJson() const {
+  json j;
+  j["name"] = m_name;
+  j["currentCharges"] = m_currentCharges;
+  return j;
+}

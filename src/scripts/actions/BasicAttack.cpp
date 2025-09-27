@@ -5,6 +5,8 @@
 #include "utils/Random.h"
 #include <memory>
 
+using json = nlohmann::json;
+
 BasicAttack::BasicAttack(std::string_view name, Stat usedStat,
                          std::vector<std::unique_ptr<PassiveEffect>> applyOnHit,
                          int cost, int maxCharges, int cooldown)
@@ -98,4 +100,15 @@ int BasicAttack::getHitChance(Creature &actor, Creature &target) const {
     hitChance = actor.getDistanceHitChance();
   }
   return hitChance - target.getEvasion();
+}
+
+json BasicAttack::toJson() const {
+  json j;
+  j["name"] = m_name;
+  j["type"] = (m_usedStat == Stat::Strength) ? "melee" : "ranged";
+  j["effects"] = json::array();
+  for (const auto &effect : m_applyOnHit) {
+    j["effects"].push_back(effect->toJson());
+  }
+  return j;
 }

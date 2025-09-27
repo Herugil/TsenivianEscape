@@ -118,3 +118,17 @@ std::string PassiveEffect::display() const {
     result += "Until rest";
   return result;
 }
+
+using json = nlohmann::json;
+
+json PassiveEffect::toJson() const {
+  json j;
+  j["id"] = m_id;
+  j["name"] = m_name;
+  j["type"] = typeToString(m_type);
+  j["value"] = m_value;
+  j["duration"] = m_roundsLeft;
+  j["stackable"] = m_stackable;
+  j["expiresOnRest"] = m_expiresOnRest;
+  return j;
+}

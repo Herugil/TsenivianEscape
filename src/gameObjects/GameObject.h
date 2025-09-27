@@ -2,8 +2,11 @@
 #include "input/Directions.h"
 #include "input/Input.h"
 #include "map/Point.h"
+#include <nlohmann/json.hpp>
 #include <string>
 #include <string_view>
+
+using json = nlohmann::json;
 
 struct InteractionResult;
 class Player;
@@ -42,5 +45,8 @@ public:
   InteractionResult virtual playerInteraction(); // not const because some
                                                  // object states can be changed
                                                  // through this function
+
+  virtual json toJson() const;
+
   virtual ~GameObject() = default;
 };

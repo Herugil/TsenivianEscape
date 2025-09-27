@@ -3,10 +3,12 @@
 #include "gameObjects/items/Item.h"
 #include "input/Input.h"
 #include "map/Point.h"
+#include "nlohmann/json.hpp"
 #include <memory>
 #include <string_view>
 #include <vector>
 
+using json = nlohmann::json;
 struct InteractionResult;
 class Player;
 
@@ -29,4 +31,7 @@ public:
   InteractionResult playerInteraction() override;
   void addItem(std::shared_ptr<Item> item);
   std::shared_ptr<Item> popItem(std::size_t index);
+
+  json toJson() const override;
+  virtual ~Container() = default;
 };

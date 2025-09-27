@@ -4,6 +4,8 @@
 #include "utils/GeometryUtils.h"
 #include <memory>
 
+using json = nlohmann::json;
+
 Shove::Shove(std::string_view name)
     : Action(name, true, false, Stat::Strength) {}
 
@@ -62,4 +64,10 @@ std::string Shove::execute([[maybe_unused]] GameSession &gameSession,
                            [[maybe_unused]] Creature &actor,
                            [[maybe_unused]] Creature &target) {
   return {};
+}
+
+json Shove::toJson() const {
+  json j;
+  j["name"] = m_name;
+  return j;
 }

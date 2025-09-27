@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string_view>
 
+using json = nlohmann::json;
+
 GameObject::GameObject(bool isMoveable, bool isTraversable, char symbol,
                        std::string_view currentMap, Point position,
                        std::string_view name, std::string_view description,
@@ -41,4 +43,19 @@ std::string GameObject::getDescription() const { return m_description; }
 std::ostream &operator<<(std::ostream &out, const GameObject &gameObject) {
   out << gameObject.getSymbol();
   return out;
+}
+
+json GameObject::toJson() const {
+  json j;
+  j["name"] = m_name;
+  j["description"] = m_description;
+  j["symbol"] = std::string(1, m_symbol);
+  j["currentMap"] = m_currentMap;
+  j["position"] = {m_position.getX(), m_position.getY()};
+  j["isMoveable"] = m_isMoveable;
+  j["traversable"] = m_traversable;
+  j["locked"] = m_locked;
+  if (m_locked)
+    j["keyId"] = m_keyId;
+  return j;
 }

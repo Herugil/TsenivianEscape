@@ -7,9 +7,12 @@
 #include "input/Directions.h"
 #include "map/Map.h"
 #include "map/Point.h"
+#include "nlohmann/json.hpp"
 #include <memory>
 #include <sstream>
 #include <vector>
+
+using json = nlohmann::json;
 
 class GameSession {
   std::shared_ptr<Player> m_player{};
@@ -57,4 +60,6 @@ public:
 
   std::vector<std::weak_ptr<NonPlayableCharacter>> getEnemiesInMap() const;
   void displayEnemiesInMap(Stat stat = Stat::nbStats) const;
+
+  json toJson() const;
 };

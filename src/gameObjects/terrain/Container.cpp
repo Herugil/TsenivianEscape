@@ -53,3 +53,12 @@ std::shared_ptr<Item> Container::popItem(std::size_t index) {
 }
 
 void Container::clearContents() { m_heldItems.clear(); }
+
+json Container::toJson() const {
+  json j = GameObject::toJson();
+  j["contents"] = json::array();
+  for (const auto &item : m_heldItems) {
+    j["contents"].push_back(item->toJson());
+  }
+  return j;
+}
