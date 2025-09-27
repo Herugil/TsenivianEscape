@@ -333,3 +333,35 @@ json GameSession::toJson() const {
   j["player"] = m_player->toJson();
   return j;
 }
+
+GameSession GameSession::loadFromJson(const json &jsonFile) {
+
+  // First, initialize a new game
+  auto player{std::make_shared<Player>(Point{2, 1}, "", 10)};
+  auto allItems{DataLoader::getAllItems()};
+  auto allNpcs{DataLoader::getAllNpcs()};
+  GameSession gameSession{player};
+  DataLoader::populateGameSession(allItems, allNpcs, gameSession);
+
+  // Load the saved data
+
+  for (const auto &[mapName, mapJson] : jsonFile.at("allMaps").items()) {
+    gameSession.getMap(mapName).updateFromJson(mapJson, allItems);
+  }
+  gameSession.setCurrentMap(jsonFile.at("currentMap").get<std::string>());
+  for (const auto &npcJson : jsonFile.at("npcs")) {
+    std::string id{npcJson["id"]};
+    std::string currentMap{npcJson["currentMap"]};
+    if (!allNpcs.contains(id)) {
+      std::cout << "Npc with id " << id << " not found in data, skipping.\n";
+      continue;
+    }
+    auto npc{allNpcs.at(id)->clone()};
+    npc->updateFromJson(npcJson, allItems, currentMap);
+  }
+  for (const auto &containerJson : jsonFile.at("containers")) {
+    auto container{Container::loadFromJson(containerJson)};
+    gameSession.addContainer(container);
+  }
+  return gameSession;
+}

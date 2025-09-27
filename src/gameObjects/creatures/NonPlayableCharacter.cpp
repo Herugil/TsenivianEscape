@@ -1,6 +1,7 @@
 #include "gameObjects/creatures/NonPlayableCharacter.h"
 #include "AISettings.h"
 #include "core/GameSession.h"
+#include "dataLoading/parseJson.h"
 #include "gameObjects/creatures/Creature.h"
 #include "gameObjects/creatures/NonPlayableCharacter.h"
 #include "gameObjects/items/Item.h"
@@ -222,3 +223,28 @@ json NonPlayableCharacter::toJson() const {
   }
   return j;
 }
+
+void NonPlayableCharacter::updateFromJson(
+    const json &j,
+    const std::unordered_map<std::string, std::shared_ptr<Item>> &items,
+    std::string_view mapToPlace) {
+  char symbol{std::string(j["symbol"])[0]};
+  Point pos{j["position"][0], j["position"][1]};
+  for (auto itemId : j["inventory"]) {
+    if (items.contains(itemId))
+      addItemToInventory(items.at(itemId)->clone());
+    else
+      std::cout << itemId << " not added, cant find it in items.\n";
+  }
+  setSymbol(symbol);
+  setPosition(pos);
+  setCurrentMap(mapToPlace);
+  if (j.contains("healthPoints"))
+    m_healthPoints = j["healthPoints"];
+  if (j.contains("actions")) {
+    for (auto &actionJ : j["actions"]) {
+      auto action{DataLoader::parseAction(actionJ)};
+      if (action)
+        m_actions.push_back(std::move(action));
+    }
+  }

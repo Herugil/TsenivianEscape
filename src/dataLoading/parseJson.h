@@ -6,6 +6,7 @@
 #include <nlohmann/json.hpp>
 #include <unordered_map>
 
+class Action;
 class GameSession;
 
 namespace DataLoader {
@@ -24,4 +25,5 @@ void placeEnemies(
         &npcs,
     const std::unordered_map<std::string, std::shared_ptr<Item>> &items);
 void placeWalls(json &data, Map &map);
+std::unique_ptr<Action> parseAction(const json &j);
 } // namespace DataLoader

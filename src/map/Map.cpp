@@ -253,3 +253,37 @@ json Map::toJson() const {
   }
   return j;
 }
+
+void Map::updateFromJson(
+    const json &j,
+    const std::unordered_map<std::string, std::shared_ptr<Item>> &allItems) {
+  for (const auto &item : j.at("floorLayer")) {
+    Point pos{item["position"][0], item["position"][1]};
+    auto currentFloorObject{getFloorObject(pos)};
+    if (currentFloorObject && currentFloorObject->getName() == item["name"]) {
+      if (item.contains("locked") && !item["locked"])
+        // for now player cant lock objects (seems useless)
+        currentFloorObject->unlock();
+      if (item.contains("contents")) {
+        if (auto container{dynamic_cast<Container *>(currentFloorObject)}) {
+          // above cast should never fail
+          container->clearContents();
+          for (const auto &itemId : item["contents"]) {
+            if (allItems.contains(itemId))
+              container->addItem(allItems.at(itemId)->clone());
+            else
+              std::cout << itemId
+                        << " not added to container, cant find it in items.\n";
+            // this should never happen
+          }
+        } else
+          throw std::runtime_error(
+              "Error updating map from json: object with contents is not a "
+              "container.");
+      }
+      if (item.contains("hasBeenUsed"))
+        if (item["hasBeenUsed"])
+          currentFloorObject->setUsed();
+    }
+  }
+}

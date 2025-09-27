@@ -17,6 +17,7 @@ public:
   InteractionResult playerInteraction() override;
   std::string getDescription() const override;
   std::string rest(Player &player);
+  void setUsed() override;
 
   json toJson() const override;
 

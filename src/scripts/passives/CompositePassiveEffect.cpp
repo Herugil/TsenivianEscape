@@ -45,7 +45,7 @@ std::string CompositePassiveEffect::display() const {
 
 nlohmann::json CompositePassiveEffect::toJson() const {
   nlohmann::json j;
-  j["type"] = "Composite";
+  j["type"] = "composite";
   j["duration"] = m_roundsLeft;
   j["stackable"] = m_stackable;
   j["id"] = m_id;

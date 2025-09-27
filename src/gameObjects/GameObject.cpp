@@ -45,6 +45,11 @@ std::ostream &operator<<(std::ostream &out, const GameObject &gameObject) {
   return out;
 }
 
+void GameObject::setUsed() {
+  // for now, specific to resting places
+  return;
+}
+
 json GameObject::toJson() const {
   json j;
   j["name"] = m_name;
