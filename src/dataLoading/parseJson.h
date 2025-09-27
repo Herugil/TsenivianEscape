@@ -6,6 +6,7 @@
 #include <nlohmann/json.hpp>
 #include <unordered_map>
 
+class Action;
 class GameSession;
 
 namespace DataLoader {
@@ -24,4 +25,12 @@ void placeEnemies(
         &npcs,
     const std::unordered_map<std::string, std::shared_ptr<Item>> &items);
 void placeWalls(json &data, Map &map);
+std::unique_ptr<Action> parseAction(const json &j);
+std::shared_ptr<Item>
+parseItem(const json &j,
+          const std::unordered_map<std::string, std::shared_ptr<Item>>
+              &items); // this isnt always used
+// only in loading an existing game context, because items can have
+// some charges already used
+std::unique_ptr<PassiveEffect> parsePassiveEffect(const json &data);
 } // namespace DataLoader

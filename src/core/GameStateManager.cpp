@@ -81,6 +81,9 @@ void GameStateManager::mainLoop() {
     case GameState::UnlockMenu:
       handleUnlockMenu();
       break;
+    case GameState::MainMenu:
+      handleMainMenu();
+      break;
     default:
       m_currentState = GameState::Exploration;
       break;
@@ -177,20 +180,9 @@ void GameStateManager::HandleWorld() {
       m_gameSession.incrementTurnIndex();
       m_currentState = GameState::Exploration;
     }
-  } else if (CommandHandler::isSaveGameCommand(
-                 command)) { // this is a temporary key, just to test saving
+  } else if (CommandHandler::isMainMenuCommand(command)) {
     ScreenUtils::clearScreen();
-    if (m_gameSession.getPlayer().inCombat()) {
-      m_logsToDisplay << "You cannot save the game while in combat!\n";
-      m_currentState = GameState::Display;
-      return;
-    }
-    std::string filename;
-    std::cout << "Enter filename to save the game: ";
-    std::getline(std::cin, filename);
-    saveGame(filename);
-    m_logsToDisplay << "Game saved to " << filename << "\n";
-    m_currentState = GameState::Display;
+    handleMainMenu();
   }
 }
 
@@ -413,6 +405,7 @@ void GameStateManager::handleGameOver() {
   std::cout << "Game Over! You have died.\n";
   std::cout << "Press any key to exit.\n";
   Input::getKeyBlocking();
+  m_currentState = GameState::MainMenu;
 }
 
 void GameStateManager::handleRestMenu() {
@@ -544,24 +537,206 @@ void GameStateManager::confirmLevelUp(Player &player, Stat stat,
   }
 }
 
-void GameStateManager::saveGame(std::string_view filename) const {
-  std::string safeFileName{filename};
-  safeFileName.erase(std::remove_if(safeFileName.begin(), safeFileName.end(),
-                                    [](char c) {
-                                      return (c == '.' || c == '/' ||
-                                              c == '\\');
-                                    }),
-                     safeFileName.end());
-  // prevent user from saving into other directories
+// Note: below this, a bunch of functions probably belong to another class
+// altogether
+
+void GameStateManager::handleMainMenu() {
+  ScreenUtils::clearScreen();
+  std::cout << "Main Menu\n";
+  std::cout << "1: New Game\n";
+  std::cout << "2: Continue Game\n";
+  std::cout << "3: Save Game\n";
+  std::cout << "4: Load Game\n";
+  std::cout << "5: Exit to Desktop\n";
+  std::cout << "Press the corresponding number key to choose an option.\n";
+  auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
+  auto pressedKey{CommandHandler::getPressedKey(command)};
+  if (pressedKey == 0) {
+    ScreenUtils::clearScreen();
+    std::string name;
+    while (true) {
+      std::cout << "Enter your character's name: ";
+      std::getline(std::cin, name);
+      if (!name.empty()) {
+        break;
+      }
+    }
+    newGame(name);
+    m_currentState = GameState::Exploration;
+  } else if (pressedKey == 1) {
+    if (m_gameSession.getPlayer().getName().empty() ||
+        m_gameSession.getPlayer().isDead()) {
+      std::cout << "You currently are not in a game session.\n";
+      std::cout << "Press any key to return to main menu.\n";
+      Input::getKeyBlocking();
+      return;
+    }
+    m_currentState = GameState::Exploration;
+  } else if (pressedKey == 2) {
+    if (m_gameSession.getPlayer().getName().empty() ||
+        m_gameSession.getPlayer().isDead()) {
+      std::cout << "You currently are not in a game session.\n";
+      std::cout << "Press any key to return to main menu.\n";
+      Input::getKeyBlocking();
+      return;
+    }
+    if (m_gameSession.getPlayer().inCombat()) {
+      std::cout << "You cannot save the game while in combat!\n";
+      std::cout << "Press any key to return to main menu.\n";
+      Input::getKeyBlocking();
+      return;
+    } else
+      saveGame();
+  } else if (pressedKey == 3) {
+    auto saveList{getAvailableSaves()};
+    if (saveList.empty()) {
+      std::cout << "No saves available.\n";
+      std::cout << "Press any key to return to main menu.\n";
+      Input::getKeyBlocking();
+      return;
+    }
+    std::cout << "Available saves:\n";
+    for (std::size_t i = 0; i < saveList.size(); ++i) {
+      std::cout << i + 1 << ": " << saveList[i] << '\n';
+    }
+    std::cout << "Select a save to load: ";
+    auto loadCommand{CommandHandler::getCommand(Input::getKeyBlocking())};
+    auto loadPressedKey{
+        static_cast<std::size_t>(CommandHandler::getPressedKey(loadCommand))};
+    if (loadPressedKey >= 0 && loadPressedKey < saveList.size()) {
+      loadGame(saveList[loadPressedKey]);
+      m_currentState = GameState::Exploration;
+    }
+  } else if (pressedKey == 4) {
+    ScreenUtils::clearScreen();
+    std::exit(0);
+  }
+}
+
+void GameStateManager::saveGame() const {
+  if (m_gameSession.getPlayer().getName().empty()) {
+    std::cout << "You currently are not in a game session.\n";
+    std::cout << "Press any key to return to main menu.\n";
+    Input::getKeyBlocking();
+    return;
+  }
+  auto saveList{getAvailableSaves()};
+  std::cout << "Available saves:\n";
+  std::cout << "1: Create new save\n";
+  for (std::size_t i = 0; i < saveList.size(); ++i) {
+    std::cout << i + 2 << ": " << saveList[i] << '\n';
+  }
+  std::cout << "Select a save to overwrite or create a new one:\n ";
+  auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
+  auto pressedKey{
+      static_cast<std::size_t>(CommandHandler::getPressedKey(command))};
+  std::string filename;
+  if (pressedKey == 0) {
+    if (saveList.size() >= Settings::g_maxSaves) {
+      std::cout << "You have reached the maximum number of saves ("
+                << Settings::g_maxSaves
+                << "). Please overwrite an existing save instead.\n";
+      std::cout << "Press any key to return to main menu.\n";
+      Input::getKeyBlocking();
+      return;
+    }
+    filename = getSaveFileName();
+  } else if (pressedKey > 0 && pressedKey <= saveList.size()) {
+    std::cout << "Are you sure you want to overwrite "
+              << saveList[pressedKey - 1] << "? (E: yes, any other key: no)\n";
+    auto confirmCommand{CommandHandler::getCommand(Input::getKeyBlocking())};
+    if (CommandHandler::isInteractionCommand(confirmCommand)) {
+      filename = getSaveFileName(saveList[pressedKey - 1]);
+      if (!deleteSave(saveList[pressedKey - 1])) {
+        std::cout << "Failed to delete existing save. Save aborted.\n";
+        std::cout << "Press any key to return to main menu.\n";
+        Input::getKeyBlocking();
+        return;
+      }
+    }
+  }
   std::string fileNameStr{"../saves/"};
-  fileNameStr += safeFileName;
+  fileNameStr += filename;
   fileNameStr += ".json";
   std::ofstream file{fileNameStr.data()};
   if (!file.is_open()) {
-    std::cerr << "Could not open file for saving: " << safeFileName << '\n';
+    std::cerr << "Could not open file for saving: " << filename << '\n';
     return;
   }
   json j = m_gameSession.toJson();
   file << j.dump(4);
   file.close();
+}
+
+void GameStateManager::loadGame(const std::string &filename) {
+  std::string fullFileName{"../saves/" + filename + ".json"};
+  std::ifstream file{fullFileName};
+  if (!file.is_open()) {
+    std::cerr << "Could not open save file: " << fullFileName << '\n';
+    return;
+  }
+  json j;
+  file >> j;
+  m_gameSession = GameSession::loadFromJson(j);
+}
+
+void GameStateManager::newGame(std::string_view name) {
+  m_gameSession =
+      GameSession(std::make_shared<Player>(Point(2, 1), "level1", 10, name));
+  std::unordered_map<std::string, std::shared_ptr<Item>> items{
+      DataLoader::getAllItems()};
+  std::unordered_map<std::string, std::shared_ptr<NonPlayableCharacter>> npcs{
+      DataLoader::getAllNpcs()};
+  DataLoader::populateGameSession(items, npcs, m_gameSession);
+  m_gameSession.respawnPlayer();
+}
+
+std::vector<std::string> GameStateManager::getAvailableSaves() const {
+  std::vector<std::string> saveFiles;
+  for (const auto &entry : std::filesystem::directory_iterator("../saves/")) {
+    if (entry.is_regular_file() && entry.path().extension() == ".json") {
+      saveFiles.push_back(entry.path().stem().string());
+    }
+  }
+  return saveFiles;
+}
+
+std::string
+GameStateManager::getSaveFileName(std::string_view saveOverwrite) const {
+  std::string filename;
+  auto saveList{getAvailableSaves()};
+  while (true) {
+    std::cout << "Enter new save name: ";
+    std::getline(std::cin, filename);
+    if (filename.empty()) {
+      std::cout << "Filename cannot be empty.\n";
+      continue;
+    }
+    auto it{std::find_if(filename.begin(), filename.end(), [](char c) {
+      return !(std::isalnum(c) || c == '_' || c == '-');
+    })};
+    if (it != filename.end()) {
+      std::cout << "Filename can only contain alphanumeric characters.\n";
+      continue;
+    }
+    auto it2{std::find(saveList.begin(), saveList.end(), filename)};
+    if (it2 != saveList.end() && filename != saveOverwrite) {
+      std::cout
+          << "A save with this name already exists. Choose another name.\n";
+      continue;
+    }
+    return filename;
+  }
+}
+
+bool GameStateManager::deleteSave(std::string_view filename) const {
+  std::string fullFileName{filename};
+  fullFileName = "../saves/" + fullFileName + ".json";
+  if (std::remove(fullFileName.c_str()) != 0) {
+    std::cerr << "Error deleting file: " << fullFileName << '\n';
+    return false;
+  } else {
+    std::cout << "Deleted save file: " << fullFileName << '\n';
+    return true;
+  }
 }

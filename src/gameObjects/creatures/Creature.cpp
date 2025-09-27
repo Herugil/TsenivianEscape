@@ -61,7 +61,7 @@ int Creature::getMaxMovementPoints() const { return m_maxMovementPoints; }
 int Creature::getMaxActionPoints() const { return m_maxActionPoints; }
 bool Creature::useActionPoints(int cost) {
   bool returnVal{canAct(cost)};
-  if (returnVal)
+  if (returnVal && inCombat())
     m_actionPoints -= cost;
   return returnVal;
 }

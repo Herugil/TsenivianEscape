@@ -51,6 +51,9 @@ public:
   void setVisited();
 
   json toJson() const;
+  void updateFromJson(
+      const json &j,
+      const std::unordered_map<std::string, std::shared_ptr<Item>> &allItems);
 };
 
 std::ostream &operator<<(std::ostream &out, const GameObject &gameObject);

@@ -7,6 +7,7 @@
 #include "gameObjects/terrain/MapChanger.h"
 #include "gameObjects/terrain/RestingPlace.h"
 #include "scripts/passives/CompositePassiveEffect.h"
+#include "skills/SkillTree.h"
 #include <cassert>
 #include <filesystem>
 #include <fstream>
@@ -73,7 +74,8 @@ DataLoader::getAllItems() {
   return items;
 }
 
-std::unique_ptr<PassiveEffect> parsePassiveEffect(const json &data) {
+std::unique_ptr<PassiveEffect>
+DataLoader::parsePassiveEffect(const json &data) {
   std::string typeStr{data["type"]};
   PassiveEffect::Type type{PassiveEffect::typeFromString(typeStr)};
   int duration{data["duration"]};
@@ -121,29 +123,9 @@ DataLoader::getAllNpcs() {
     std::vector<std::unique_ptr<Action>> actions{};
     if (value.contains("actions")) {
       for (auto &action : value["actions"]) {
-        if (action["isBasicAttack"]) {
-          std::vector<std::unique_ptr<PassiveEffect>> effects{};
-          if (action.contains("effects")) {
-            for (const auto &effectData : action["effects"]) {
-              effects.emplace_back(parsePassiveEffect(effectData));
-            }
-          }
-          std::string name{action["name"]};
-          Stat usedStat{Stat::Strength};
-          if (action.contains("type")) {
-            std::string type{action["type"]};
-            if (type == "melee")
-              usedStat = Stat::Strength;
-            else if (type == "ranged")
-              usedStat = Stat::Dexterity;
-            else
-              usedStat = Stat::Strength; // default to melee
-          }
-          actions.emplace_back(std::make_unique<BasicAttack>(
-              name, usedStat, std::move(effects)));
-        } else {
-          std::cout << "Unknown action type for NPC " << key << "\n";
-        }
+        auto parsedAction = parseAction(action);
+        if (parsedAction)
+          actions.push_back(std::move(parsedAction));
       }
     }
     npcs[key] = std::make_shared<NonPlayableCharacter>(
@@ -174,23 +156,13 @@ void DataLoader::placeEnemies(
     const std::unordered_map<std::string, std::shared_ptr<Item>> &items) {
   const auto &arrEnemies{data["enemies"]};
   for (auto enemy : arrEnemies) {
-    char symbol{std::string(enemy["symbol"])[0]}; // json doesnt have char
-    Point pos{enemy["position"][0], enemy["position"][1]};
     std::string id{enemy["id"]};
     if (!npcs.contains(id)) {
       std::cout << id << " not added, cant find it in npcs.\n";
       continue;
     }
     auto npc = npcs.at(id)->clone();
-    for (auto itemId : enemy["inventory"]) {
-      if (items.contains(itemId))
-        npc->addItemToInventory(items.at(itemId)->clone());
-      else
-        std::cout << itemId << " not added, cant find it in items.\n";
-    }
-    npc->setSymbol(symbol);
-    npc->setPosition(pos);
-    npc->setCurrentMap(map.getName());
+    npc->updateFromJson(enemy, items, map.getName());
     gameSession.addNpc(npc);
   }
 }
@@ -212,18 +184,8 @@ void placeObjects(
       keyId = object["keyId"];
     }
     if (type == "container") {
-      std::vector<std::shared_ptr<Item>> loot{};
-      const auto &itemIds{object["contents"]};
-      for (auto itemId : itemIds) {
-        if (items.contains(itemId))
-          loot.emplace_back(items.at(itemId)->clone());
-        else
-          std::cout << itemId << " not added, cant find it in items.\n";
-      }
       Container container{
-          std::move(loot), pos,    map.getName(), name, desc,
-          symbol,          locked, keyId,
-      };
+          Container::loadFromJson(object, items, map.getName())};
       map.placeFloor(std::make_unique<Container>(std::move(container)), pos);
     } else if (type == "mapChanger") {
       const std::string nextMap{object["destLevel"]};
@@ -269,4 +231,59 @@ void DataLoader::populateGameSession(
     placeEnemies(data, gameSession.getMap(), gameSession, npcs, items);
     placeObjects(data, gameSession.getMap(), items);
   }
+}
+
+std::unique_ptr<Action> DataLoader::parseAction(const json &j) {
+  std::string name{j["name"]};
+  if (j.contains("isBasicAttack") && j["isBasicAttack"]) {
+    std::vector<std::unique_ptr<PassiveEffect>> effects{};
+    if (j.contains("effects")) {
+      for (const auto &effectData : j["effects"]) {
+        effects.emplace_back(parsePassiveEffect(effectData));
+      }
+    }
+    Stat usedStat{Stat::Strength};
+    if (j.contains("type")) {
+      std::string type{j["type"]};
+      if (type == "melee")
+        usedStat = Stat::Strength;
+      else if (type == "ranged")
+        usedStat = Stat::Dexterity;
+      else
+        usedStat = Stat::Strength; // default to melee
+    }
+    return std::make_unique<BasicAttack>(name, usedStat, std::move(effects));
+  } else {
+    auto action{SkillTree::createActionByName(name)};
+    if (action && j.contains("currentCharges"))
+      action->setCurrentCharges(j["currentCharges"]);
+    return action;
+  }
+}
+
+std::shared_ptr<Item> DataLoader::parseItem(
+    const json &j,
+    const std::unordered_map<std::string, std::shared_ptr<Item>> &items) {
+  if (j.is_string()) {
+    std::string itemId{j};
+    if (items.contains(itemId)) {
+      return items.at(itemId)->clone();
+    } else {
+      std::cout << itemId << " not added, cant find it in items.\n";
+      return nullptr;
+    }
+  }
+  std::string itemId{j["id"]};
+  if (items.contains(itemId)) {
+    auto itemToAdd{items.at(itemId)->clone()};
+    if (auto instantItem =
+            std::dynamic_pointer_cast<InstantUsableItem>(itemToAdd)) {
+      if (j.contains("currentCharges"))
+        instantItem->setCharges(j["currentCharges"]);
+      return instantItem;
+    }
+    return itemToAdd;
+  } else
+    std::cout << itemId << " not added, cant find it in items.\n";
+  return nullptr;
 }

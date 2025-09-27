@@ -32,6 +32,11 @@ public:
   void addItem(std::shared_ptr<Item> item);
   std::shared_ptr<Item> popItem(std::size_t index);
 
+  static Container loadFromJson(
+      const json &j,
+      const std::unordered_map<std::string, std::shared_ptr<Item>> &items,
+      std::string_view mapToPlace);
+
   json toJson() const override;
   virtual ~Container() = default;
 };

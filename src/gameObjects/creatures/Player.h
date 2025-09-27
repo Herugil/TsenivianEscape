@@ -42,7 +42,8 @@ private:
 
 public:
   Player(const Point &position, std::string_view currentMap,
-         int maxHealthPoints, Stats stats = Stats{1, 1, 1, 1});
+         int maxHealthPoints, std::string_view name,
+         Stats stats = Stats{1, 1, 1, 1});
   void takeItem(std::shared_ptr<Item> item);
   void displayInventory(std::size_t page = 0) const;
   void displayActions() const;
@@ -82,5 +83,8 @@ public:
   void addAction(std::unique_ptr<Action> action);
   void unequipItemToDrop(std::shared_ptr<Equipment> item);
   json toJson() const override;
+  void updateFromJson(
+      const json &j,
+      const std::unordered_map<std::string, std::shared_ptr<Item>> &allItems);
   virtual ~Player() = default;
 };

@@ -90,19 +90,19 @@ const std::string &PassiveEffect::getName() const { return m_name; }
 std::string PassiveEffect::typeToString(Type type) {
   switch (type) {
   case Type::EvasionBonus:
-    return "Evasion Bonus";
+    return "evasionBonus";
   case Type::StrengthBonus:
-    return "Strength Bonus";
+    return "strengthBonus";
   case Type::DexterityBonus:
-    return "Dexterity Bonus";
+    return "dexterityBonus";
   case Type::IntelligenceBonus:
-    return "Intelligence Bonus";
+    return "intelligenceBonus";
   case Type::ConstitutionBonus:
-    return "Constitution Bonus";
+    return "constitutionBonus";
   case Type::DamageOverTime:
-    return "Damage Over Time";
+    return "damageOverTime";
   case Type::Composite:
-    return "Composite";
+    return "composite";
   default:
     return "unknown";
   }

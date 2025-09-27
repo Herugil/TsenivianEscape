@@ -88,7 +88,7 @@ void Map::placeWalls(const Point &bottomLeft, const Point &topRight,
 std::ostream &operator<<(std::ostream &out, Map &map) {
   if (map.m_readIntroText) {
     map.printIntroText();
-    map.setVisited();
+    map.m_readIntroText = false;
   }
   for (int row{0}; row < map.m_height; ++row) {
     for (int col{0}; col < map.m_width; ++col) {
@@ -106,10 +106,7 @@ std::ostream &operator<<(std::ostream &out, Map &map) {
   return out;
 }
 
-void Map::setVisited() {
-  m_readIntroText = false;
-  m_visited = true;
-}
+void Map::setVisited() { m_visited = true; }
 
 bool Map::hasBeenVisited() const { return m_visited; }
 
@@ -252,4 +249,38 @@ json Map::toJson() const {
     }
   }
   return j;
+}
+
+void Map::updateFromJson(
+    const json &j,
+    const std::unordered_map<std::string, std::shared_ptr<Item>> &allItems) {
+  for (const auto &item : j.at("floorLayer")) {
+    Point pos{item["position"][0], item["position"][1]};
+    auto currentFloorObject{getFloorObject(pos)};
+    std::string itemName{item["name"]};
+    if (currentFloorObject && (currentFloorObject->getName() == itemName)) {
+      if (item.contains("locked") && !item["locked"])
+        // for now player cant lock objects (seems useless)
+        currentFloorObject->unlock();
+      if (item.contains("contents")) {
+        if (auto container{dynamic_cast<Container *>(currentFloorObject)}) {
+          // above cast should never fail
+          container->clearContents();
+          for (const auto &itemJson : item["contents"]) {
+            auto item{DataLoader::parseItem(itemJson, allItems)};
+            if (item)
+              container->addItem(item);
+          }
+        } else
+          throw std::runtime_error(
+              "Error updating map from json: object with contents is not a "
+              "container.");
+      }
+      if (item.contains("hasBeenUsed"))
+        if (item["hasBeenUsed"])
+          currentFloorObject->setUsed();
+    }
+  }
+  setVisited();
+  m_readIntroText = j["introTextRead"];
 }

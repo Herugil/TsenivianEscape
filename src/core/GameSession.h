@@ -1,4 +1,5 @@
 #pragma once
+#include "dataLoading/parseJson.h"
 #include "gameObjects/creatures/Creature.h"
 #include "gameObjects/creatures/NonPlayableCharacter.h"
 #include "gameObjects/creatures/Player.h"
@@ -62,4 +63,5 @@ public:
   void displayEnemiesInMap(Stat stat = Stat::nbStats) const;
 
   json toJson() const;
+  static GameSession loadFromJson(const json &j);
 };

@@ -41,12 +41,14 @@ std::string RestingPlace::rest(Player &player) {
     player.addHealthPoints(player.getMaxHealthPoints());
     player.refillSkillCharges();
     player.removePassives();
-    m_hasBeenUsed = true;
+    setUsed();
     result = "You rest for the night. Your health and skill charges are "
              "refilled, and your ailments healed.\n";
   }
   return result;
 }
+
+void RestingPlace::setUsed() { m_hasBeenUsed = true; }
 
 json RestingPlace::toJson() const {
   json j = GameObject::toJson();

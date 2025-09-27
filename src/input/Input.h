@@ -38,7 +38,7 @@ constexpr char attack{'f'};
 constexpr char characterSheet{'c'};
 constexpr char showEnemies{'\t'};
 constexpr char skipTurn{' '};
-constexpr char saveGame{'m'};
+constexpr char mainMenu{27}; // ESC key
 } // namespace CommandChar
 
 struct Command {
@@ -65,7 +65,7 @@ struct Command {
     showEnemies,
     skipTurn,
     shove,
-    saveGame,
+    mainMenu,
     nbCommands,
   };
 };
@@ -98,5 +98,5 @@ bool isAttackCommand(Command::command cmd);
 bool isShowEnemiesCommand(Command::command cmd);
 bool isSkipTurnCommand(Command::command cmd);
 bool isCharacterSheetCommand(Command::command cmd);
-bool isSaveGameCommand(Command::command cmd);
+bool isMainMenuCommand(Command::command cmd);
 } // namespace CommandHandler

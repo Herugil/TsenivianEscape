@@ -26,5 +26,9 @@ public:
       j["usesLeft"] = m_usesLeft;
     return j;
   }
+  void setCharges(int charges) {
+    if (!m_isUnlimitedUse)
+      m_usesLeft = charges;
+  }
   virtual ~UsableItem() = default;
 };

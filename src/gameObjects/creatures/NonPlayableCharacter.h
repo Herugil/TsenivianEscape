@@ -81,5 +81,10 @@ public:
 
   json toJson() const override;
 
+  void updateFromJson(
+      const json &j,
+      const std::unordered_map<std::string, std::shared_ptr<Item>> &items,
+      std::string_view mapToPlace);
+
   virtual ~NonPlayableCharacter() = default;
 };

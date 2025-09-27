@@ -119,8 +119,8 @@ bool CommandHandler::isAttackCommand(Command::command cmd) {
 bool CommandHandler::isCharacterSheetCommand(Command::command cmd) {
   return cmd == Command::characterSheet;
 }
-bool CommandHandler::isSaveGameCommand(Command::command cmd) {
-  return cmd == Command::saveGame;
+bool CommandHandler::isMainMenuCommand(Command::command cmd) {
+  return cmd == Command::mainMenu;
 }
 
 Command::command CommandHandler::getCommand(char pressedKey) {
@@ -169,8 +169,8 @@ Command::command CommandHandler::getCommand(char pressedKey) {
     return Command::shove;
   case CommandChar::characterSheet:
     return Command::characterSheet;
-  case CommandChar::saveGame:
-    return Command::saveGame;
+  case CommandChar::mainMenu:
+    return Command::mainMenu;
   default:
     return Command::nbCommands;
   }

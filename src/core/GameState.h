@@ -17,6 +17,7 @@ enum class GameState {
   RestMenu,
   UnlockMenu,
   LevelUp,
+  MainMenu,
   GameOver,
 };
 
