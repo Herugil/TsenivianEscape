@@ -1,6 +1,7 @@
 #include "skills/SkillTree.h"
 #include "gameObjects/creatures/Player.h"
 #include "scripts/actions/CubeAoe.h"
+#include "scripts/actions/Dodge.h"
 #include "scripts/actions/Haste.h"
 #include "scripts/actions/HealingAttack.h"
 #include "scripts/actions/ShovingAttack.h"
@@ -59,6 +60,10 @@ std::unique_ptr<Action> SkillTree::createRejuvenatingStrikeAction() {
 
 std::unique_ptr<Action> SkillTree::createHasteAction() {
   return std::make_unique<Haste>(1, 0, 2, 1, "Haste");
+}
+
+std::unique_ptr<Action> SkillTree::createDodgeAction() {
+  return std::make_unique<Dodge>("Dodge");
 }
 
 std::unique_ptr<Action> SkillTree::createActionByName(std::string_view name) {

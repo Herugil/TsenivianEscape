@@ -4,6 +4,7 @@
 #include "dataLoading/parseJson.h"
 #include "gameObjects/creatures/Creature.h"
 #include "gameObjects/creatures/NonPlayableCharacter.h"
+#include "gameObjects/items/InstantUsableItem.h"
 #include "gameObjects/items/Item.h"
 #include "gameObjects/terrain/Container.h"
 #include "gameObjects/terrain/MapChanger.h"
@@ -230,11 +231,19 @@ void NonPlayableCharacter::updateFromJson(
     std::string_view mapToPlace) {
   char symbol{std::string(j["symbol"])[0]};
   Point pos{j["position"][0], j["position"][1]};
-  for (auto itemId : j["inventory"]) {
-    if (items.contains(itemId))
-      addItemToInventory(items.at(itemId)->clone());
-    else
-      std::cout << itemId << " not added, cant find it in items.\n";
+  for (auto itemJson : j["inventory"]) {
+    if (itemJson.is_string()) {
+      std::string itemId{itemJson};
+      if (items.contains(itemId))
+        addItemToInventory(items.at(itemId)->clone());
+      else
+        std::cout << itemId << " not added, cant find it in items.\n";
+    } else {
+      // item is a json object with fields
+      auto item{DataLoader::parseItem(itemJson, items)};
+      if (item)
+        addItemToInventory(item);
+    }
   }
   setSymbol(symbol);
   setPosition(pos);
@@ -248,3 +257,4 @@ void NonPlayableCharacter::updateFromJson(
         m_actions.push_back(std::move(action));
     }
   }
+}

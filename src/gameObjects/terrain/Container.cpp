@@ -62,3 +62,30 @@ json Container::toJson() const {
   }
   return j;
 }
+
+Container Container::loadFromJson(
+    const json &j,
+    const std::unordered_map<std::string, std::shared_ptr<Item>> &items,
+    std::string_view mapToPlace) {
+  Point pos{j["position"][0], j["position"][1]};
+  std::vector<std::shared_ptr<Item>> loot{};
+  char symbol{std::string(j["symbol"])[0]};
+  std::string name{j["name"]};
+  std::string desc{j["description"]};
+  const auto &itemIds{j["contents"]};
+  for (auto itemId : itemIds) {
+    if (items.contains(itemId))
+      loot.emplace_back(items.at(itemId)->clone());
+    else
+      std::cout << itemId << " not added, cant find it in items.\n";
+  }
+  bool locked{false};
+  std::string keyId{};
+  if (j.contains("locked")) {
+    locked = j["locked"];
+    keyId = j["keyId"];
+  }
+  return Container{
+      std::move(loot), pos, mapToPlace, name, desc, symbol, locked, keyId,
+  };
+}

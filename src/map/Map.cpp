@@ -260,7 +260,8 @@ void Map::updateFromJson(
   for (const auto &item : j.at("floorLayer")) {
     Point pos{item["position"][0], item["position"][1]};
     auto currentFloorObject{getFloorObject(pos)};
-    if (currentFloorObject && currentFloorObject->getName() == item["name"]) {
+    std::string itemName{item["name"]};
+    if (currentFloorObject && (currentFloorObject->getName() == itemName)) {
       if (item.contains("locked") && !item["locked"])
         // for now player cant lock objects (seems useless)
         currentFloorObject->unlock();

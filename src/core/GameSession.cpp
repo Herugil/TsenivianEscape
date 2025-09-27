@@ -358,10 +358,13 @@ GameSession GameSession::loadFromJson(const json &jsonFile) {
     }
     auto npc{allNpcs.at(id)->clone()};
     npc->updateFromJson(npcJson, allItems, currentMap);
+    gameSession.addNpc(npc);
   }
   for (const auto &containerJson : jsonFile.at("containers")) {
-    auto container{Container::loadFromJson(containerJson)};
-    gameSession.addContainer(container);
+    std::string currentMap{containerJson["currentMap"]};
+    gameSession.addContainer(std::make_shared<Container>(
+        Container::loadFromJson(containerJson, allItems, currentMap)));
   }
+  gameSession.getPlayer().updateFromJson(jsonFile.at("player"), allItems);
   return gameSession;
 }

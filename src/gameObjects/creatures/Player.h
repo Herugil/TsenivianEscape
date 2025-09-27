@@ -82,5 +82,8 @@ public:
   void addAction(std::unique_ptr<Action> action);
   void unequipItemToDrop(std::shared_ptr<Equipment> item);
   json toJson() const override;
+  void updateFromJson(
+      const json &j,
+      const std::unordered_map<std::string, std::shared_ptr<Item>> &allItems);
   virtual ~Player() = default;
 };

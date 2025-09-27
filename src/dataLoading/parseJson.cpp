@@ -74,7 +74,8 @@ DataLoader::getAllItems() {
   return items;
 }
 
-std::unique_ptr<PassiveEffect> parsePassiveEffect(const json &data) {
+std::unique_ptr<PassiveEffect>
+DataLoader::parsePassiveEffect(const json &data) {
   std::string typeStr{data["type"]};
   PassiveEffect::Type type{PassiveEffect::typeFromString(typeStr)};
   int duration{data["duration"]};
@@ -183,18 +184,8 @@ void placeObjects(
       keyId = object["keyId"];
     }
     if (type == "container") {
-      std::vector<std::shared_ptr<Item>> loot{};
-      const auto &itemIds{object["contents"]};
-      for (auto itemId : itemIds) {
-        if (items.contains(itemId))
-          loot.emplace_back(items.at(itemId)->clone());
-        else
-          std::cout << itemId << " not added, cant find it in items.\n";
-      }
       Container container{
-          std::move(loot), pos,    map.getName(), name, desc,
-          symbol,          locked, keyId,
-      };
+          Container::loadFromJson(object, items, map.getName())};
       map.placeFloor(std::make_unique<Container>(std::move(container)), pos);
     } else if (type == "mapChanger") {
       const std::string nextMap{object["destLevel"]};
@@ -268,4 +259,21 @@ std::unique_ptr<Action> DataLoader::parseAction(const json &j) {
       action->setCurrentCharges(j["currentCharges"]);
     return action;
   }
+}
+
+std::shared_ptr<Item> DataLoader::parseItem(
+    const json &j,
+    const std::unordered_map<std::string, std::shared_ptr<Item>> &items) {
+  std::string itemId{j["id"]};
+  if (items.contains(itemId)) {
+    auto itemToAdd{items.at(itemId)->clone()};
+    if (auto instantItem =
+            std::dynamic_pointer_cast<InstantUsableItem>(itemToAdd)) {
+      instantItem->setCharges(j["currentCharges"]);
+      return instantItem;
+    }
+    return itemToAdd;
+  } else
+    std::cout << itemId << " not added, cant find it in items.\n";
+  return nullptr;
 }

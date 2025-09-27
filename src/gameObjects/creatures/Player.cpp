@@ -1,5 +1,6 @@
 #include "gameObjects/creatures/Player.h"
 #include "Settings.h"
+#include "dataLoading/parseJson.h"
 #include "gameObjects/items/Equipment.h"
 #include "gameObjects/items/Weapon.h"
 #include "map/Map.h"
@@ -20,7 +21,7 @@ Player::Player(const Point &position, std::string_view currentMap,
 
 void Player::takeItem(std::shared_ptr<Item> item) {
   if (item) {
-    m_inventory.emplace_back(item);
+    m_inventory.push_back(item);
   }
 }
 
@@ -451,4 +452,85 @@ json Player::toJson() const {
   }
 
   return j;
+}
+
+void Player::updateFromJson(
+    const json &j,
+    const std::unordered_map<std::string, std::shared_ptr<Item>> &allItems) {
+  setPosition(Point(j["position"]["x"], j["position"]["y"]));
+  std::string currentMap = j["currentMap"];
+  setCurrentMap(currentMap);
+  m_maxHealthPoints = j["maxHealthPoints"];
+  m_healthPoints = j["currentHealthPoints"];
+  m_actionPoints = j["actionPoints"]; // this is probably useless
+  m_stats.strength = j["stats"]["strength"];
+  m_stats.dexterity = j["stats"]["dexterity"];
+  m_stats.intelligence = j["stats"]["intelligence"];
+  m_stats.constitution = j["stats"]["constitution"];
+  m_currentXP = j["currentXP"];
+  m_level = j["level"];
+  m_xpToNextLevel = j["xpToNextLevel"];
+  // Inventory
+  m_inventory.clear();
+  for (auto itemJson : j["inventory"]) {
+    auto item{DataLoader::parseItem(itemJson, allItems)};
+    if (item)
+      takeItem(item);
+  }
+  // Equipment
+  auto parseAndEquip = [this](std::string_view itemId) {
+    auto it{std::find_if(m_inventory.begin(), m_inventory.end(),
+                         [itemId](const std::shared_ptr<Item> &item) {
+                           return item && item->getId() == itemId;
+                         })};
+    if (it != m_inventory.end()) {
+      equipItem(std::dynamic_pointer_cast<Equipment>(*it));
+    }
+  };
+  if (!j["equipment"]["rightHand"].is_null()) {
+    std::string itemId = j["equipment"]["rightHand"]["id"];
+    parseAndEquip(itemId);
+  }
+  if (!j["equipment"]["leftHand"].is_null()) {
+    std::string itemId = j["equipment"]["leftHand"]["id"];
+    parseAndEquip(itemId);
+  }
+  if (!j["equipment"]["chestArmor"].is_null()) {
+    std::string itemId = j["equipment"]["chestArmor"]["id"];
+    parseAndEquip(itemId);
+  }
+  if (!j["equipment"]["legArmor"].is_null()) {
+    std::string itemId = j["equipment"]["legArmor"]["id"];
+    parseAndEquip(itemId);
+  }
+  if (!j["equipment"]["helmet"].is_null()) {
+    std::string itemId = j["equipment"]["helmet"]["id"];
+    parseAndEquip(itemId);
+  }
+  if (!j["equipment"]["boots"].is_null()) {
+    std::string itemId = j["equipment"]["boots"]["id"];
+    parseAndEquip(itemId);
+  }
+  if (!j["equipment"]["gloves"].is_null()) {
+    std::string itemId = j["equipment"]["gloves"]["id"];
+    parseAndEquip(itemId);
+  }
+  // well that was painful, will probably refactor this code
+  // into another function
+
+  // actions
+  m_actions.clear();
+  for (auto actionJson : j["actions"]) {
+    auto action{DataLoader::parseAction(actionJson)};
+    if (action)
+      m_actions.push_back(std::move(action));
+  }
+
+  // passive effects
+  m_passiveEffects.clear();
+  for (auto effectJson : j["passiveEffects"]) {
+    auto effect{DataLoader::parsePassiveEffect(effectJson)};
+    if (effect)
+      m_passiveEffects.push_back(std::move(effect));
+  }
 }
