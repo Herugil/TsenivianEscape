@@ -565,3 +565,15 @@ void GameStateManager::saveGame(std::string_view filename) const {
   file << j.dump(4);
   file.close();
 }
+
+void GameStateManager::loadGame(const std::string &filename) {
+  std::string fullFileName{"../saves/" + filename};
+  std::ifstream file{fullFileName};
+  if (!file.is_open()) {
+    std::cerr << "Could not open save file: " << fullFileName << '\n';
+    return;
+  }
+  json j;
+  file >> j;
+  m_gameSession = GameSession::loadFromJson(j);
+}

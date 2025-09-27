@@ -1,5 +1,6 @@
 #include "gameObjects/terrain/Container.h"
 #include "core/GameState.h"
+#include "dataLoading/parseJson.h"
 #include "input/Input.h"
 #include "map/Point.h"
 #include <iostream>
@@ -74,16 +75,15 @@ Container Container::loadFromJson(
   std::string desc{j["description"]};
   const auto &itemIds{j["contents"]};
   for (auto itemId : itemIds) {
-    if (items.contains(itemId))
-      loot.emplace_back(items.at(itemId)->clone());
-    else
-      std::cout << itemId << " not added, cant find it in items.\n";
+    auto item{DataLoader::parseItem(itemId, items)};
+    if (item)
+      loot.push_back(item);
   }
   bool locked{false};
   std::string keyId{};
   if (j.contains("locked")) {
     locked = j["locked"];
-    keyId = j["keyId"];
+    keyId = j.contains("keyId") ? std::string(j["keyId"]) : "";
   }
   return Container{
       std::move(loot), pos, mapToPlace, name, desc, symbol, locked, keyId,

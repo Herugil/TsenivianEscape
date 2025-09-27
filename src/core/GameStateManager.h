@@ -33,8 +33,10 @@ private:
   void handleCharacterSheet();
   void confirmLevelUp(Player &player, Stat stat, Stats playerStats);
   void saveGame(std::string_view filename) const;
+  // void loadGame(const std::string &filename);
 
 public:
   GameStateManager(GameSession &&gameSession);
+  void loadGame(const std::string &filename);
   void mainLoop();
 };

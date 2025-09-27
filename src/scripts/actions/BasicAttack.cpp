@@ -106,6 +106,7 @@ json BasicAttack::toJson() const {
   json j;
   j["name"] = m_name;
   j["type"] = (m_usedStat == Stat::Strength) ? "melee" : "ranged";
+  j["isBasicAttack"] = true;
   j["effects"] = json::array();
   for (const auto &effect : m_applyOnHit) {
     j["effects"].push_back(effect->toJson());

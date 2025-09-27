@@ -264,12 +264,22 @@ std::unique_ptr<Action> DataLoader::parseAction(const json &j) {
 std::shared_ptr<Item> DataLoader::parseItem(
     const json &j,
     const std::unordered_map<std::string, std::shared_ptr<Item>> &items) {
+  if (j.is_string()) {
+    std::string itemId{j};
+    if (items.contains(itemId)) {
+      return items.at(itemId)->clone();
+    } else {
+      std::cout << itemId << " not added, cant find it in items.\n";
+      return nullptr;
+    }
+  }
   std::string itemId{j["id"]};
   if (items.contains(itemId)) {
     auto itemToAdd{items.at(itemId)->clone()};
     if (auto instantItem =
             std::dynamic_pointer_cast<InstantUsableItem>(itemToAdd)) {
-      instantItem->setCharges(j["currentCharges"]);
+      if (j.contains("currentCharges"))
+        instantItem->setCharges(j["currentCharges"]);
       return instantItem;
     }
     return itemToAdd;

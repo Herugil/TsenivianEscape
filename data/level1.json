@@ -25,7 +25,14 @@
     [0, 9],
     [9, 9]
   ],
-  "enemies": [],
+  "enemies": [
+    {
+      "id": "enemyRat",
+      "position": [5, 5],
+      "symbol": "r",
+      "inventory": ["itemBanana"]
+    }
+  ],
   "gameObjects": [
     {
       "symbol": "X",

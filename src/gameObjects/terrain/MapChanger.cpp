@@ -31,6 +31,7 @@ void MapChanger::activateWalkOn(std::shared_ptr<GameObject> gameObject,
     gameSession.setCurrentMap(m_targetMap);
     player->setPosition(m_spawningPoint);
     gameSession.getMap().placeTop(player, m_spawningPoint);
+    gameSession.getMap().setVisited();
     gameSession.displayMap();
     return;
   } else if (auto creature{

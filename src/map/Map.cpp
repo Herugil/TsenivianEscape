@@ -88,7 +88,7 @@ void Map::placeWalls(const Point &bottomLeft, const Point &topRight,
 std::ostream &operator<<(std::ostream &out, Map &map) {
   if (map.m_readIntroText) {
     map.printIntroText();
-    map.setVisited();
+    map.m_readIntroText = false;
   }
   for (int row{0}; row < map.m_height; ++row) {
     for (int col{0}; col < map.m_width; ++col) {
@@ -106,10 +106,7 @@ std::ostream &operator<<(std::ostream &out, Map &map) {
   return out;
 }
 
-void Map::setVisited() {
-  m_readIntroText = false;
-  m_visited = true;
-}
+void Map::setVisited() { m_visited = true; }
 
 bool Map::hasBeenVisited() const { return m_visited; }
 
@@ -269,13 +266,10 @@ void Map::updateFromJson(
         if (auto container{dynamic_cast<Container *>(currentFloorObject)}) {
           // above cast should never fail
           container->clearContents();
-          for (const auto &itemId : item["contents"]) {
-            if (allItems.contains(itemId))
-              container->addItem(allItems.at(itemId)->clone());
-            else
-              std::cout << itemId
-                        << " not added to container, cant find it in items.\n";
-            // this should never happen
+          for (const auto &itemJson : item["contents"]) {
+            auto item{DataLoader::parseItem(itemJson, allItems)};
+            if (item)
+              container->addItem(item);
           }
         } else
           throw std::runtime_error(
@@ -287,4 +281,6 @@ void Map::updateFromJson(
           currentFloorObject->setUsed();
     }
   }
+  setVisited();
+  m_readIntroText = j["introTextRead"];
 }

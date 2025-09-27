@@ -59,12 +59,13 @@ std::shared_ptr<Player> GameSession::getPlayerPtr() const { return m_player; }
 
 void GameSession::addNpc(std::shared_ptr<NonPlayableCharacter> npc) {
   m_npcs.push_back(npc);
-  m_currentMap->placeTop(npc, npc->getPosition());
+  getMap(npc->getCurrentMap()).placeTop(npc, npc->getPosition());
 }
 
 void GameSession::addContainer(std::shared_ptr<Container> container) {
   m_sessionOwnedContainers.push_back(container);
-  m_currentMap->placeTop(container, container->getPosition());
+  getMap(container->getCurrentMap())
+      .placeTop(container, container->getPosition());
 }
 
 void GameSession::removeContainer(std::shared_ptr<Container> container) {
@@ -348,7 +349,27 @@ GameSession GameSession::loadFromJson(const json &jsonFile) {
   for (const auto &[mapName, mapJson] : jsonFile.at("allMaps").items()) {
     gameSession.getMap(mapName).updateFromJson(mapJson, allItems);
   }
-  gameSession.setCurrentMap(jsonFile.at("currentMap").get<std::string>());
+  for (auto it{gameSession.m_npcs.begin()}; it != gameSession.m_npcs.end();) {
+    std::string npcCurrentMap{(*it)->getCurrentMap()};
+    if (gameSession.getMap(npcCurrentMap).hasBeenVisited()) {
+      gameSession.getMap(npcCurrentMap).removeTop((*it)->getPosition());
+      // This just removes a dereferenced weak ptr from the top layer of the map
+      it = gameSession.m_npcs.erase(it);
+      // this deletes the npc from memory
+    } else
+      ++it;
+  }
+  for (auto it{gameSession.m_sessionOwnedContainers.begin()};
+       it != gameSession.m_sessionOwnedContainers.end();) {
+    std::string contCurrentMap{(*it)->getCurrentMap()};
+    if (gameSession.getMap(contCurrentMap).hasBeenVisited()) {
+      gameSession.getMap(contCurrentMap).removeTop((*it)->getPosition());
+      // This just removes a dereferenced weak ptr from the top layer of the map
+      it = gameSession.m_sessionOwnedContainers.erase(it);
+      // this deletes the container from memory
+    } else
+      ++it;
+  }
   for (const auto &npcJson : jsonFile.at("npcs")) {
     std::string id{npcJson["id"]};
     std::string currentMap{npcJson["currentMap"]};
@@ -366,5 +387,7 @@ GameSession GameSession::loadFromJson(const json &jsonFile) {
         Container::loadFromJson(containerJson, allItems, currentMap)));
   }
   gameSession.getPlayer().updateFromJson(jsonFile.at("player"), allItems);
+  gameSession.setCurrentMap(gameSession.getPlayer().getCurrentMap());
+  gameSession.respawnPlayer();
   return gameSession;
 }

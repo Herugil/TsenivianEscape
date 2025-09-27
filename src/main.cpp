@@ -15,6 +15,7 @@ int main() {
   gameSession.getPlayer().takeItem(items["itemSword"]->clone());
   DataLoader::populateGameSession(items, npcs, gameSession);
   GameStateManager gameStateManager{std::move(gameSession)};
+  gameStateManager.loadGame("savetest2.json");
   gameStateManager.mainLoop();
   return 0;
 }

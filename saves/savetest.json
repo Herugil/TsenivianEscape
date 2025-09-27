@@ -3,7 +3,11 @@
     "level1": {
       "floorLayer": [
         {
-          "contents": [],
+          "contents": [
+            {
+              "id": "itemPickaxe"
+            }
+          ],
           "currentMap": "level1",
           "description": "The body of an older inmate, half rotten. You find some items on him:",
           "isMoveable": true,
@@ -61,96 +65,48 @@
         }
       ],
       "introTextRead": false
-    },
-    "level2": {
-      "floorLayer": [
-        {
-          "currentMap": "level2",
-          "description": "A creaking, half open wooden door.",
-          "isMoveable": false,
-          "locked": false,
-          "name": "passage to the next room",
-          "position": [12, 5],
-          "symbol": " ",
-          "traversable": true
-        }
-      ],
-      "introTextRead": false
-    },
-    "level3": {
-      "floorLayer": [
-        {
-          "currentMap": "level3",
-          "description": "A creaking, half open wooden door.",
-          "isMoveable": false,
-          "locked": false,
-          "name": "passage to the next room",
-          "position": [0, 4],
-          "symbol": " ",
-          "traversable": true
-        },
-        {
-          "currentMap": "level3",
-          "description": "A tranquil spot below a broken statue. You feel confident you can lock the doors to this room and rest here.",
-          "hasBeenUsed": false,
-          "isMoveable": false,
-          "locked": false,
-          "name": "Tranquil spot",
-          "position": [6, 5],
-          "symbol": "Z",
-          "traversable": true
-        },
-        {
-          "contents": [
-            {
-              "id": "itemSword"
-            },
-            {
-              "id": "itemBanana"
-            }
-          ],
-          "currentMap": "level3",
-          "description": "A brick you could dig out of the wall with the appropriate tools.",
-          "isMoveable": true,
-          "locked": false,
-          "name": "hidden items in the wall",
-          "position": [12, 5],
-          "symbol": "X",
-          "traversable": false
-        }
-      ],
-      "introTextRead": false
     }
   },
-  "containers": [],
-  "currentMap": "level2",
-  "npcs": [
+  "containers": [
     {
-      "currentMap": "level3",
-      "healthPoints": 8,
-      "id": "enemyGiantRat",
-      "inventory": [
+      "contents": [
         {
           "id": "itemBanana"
         }
       ],
-      "position": [8, 2],
-      "symbol": "R"
+      "currentMap": "level1",
+      "description": "A dead rat body.",
+      "isMoveable": true,
+      "locked": false,
+      "name": "Rat's body",
+      "position": [5, 4],
+      "symbol": "c",
+      "traversable": false
     },
     {
-      "currentMap": "level3",
-      "healthPoints": 6,
-      "id": "enemyBandit",
-      "inventory": [],
-      "position": [7, 5],
-      "symbol": "b"
+      "contents": [
+        {
+          "id": "itemLeatherHelmet"
+        }
+      ],
+      "currentMap": "level1",
+      "description": "A bag of items left by someone",
+      "isMoveable": true,
+      "locked": false,
+      "name": "Left items bag",
+      "position": [5, 6],
+      "symbol": "c",
+      "traversable": false
     }
   ],
+  "currentMap": "level1",
+  "npcs": [],
   "player": {
-    "actionPoints": 0,
+    "actionPoints": -5,
     "actions": [
       {
         "effects": [],
+        "isBasicAttack": true,
         "name": "Attack with melee weapon",
         "type": "melee"
       },
@@ -158,22 +114,20 @@
         "name": "Dodge"
       },
       {
-        "currentCharges": 1,
+        "currentCharges": 2,
         "name": "Swirling flames"
       }
     ],
-    "currentHealthPoints": 10,
-    "currentMap": "level2",
-    "currentXP": 0,
+    "currentHealthPoints": 9,
+    "currentMap": "level1",
+    "currentXP": 20,
     "equipment": {
       "boots": null,
       "chestArmor": {
         "id": "itemTornLeatherArmor"
       },
       "gloves": null,
-      "helmet": {
-        "id": "itemLeatherHelmet"
-      },
+      "helmet": null,
       "leftHand": null,
       "legArmor": null,
       "rightHand": {
@@ -186,21 +140,43 @@
       },
       {
         "id": "itemTornLeatherArmor"
-      },
-      {
-        "id": "itemLeatherHelmet"
-      },
-      {
-        "id": "itemPickaxe"
       }
     ],
     "level": 2,
     "maxActionPoints": 2,
     "maxHealthPoints": 15,
     "name": "you",
-    "passiveEffects": [],
+    "passiveEffects": [
+      {
+        "components": [
+          {
+            "duration": 0,
+            "expiresOnRest": true,
+            "id": "ratBiteEffect",
+            "name": "component",
+            "stackable": false,
+            "type": "damageOverTime",
+            "value": 1
+          },
+          {
+            "duration": 0,
+            "expiresOnRest": true,
+            "id": "ratBiteEffect",
+            "name": "component",
+            "stackable": false,
+            "type": "strengthBonus",
+            "value": -1
+          }
+        ],
+        "duration": -1,
+        "id": "ratBiteEffect",
+        "name": "Rat's disease",
+        "stackable": false,
+        "type": "composite"
+      }
+    ],
     "position": {
-      "x": 7,
+      "x": 3,
       "y": 5
     },
     "stats": {
