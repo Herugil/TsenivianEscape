@@ -17,6 +17,7 @@ GameSession::GameSession(std::shared_ptr<Player> player)
 
 void GameSession::respawnPlayer() {
   m_currentMap->placeTop(m_player, m_player->getPosition());
+  m_currentMap->setVisited();
 }
 
 void GameSession::moveCreature(std::shared_ptr<GameObject> gameObject,
@@ -217,7 +218,8 @@ void GameSession::setCurrentMap(std::string_view mapName) {
   m_currentMap->removeTop(m_player->getPosition());
   m_currentMap = &m_allMaps.at(strMapName);
   m_player->setCurrentMap(strMapName);
-  initializeTurnOrder();
+  if (enemiesInMap())
+    initializeTurnOrder();
   m_player->resetTurn();
 }
 
@@ -338,7 +340,7 @@ json GameSession::toJson() const {
 GameSession GameSession::loadFromJson(const json &jsonFile) {
 
   // First, initialize a new game
-  auto player{std::make_shared<Player>(Point{2, 1}, "", 10)};
+  auto player{std::make_shared<Player>(Point{2, 1}, "placeHolder", 10, "")};
   auto allItems{DataLoader::getAllItems()};
   auto allNpcs{DataLoader::getAllNpcs()};
   GameSession gameSession{player};

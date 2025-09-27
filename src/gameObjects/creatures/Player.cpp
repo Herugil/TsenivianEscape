@@ -13,8 +13,8 @@
 #include <memory>
 
 Player::Player(const Point &position, std::string_view currentMap,
-               int maxHealthPoints, Stats stats)
-    : Creature('@', position, currentMap, maxHealthPoints, 0, "you"),
+               int maxHealthPoints, std::string_view name, Stats stats)
+    : Creature('@', position, currentMap, maxHealthPoints, 0, name),
       m_stats{stats}, m_shoveAction{} {
   m_actions.emplace_back(std::make_unique<Dodge>(Dodge("Dodge")));
 }
@@ -395,6 +395,7 @@ using json = nlohmann::json;
 json Player::toJson() const {
   json j;
   j["type"] = "Player";
+  j["name"] = getName();
   j["position"] = {{"x", getPosition().getX()}, {"y", getPosition().getY()}};
   j["currentMap"] = getCurrentMap();
   j["maxHealthPoints"] = getMaxHealthPoints();
@@ -457,6 +458,7 @@ json Player::toJson() const {
 void Player::updateFromJson(
     const json &j,
     const std::unordered_map<std::string, std::shared_ptr<Item>> &allItems) {
+  m_name = j["name"];
   setPosition(Point(j["position"]["x"], j["position"]["y"]));
   std::string currentMap = j["currentMap"];
   setCurrentMap(currentMap);
@@ -493,7 +495,14 @@ void Player::updateFromJson(
   }
   if (!j["equipment"]["leftHand"].is_null()) {
     std::string itemId = j["equipment"]["leftHand"]["id"];
-    parseAndEquip(itemId);
+    if (auto rightHand{m_equipment.rightHand.lock()})
+      if (rightHand->getEquipmentType() ==
+          Equipment::EquipmentType::twoHanded) {
+        m_equipment.leftHand = m_equipment.rightHand;
+      } else
+        parseAndEquip(itemId);
+    else
+      parseAndEquip(itemId);
   }
   if (!j["equipment"]["chestArmor"].is_null()) {
     std::string itemId = j["equipment"]["chestArmor"]["id"];

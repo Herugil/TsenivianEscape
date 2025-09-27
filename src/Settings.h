@@ -11,4 +11,5 @@ constexpr int g_baseEnemyDistanceDamage{1};
 constexpr int g_baseEnemyDistanceRange{6};
 constexpr int g_itemListSize{9}; // seriously, dont make this bigger than 10
 constexpr int g_baseHitChance{75};
+constexpr int g_maxSaves{8};
 } // namespace Settings

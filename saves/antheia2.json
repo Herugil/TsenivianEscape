@@ -45,24 +45,6 @@
                 }
             ],
             "introTextRead": false
-        },
-        "level2": {
-            "floorLayer": [
-                {
-                    "currentMap": "level2",
-                    "description": "A creaking, half open wooden door.",
-                    "isMoveable": false,
-                    "locked": false,
-                    "name": "passage to the next room",
-                    "position": [
-                        12,
-                        5
-                    ],
-                    "symbol": " ",
-                    "traversable": true
-                }
-            ],
-            "introTextRead": false
         }
     },
     "containers": [
@@ -78,89 +60,47 @@
             "locked": false,
             "name": "Rat's body",
             "position": [
-                5,
-                4
-            ],
-            "symbol": "c",
-            "traversable": false
-        },
-        {
-            "contents": [
-                {
-                    "id": "itemLeatherHelmet"
-                }
-            ],
-            "currentMap": "level1",
-            "description": "A bag of items left by someone",
-            "isMoveable": true,
-            "locked": false,
-            "name": "Left items bag",
-            "position": [
-                5,
-                6
-            ],
-            "symbol": "c",
-            "traversable": false
-        },
-        {
-            "contents": [
-                {
-                    "id": "itemBanana"
-                }
-            ],
-            "currentMap": "level2",
-            "description": "A dead giant rat body.",
-            "isMoveable": true,
-            "locked": false,
-            "name": "Giant Rat's body",
-            "position": [
-                2,
-                4
+                3,
+                2
             ],
             "symbol": "c",
             "traversable": false
         }
     ],
-    "currentMap": "level2",
+    "currentMap": "level1",
     "npcs": [],
     "player": {
-        "actionPoints": 0,
+        "actionPoints": 2,
         "actions": [
             {
                 "effects": [],
                 "isBasicAttack": true,
-                "name": "Ranged attack with right hand weapon",
-                "type": "ranged"
-            },
-            {
-                "currentCharges": 2,
-                "name": "Swirling flames"
+                "name": "Attack with melee weapon",
+                "type": "melee"
             }
         ],
-        "currentHealthPoints": 8,
-        "currentMap": "level2",
-        "currentXP": 70,
+        "currentHealthPoints": 9,
+        "currentMap": "level1",
+        "currentXP": 120,
         "equipment": {
             "boots": null,
             "chestArmor": {
                 "id": "itemTornLeatherArmor"
             },
             "gloves": null,
-            "helmet": null,
-            "leftHand": {
-                "id": "itemBowOfFury"
+            "helmet": {
+                "id": "itemLeatherHelmet"
             },
+            "leftHand": null,
             "legArmor": null,
-            "rightHand": {
-                "id": "itemBowOfFury"
-            }
+            "rightHand": null
         },
         "inventory": [
             {
-                "id": "itemSword"
+                "id": "itemTornLeatherArmor"
             },
             {
-                "id": "itemTornLeatherArmor"
+                "id": "itemLeatherHelmet"
             },
             {
                 "id": "itemSword"
@@ -186,10 +126,10 @@
                 "id": "itemBowOfFury"
             }
         ],
-        "level": 2,
+        "level": 1,
         "maxActionPoints": 2,
-        "maxHealthPoints": 15,
-        "name": "you",
+        "maxHealthPoints": 10,
+        "name": "Antheia",
         "passiveEffects": [
             {
                 "components": [
@@ -220,13 +160,13 @@
             }
         ],
         "position": {
-            "x": 8,
+            "x": 6,
             "y": 6
         },
         "stats": {
             "constitution": 1,
             "dexterity": 1,
-            "intelligence": 2,
+            "intelligence": 1,
             "strength": 1
         },
         "type": "Player",

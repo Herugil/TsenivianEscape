@@ -42,7 +42,8 @@ private:
 
 public:
   Player(const Point &position, std::string_view currentMap,
-         int maxHealthPoints, Stats stats = Stats{1, 1, 1, 1});
+         int maxHealthPoints, std::string_view name,
+         Stats stats = Stats{1, 1, 1, 1});
   void takeItem(std::shared_ptr<Item> item);
   void displayInventory(std::size_t page = 0) const;
   void displayActions() const;
