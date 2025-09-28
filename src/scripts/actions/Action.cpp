@@ -24,3 +24,17 @@ bool Action::useActionResources(Creature &creature) {
   }
   return false;
 }
+
+bool Action::canBeUsed(Creature &creature) {
+  // check if the action can be used by the creature
+  // but does not use the resources/ set cooldown
+  if (m_currentCooldown > 0)
+    return false; // action is on cooldown
+  if (m_maxCharges != -1) {
+    // action has limited charges
+    if (m_currentCharges == 0)
+      return false;                 // no charges left
+    return creature.canAct(m_cost); // enough action points and not on cooldown
+  }
+  return true;
+}

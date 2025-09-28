@@ -82,6 +82,7 @@ public:
   int getCurrentCharges() const { return m_currentCharges; }
   int getMaxCharges() const { return m_maxCharges; }
   bool useActionResources(Creature &creature);
+  bool canBeUsed(Creature &creature);
 
   virtual json toJson() const = 0;
 

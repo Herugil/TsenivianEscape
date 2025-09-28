@@ -181,8 +181,7 @@ void GameStateManager::HandleWorld() {
       m_currentState = GameState::Exploration;
     }
   } else if (CommandHandler::isMainMenuCommand(command)) {
-    ScreenUtils::clearScreen();
-    handleMainMenu();
+    m_currentState = GameState::MainMenu;
   }
 }
 
@@ -287,7 +286,9 @@ void GameStateManager::handleActions() {
     auto action{player.getAction(pressedKey)};
     if (!action)
       return;
-    if (action->needsHotkeyInput()) {
+    if (!action->canBeUsed(player))
+      m_logsToDisplay << "You cannot use this action right now.\n";
+    else if (action->needsHotkeyInput()) {
       m_gameSession.displayEnemiesInMap(action->getUsedStat());
       auto hotkeyCommand{CommandHandler::getCommand(Input::getKeyBlocking())};
       if (CommandHandler::isHotkeyCommand(hotkeyCommand)) {
@@ -564,15 +565,17 @@ void GameStateManager::handleMainMenu() {
     newGame(name);
     m_currentState = GameState::Exploration;
   } else if (pressedKey == 1) {
+    ScreenUtils::clearScreen();
     if (m_gameSession.getPlayer().getName().empty() ||
         m_gameSession.getPlayer().isDead()) {
       std::cout << "You currently are not in a game session.\n";
       std::cout << "Press any key to return to main menu.\n";
       Input::getKeyBlocking();
       return;
-    }
-    m_currentState = GameState::Exploration;
+    } else
+      m_currentState = GameState::Exploration;
   } else if (pressedKey == 2) {
+    ScreenUtils::clearScreen();
     if (m_gameSession.getPlayer().getName().empty() ||
         m_gameSession.getPlayer().isDead()) {
       std::cout << "You currently are not in a game session.\n";
@@ -588,6 +591,7 @@ void GameStateManager::handleMainMenu() {
     } else
       saveGame();
   } else if (pressedKey == 3) {
+    ScreenUtils::clearScreen();
     auto saveList{getAvailableSaves()};
     if (saveList.empty()) {
       std::cout << "No saves available.\n";
