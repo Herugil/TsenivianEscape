@@ -124,7 +124,6 @@ std::deque<Point> &NonPlayableCharacter::getCurrentPath() {
 }
 
 void NonPlayableCharacter::setCurrentPath(GameSession &gameSession) {
-  std::vector<Point> possiblePoints{};
   switch (m_currentBehavior) {
   case basicAttack:
     m_currentPath = getPathAttack(gameSession);
@@ -167,27 +166,33 @@ std::deque<Point> NonPlayableCharacter::getPathFlee(GameSession &gameSession) {
                       GeometryUtils::distanceL2(getPosition(), p2));
             });
   path = GeometryUtils::sortPointsAndFindPath(mapChangers, getPosition(),
-                                              gameSession, false);
+                                              gameSession, getPosition(), true);
+  // this leads to the closest map changer
   if (!path.empty())
     return path;
   else
-    return GeometryUtils::sortPointsAndFindPath(safePoints, getPosition(),
-                                                gameSession, false);
+    return GeometryUtils::sortPointsAndFindPath(
+        safePoints, getPosition(), gameSession, gameSession.getPlayerPos(),
+        false);
 }
 
 std::deque<Point>
 NonPlayableCharacter::getPathAttack(GameSession &gameSession) {
   std::vector<Point> possiblePoints{};
-  for (int i{0};
-       static_cast<Directions::Direction>(i) < Directions::nbDirections; ++i) {
-    Point potentialDestination{gameSession.getPlayerPos().getAdjacentPoint(
-        static_cast<Directions::Direction>(i))};
-    if (!gameSession.getMap().isAvailable(potentialDestination))
-      continue; // cant go there
-    possiblePoints.push_back(potentialDestination);
+  for (int i{0}; i < gameSession.getMap().getWidth(); ++i) {
+    for (int j{0}; j < gameSession.getMap().getHeight(); ++j) {
+      Point potentialDestination{i, j};
+      if (!gameSession.getMap().isAvailable(potentialDestination))
+        continue; // cant go there
+      if (GeometryUtils::distanceL2(potentialDestination,
+                                    gameSession.getPlayerPos()) >=
+          GeometryUtils::distanceL2(getPosition(), gameSession.getPlayerPos()))
+        continue; // would get farther to player
+      possiblePoints.push_back(potentialDestination);
+    }
   }
-  return GeometryUtils::sortPointsAndFindPath(possiblePoints, getPosition(),
-                                              gameSession);
+  return GeometryUtils::sortPointsAndFindPath(
+      possiblePoints, getPosition(), gameSession, gameSession.getPlayerPos());
   return {};
 }
 
@@ -231,11 +236,12 @@ void NonPlayableCharacter::updateFromJson(
     std::string_view mapToPlace) {
   char symbol{std::string(j["symbol"])[0]};
   Point pos{j["position"][0], j["position"][1]};
-  for (auto itemJson : j["inventory"]) {
-    auto item{DataLoader::parseItem(itemJson, items)};
-    if (item)
-      addItemToInventory(item);
-  }
+  if (j.contains("inventory"))
+    for (auto itemJson : j["inventory"]) {
+      auto item{DataLoader::parseItem(itemJson, items)};
+      if (item)
+        addItemToInventory(item);
+    }
   setSymbol(symbol);
   setPosition(pos);
   setCurrentMap(mapToPlace);

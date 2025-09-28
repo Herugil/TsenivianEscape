@@ -106,14 +106,24 @@ std::vector<Point> GeometryUtils::drawStraightLine(const Point &p1,
 
 std::deque<Point> GeometryUtils::sortPointsAndFindPath(
     std::vector<Point> points, const Point &startPoint,
-    const GameSession &gameSession, bool closest) {
-  std::sort(points.begin(), points.end(),
-            [startPoint, closest](const Point &p1, const Point &p2) {
-              return (closest ? GeometryUtils::distanceL2(startPoint, p1) <=
-                                    GeometryUtils::distanceL2(startPoint, p2)
-                              : GeometryUtils::distanceL2(startPoint, p1) >=
-                                    GeometryUtils::distanceL2(startPoint, p2));
-            });
+    const GameSession &gameSession, const Point &comparisonPoint,
+    bool closest) {
+  // This function sorts the points by distance to startPoint and
+  // returns the path to the closest (or farthest if closest is false)
+  // from comparisonPoint
+  std::sort(
+      points.begin(), points.end(),
+      [startPoint, closest, comparisonPoint](const Point &p1, const Point &p2) {
+        if (distanceL2(p1, comparisonPoint) == distanceL2(p2, comparisonPoint))
+          return (GeometryUtils::distanceL2(startPoint, p1) <=
+                  GeometryUtils::distanceL2(startPoint, p2)
+
+          );
+        return (closest ? distanceL2(p1, comparisonPoint) <
+                              distanceL2(p2, comparisonPoint)
+                        : distanceL2(p1, comparisonPoint) >
+                              distanceL2(p2, comparisonPoint));
+      });
   for (auto safePoint : points) {
     std::deque<Point> res{gameSession.getMap().findPath(startPoint, safePoint)};
     if (!res.empty()) {

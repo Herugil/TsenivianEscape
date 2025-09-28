@@ -40,8 +40,8 @@ NpcCombatAI::npcActCombat(GameSession &gameSession,
       res << actor->executeBasicAttack(gameSession.getPlayer(), gameSession);
       res << actor->setCurrentBehavior(gameSession);
       actor->setCurrentPath(gameSession);
+      return res.str();
       // after attack, recalculate behavior and path
-      break;
     } else {
       if (!actor->getCurrentPath().empty()) {
         Point nextPoint{actor->getCurrentPath().front()};
@@ -51,14 +51,19 @@ NpcCombatAI::npcActCombat(GameSession &gameSession,
         if (actor->canMove(costNextPoint)) {
           gameSession.moveCreature(actor, direction);
           actor->getCurrentPath().pop_front(); // remove current point from path
+          return res.str();
         } else {
           res << actor->setCurrentBehavior(gameSession);
           actor->setCurrentPath(gameSession);
           return res.str();
         }
-        break;
+      } else {
+        // no path to player, so just wait
+        actor->setSkipTurn();
+        return res.str();
       }
     }
+    break;
   case NonPlayableCharacter::flee:
     // the next part is so not dry, need to refactor
     if (!actor->getCurrentPath().empty()) {
@@ -82,7 +87,6 @@ NpcCombatAI::npcActCombat(GameSession &gameSession,
     }
   default:
     res << actor->getName() << " doesn't know what to do!\n";
-    actor->setSkipTurn();
     break;
   }
   return res.str();
