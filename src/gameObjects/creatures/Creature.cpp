@@ -6,10 +6,10 @@
 
 Creature::Creature(char symbol, const Point &position,
                    std::string_view currentMap, int maxHealthPoints,
-                   int evasion, std::string_view name,
+                   int evasion, Stats stats, std::string_view name,
                    std::string_view description)
     : GameObject{true, false, symbol, currentMap, position, name, description},
-      m_maxHealthPoints{maxHealthPoints}, m_evasion{evasion} {
+      m_maxHealthPoints{maxHealthPoints}, m_evasion{evasion}, m_stats{stats} {
   m_actions.emplace_back(std::make_unique<BasicAttack>(
       "Attack with right hand weapon", Stat::Strength));
   m_healthPoints = m_maxHealthPoints;
@@ -18,7 +18,7 @@ Creature::Creature(char symbol, const Point &position,
 Creature::Creature(const Creature &other)
     : GameObject(other), m_inventory{}, m_healthPoints{other.m_healthPoints},
       m_maxHealthPoints{other.m_maxHealthPoints}, m_evasion{other.m_evasion},
-      m_maxMovementPoints{other.m_maxMovementPoints},
+      m_stats{other.m_stats}, m_maxMovementPoints{other.m_maxMovementPoints},
       m_maxActionPoints{other.m_maxActionPoints},
       m_movementPoints{other.m_movementPoints},
       m_actionPoints{other.m_actionPoints}, m_inCombat{other.m_inCombat} {

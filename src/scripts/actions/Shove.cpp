@@ -22,6 +22,13 @@ std::string Shove::execute([[maybe_unused]] GameSession &gameSession,
   }
   if (useActionResources(actor)) {
     if (target->isMoveable()) {
+      if (auto creatureTarget = std::dynamic_pointer_cast<Creature>(target)) {
+        if (creatureTarget->getStrength() > actor.getStrength()) {
+          result << actor.getName() << " is not strong enough to shove "
+                 << target->getName() << ".\n";
+          return result.str();
+        }
+      }
       gameSession.moveCreature(target, shoveDirection, true);
       result << target->getName() << " shoved by " << actor.getName() << ".\n";
     }

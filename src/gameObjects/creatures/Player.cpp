@@ -14,7 +14,7 @@
 
 Player::Player(const Point &position, std::string_view currentMap,
                int maxHealthPoints, std::string_view name, Stats stats)
-    : Creature('@', position, currentMap, maxHealthPoints, 0, name),
+    : Creature('@', position, currentMap, maxHealthPoints, 0, stats, name),
       m_stats{stats}, m_shoveAction{} {
   m_actions.emplace_back(std::make_unique<Dodge>(Dodge("Dodge")));
 }

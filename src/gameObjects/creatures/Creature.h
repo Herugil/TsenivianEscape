@@ -1,6 +1,7 @@
 #pragma once
 #include "Settings.h"
 #include "gameObjects/GameObject.h"
+#include "gameObjects/creatures/Stats.h"
 #include "gameObjects/items/Item.h"
 #include "scripts/actions/Action.h"
 #include "scripts/passives/PassiveEffect.h"
@@ -17,6 +18,7 @@ protected:
   int m_healthPoints{};
   int m_maxHealthPoints{};
   int m_evasion{};
+  Stats m_stats{};
   int m_maxMovementPoints{Settings::g_averageMoveSpeed};
   int m_maxActionPoints{Settings::g_numActions};
   std::vector<std::unique_ptr<PassiveEffect>> m_passiveEffects{};
@@ -26,8 +28,8 @@ protected:
 
 public:
   Creature(char symbol, const Point &position, std::string_view currentMap,
-           int maxHealthPoints, int evasion = 0, std::string_view name = "",
-           std::string_view description = "");
+           int maxHealthPoints, int evasion = 0, Stats stats = Stats{},
+           std::string_view name = "", std::string_view description = "");
   Creature(const Creature &other);
   int getHealthPoints() const;
   bool isDead() const;

@@ -25,13 +25,14 @@ NonPlayableCharacter::NonPlayableCharacter(
     int evasion, int meleeHitChance, int distanceHitChance, int meleeDamage,
     int distanceDamage, std::vector<std::unique_ptr<Action>> &&actions,
     std::vector<std::shared_ptr<Item>> &&items, std::string_view description,
-    std::string_view deadDescription, std::string_view aiType, int xpValue)
+    std::string_view deadDescription, std::string_view aiType, int xpValue,
+    Stats stats, int armor)
     : Creature{symbol,  point, currentMap, maxHealthPoints,
-               evasion, name,  description},
+               evasion, stats, name,       description},
       m_id{id}, m_deadDescription{deadDescription},
       m_meleeHitChance{meleeHitChance}, m_distanceHitChance{distanceHitChance},
       m_meleeDamage{meleeDamage}, m_distanceDamage{distanceDamage},
-      m_AIType{stringToAIType(aiType)}, m_xpValue{xpValue} {
+      m_AIType{stringToAIType(aiType)}, m_xpValue{xpValue}, m_armor{armor} {
   if (!items.empty())
     m_inventory = std::move(items);
   if (!actions.empty()) {
@@ -53,7 +54,7 @@ NonPlayableCharacter::NonPlayableCharacter(const NonPlayableCharacter &other)
       m_distanceDamage(other.m_distanceDamage),
       m_currentPath(other.m_currentPath),
       m_currentBehavior(other.m_currentBehavior), m_AIType(other.m_AIType),
-      m_xpValue{other.m_xpValue} {}
+      m_xpValue{other.m_xpValue}, m_armor{other.m_armor} {}
 
 std::shared_ptr<NonPlayableCharacter> NonPlayableCharacter::clone() const {
   return std::make_shared<NonPlayableCharacter>(*this);
@@ -67,6 +68,10 @@ void NonPlayableCharacter::addItemToInventory(std::shared_ptr<Item> item) {
   m_inventory.push_back(std::move(item));
 }
 
+// for the damage/getter functions below, not using stat modifiers for now
+// considering using only specific stat modifiers such as melee hit chance
+// modifier, but not strength modifier
+// will depend on balancing probably
 int NonPlayableCharacter::getMeleeHitChance() const { return m_meleeHitChance; }
 int NonPlayableCharacter::getDistanceHitChance() const {
   return m_distanceHitChance;
@@ -75,6 +80,21 @@ int NonPlayableCharacter::getMeleeDamage() const { return m_meleeDamage; }
 int NonPlayableCharacter::getMeleeRange() const { return m_meleeRange; }
 int NonPlayableCharacter::getDistanceDamage() const { return m_distanceDamage; }
 int NonPlayableCharacter::getDistanceRange() const { return m_distanceRange; }
+int NonPlayableCharacter::getArmor() const {
+  return m_armor + getStatModifier(Stat::Armor);
+}
+int NonPlayableCharacter::getStrength() const {
+  return m_stats.strength + getStatModifier(Stat::Strength);
+}
+int NonPlayableCharacter::getDexterity() const {
+  return m_stats.dexterity + getStatModifier(Stat::Dexterity);
+}
+int NonPlayableCharacter::getIntelligence() const {
+  return m_stats.intelligence + getStatModifier(Stat::Intelligence);
+}
+int NonPlayableCharacter::getConstitution() const {
+  return m_stats.constitution + getStatModifier(Stat::Constitution);
+}
 
 std::string NonPlayableCharacter::executeBasicAttack(Creature &target,
                                                      GameSession &gameSession) {

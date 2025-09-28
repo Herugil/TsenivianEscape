@@ -41,6 +41,7 @@ protected:
   Behaviors m_currentBehavior{defaultBehavior};
   AITypes m_AIType{defaultAI};
   int m_xpValue{}; // xp given to player on kill
+  int m_armor{0};
 
 public:
   NonPlayableCharacter(std::string_view id, char symbol, const Point &point,
@@ -54,7 +55,8 @@ public:
                        std::vector<std::shared_ptr<Item>> &&inventory = {},
                        std::string_view description = "enemy",
                        std::string_view deadDescription = "",
-                       std::string_view aiType = "defaultAI", int xpValue = 50);
+                       std::string_view aiType = "defaultAI", int xpValue = 50,
+                       Stats stats = Stats{}, int armor = 0);
   NonPlayableCharacter(const NonPlayableCharacter &other);
   std::shared_ptr<NonPlayableCharacter> clone() const;
   std::string_view getDeadDescription() const;
@@ -78,6 +80,11 @@ public:
   static AITypes stringToAIType(std::string_view str);
   AITypes getAIType() const { return m_AIType; }
   int getXpValue() const;
+  int getArmor() const override;
+  int getStrength() const override;
+  int getDexterity() const override;
+  int getIntelligence() const override;
+  int getConstitution() const override;
 
   json toJson() const override;
 

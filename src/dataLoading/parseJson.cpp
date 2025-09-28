@@ -1,5 +1,6 @@
 #include "dataLoading/parseJson.h"
 #include "core/GameSession.h"
+#include "gameObjects/creatures/Stats.h"
 #include "gameObjects/items/Armor.h"
 #include "gameObjects/items/InstantUsableItem.h"
 #include "gameObjects/items/Item.h"
@@ -128,11 +129,21 @@ DataLoader::getAllNpcs() {
           actions.push_back(std::move(parsedAction));
       }
     }
+    Stats stats{};
+    int armor{0};
+    if (value.contains("stats")) {
+      stats =
+          Stats{value["stats"]["strength"], value["stats"]["dexterity"],
+                value["stats"]["intelligence"], value["stats"]["constitution"]};
+    }
+    if (value.contains("armor")) {
+      armor = value["armor"];
+    }
     npcs[key] = std::make_shared<NonPlayableCharacter>(
         id, ' ', Point{0, 0}, "placeholder", maxHealth, name, evasion,
         meleeHitChance, distanceHitChance, meleeDamage, distanceDamage,
         std::move(actions), std::vector<std::shared_ptr<Item>>{}, desc,
-        descDead, aiType, xpValue);
+        descDead, aiType, xpValue, stats, armor);
   }
   return npcs;
 }
