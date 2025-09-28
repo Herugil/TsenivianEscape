@@ -30,9 +30,10 @@ public:
                                          std::move(effectsCloned), m_cost,
                                          m_maxCharges, m_cooldown);
   };
-  int getRange(Creature &actor) const override;
-  int getDamage(Creature &actor) const override;
-  int getHitChance(Creature &actor, Creature &target) const override;
+  int getRange(const Creature &actor) const override;
+  int getDamage(const Creature &actor) const override;
+  int getHitChance(const Creature &actor,
+                   const Creature &target) const override;
 
   json toJson() const override;
 

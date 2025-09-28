@@ -20,7 +20,7 @@ public:
   std::unique_ptr<Action> clone() const override {
     return std::make_unique<CubeAoe>(*this);
   }
-  int getDamage(Creature &actor) const override;
+  int getDamage(const Creature &actor) const override;
 
   json toJson() const override;
   virtual ~CubeAoe() = default;

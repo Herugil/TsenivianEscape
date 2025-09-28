@@ -63,13 +63,14 @@ std::unique_ptr<Action> ShovingAttack::clone() const {
   return std::make_unique<ShovingAttack>(*this);
 }
 
-int ShovingAttack::getRange(Creature &actor) const {
+int ShovingAttack::getRange(const Creature &actor) const {
   return m_rangeFormula(actor);
 }
-int ShovingAttack::getDamage(Creature &actor) const {
+int ShovingAttack::getDamage(const Creature &actor) const {
   return m_damageFormula(actor);
 }
-int ShovingAttack::getHitChance(Creature &actor, Creature &target) const {
+int ShovingAttack::getHitChance(const Creature &actor,
+                                const Creature &target) const {
   return m_hitChanceFormula(actor, target);
 }
 

@@ -9,6 +9,7 @@
 #include "map/Map.h"
 #include "map/Point.h"
 #include "nlohmann/json.hpp"
+#include <functional>
 #include <memory>
 #include <sstream>
 #include <vector>
@@ -60,7 +61,8 @@ public:
   void incrementCurrentTurn();
 
   std::vector<std::weak_ptr<NonPlayableCharacter>> getEnemiesInMap() const;
-  void displayEnemiesInMap(Stat stat = Stat::nbStats) const;
+  void displayEnemiesInMap(
+      std::function<int(const Creature &)> hitChanceFunc = {}) const;
 
   json toJson() const;
   static GameSession loadFromJson(const json &j);

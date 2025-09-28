@@ -289,7 +289,9 @@ void GameStateManager::handleActions() {
     if (!action->canBeUsed(player))
       m_logsToDisplay << "You cannot use this action right now.\n";
     else if (action->needsHotkeyInput()) {
-      m_gameSession.displayEnemiesInMap(action->getUsedStat());
+      m_gameSession.displayEnemiesInMap([player, action](const Creature &c) {
+        return action->getHitChance(player, c);
+      });
       auto hotkeyCommand{CommandHandler::getCommand(Input::getKeyBlocking())};
       if (CommandHandler::isHotkeyCommand(hotkeyCommand)) {
         auto pressedKey{static_cast<std::size_t>(

@@ -31,9 +31,10 @@ public:
   std::string playerExecute(GameSession &gameSession,
                             Creature &target) override;
   std::unique_ptr<Action> clone() const override;
-  int getRange(Creature &actor) const override;
-  int getDamage(Creature &actor) const override;
-  int getHitChance(Creature &actor, Creature &target) const override;
+  int getRange(const Creature &actor) const override;
+  int getDamage(const Creature &actor) const override;
+  int getHitChance(const Creature &actor,
+                   const Creature &target) const override;
 
   json toJson() const override;
   virtual ~ShovingAttack() = default;

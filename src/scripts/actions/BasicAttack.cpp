@@ -74,7 +74,7 @@ std::string BasicAttack::playerExecute(GameSession &gameSession,
   return result;
 }
 
-int BasicAttack::getRange(Creature &actor) const {
+int BasicAttack::getRange(const Creature &actor) const {
   if (m_usedStat == Stat::Strength) {
     return actor.getMeleeRange();
   } else if (m_usedStat == Stat::Dexterity) {
@@ -83,7 +83,7 @@ int BasicAttack::getRange(Creature &actor) const {
   return 0;
 }
 
-int BasicAttack::getDamage(Creature &actor) const {
+int BasicAttack::getDamage(const Creature &actor) const {
   if (m_usedStat == Stat::Strength) {
     return actor.getMeleeDamage();
   } else if (m_usedStat == Stat::Dexterity) {
@@ -92,7 +92,8 @@ int BasicAttack::getDamage(Creature &actor) const {
   return 0;
 }
 
-int BasicAttack::getHitChance(Creature &actor, Creature &target) const {
+int BasicAttack::getHitChance(const Creature &actor,
+                              const Creature &target) const {
   int hitChance{0};
   if (m_usedStat == Stat::Strength) {
     hitChance = actor.getMeleeHitChance();

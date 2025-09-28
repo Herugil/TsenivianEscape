@@ -38,7 +38,9 @@ std::string CubeAoe::execute(GameSession &gameSession, Creature &actor,
   return result.str();
 }
 
-int CubeAoe::getDamage(Creature &actor) const { return m_damageFormula(actor); }
+int CubeAoe::getDamage(const Creature &actor) const {
+  return m_damageFormula(actor);
+}
 
 json CubeAoe::toJson() const {
   json j;

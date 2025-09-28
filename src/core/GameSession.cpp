@@ -259,7 +259,8 @@ std::weak_ptr<Creature> GameSession::getActiveCreature() const {
   return m_turnOrder[m_currentTurnIndex];
 }
 
-void GameSession::displayEnemiesInMap(Stat stat) const {
+void GameSession::displayEnemiesInMap(
+    std::function<int(const Creature &)> hitChanceFunc) const {
   auto enemies{getEnemiesInMap()};
   std::ostringstream res{};
   if (enemies.empty()) {
@@ -278,20 +279,8 @@ void GameSession::displayEnemiesInMap(Stat stat) const {
       if (!m_currentMap->isPointVisible(m_player->getPosition(),
                                         lockedEnemy->getPosition()))
         res << " (not visible)";
-      if (stat != Stat::nbStats) {
-        int chanceToHit{0};
-        switch (stat) {
-        case Stat::Strength:
-          chanceToHit =
-              m_player->getMeleeHitChance() - lockedEnemy->getEvasion();
-          break;
-        case Stat::Dexterity:
-          chanceToHit =
-              m_player->getDistanceHitChance() - lockedEnemy->getEvasion();
-          break;
-        default:
-          break;
-        }
+      if (hitChanceFunc) {
+        int chanceToHit = hitChanceFunc(*lockedEnemy);
         res << "  " << chanceToHit << '%';
       }
       res << '\n';
@@ -355,7 +344,8 @@ GameSession GameSession::loadFromJson(const json &jsonFile) {
     std::string npcCurrentMap{(*it)->getCurrentMap()};
     if (gameSession.getMap(npcCurrentMap).hasBeenVisited()) {
       gameSession.getMap(npcCurrentMap).removeTop((*it)->getPosition());
-      // This just removes a dereferenced weak ptr from the top layer of the map
+      // This just removes a dereferenced weak ptr from the top layer of the
+      // map
       it = gameSession.m_npcs.erase(it);
       // this deletes the npc from memory
     } else
@@ -366,7 +356,8 @@ GameSession GameSession::loadFromJson(const json &jsonFile) {
     std::string contCurrentMap{(*it)->getCurrentMap()};
     if (gameSession.getMap(contCurrentMap).hasBeenVisited()) {
       gameSession.getMap(contCurrentMap).removeTop((*it)->getPosition());
-      // This just removes a dereferenced weak ptr from the top layer of the map
+      // This just removes a dereferenced weak ptr from the top layer of the
+      // map
       it = gameSession.m_sessionOwnedContainers.erase(it);
       // this deletes the container from memory
     } else

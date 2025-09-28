@@ -73,10 +73,14 @@ public:
       m_currentCharges = m_maxCharges;
   }
   void setCurrentCharges(int charges) { m_currentCharges = charges; }
-  virtual int getRange([[maybe_unused]] Creature &actor) const { return 0; }
-  virtual int getDamage([[maybe_unused]] Creature &actor) const { return 0; }
-  virtual int getHitChance([[maybe_unused]] Creature &actor,
-                           [[maybe_unused]] Creature &target) const {
+  virtual int getRange([[maybe_unused]] const Creature &actor) const {
+    return 0;
+  }
+  virtual int getDamage([[maybe_unused]] const Creature &actor) const {
+    return 0;
+  }
+  virtual int getHitChance([[maybe_unused]] const Creature &actor,
+                           [[maybe_unused]] const Creature &target) const {
     return 0;
   }
   int getCurrentCharges() const { return m_currentCharges; }
