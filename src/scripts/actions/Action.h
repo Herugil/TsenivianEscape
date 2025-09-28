@@ -12,6 +12,20 @@ class GameSession;
 class Creature;
 
 class Action {
+public:
+  enum ActionType { // this enum allows to group actions by type
+    // to enable AI decision making
+    attack,
+    selfHeal,
+    heal,
+    offenseBuff,
+    defenseBuff,
+    offenseDebuff,
+    defenseDebuff,
+    control,
+    defaultType,
+  };
+
 protected:
   std::string m_name{};
   bool m_needsHotkeyInput{};
@@ -27,6 +41,7 @@ protected:
   int m_currentCharges{-1}; // -1 means unlimited
   int m_cooldown{0};
   int m_currentCooldown{0};
+  std::vector<ActionType> m_types{ActionType::defaultType};
 
 public:
   Action(std::string_view name, bool needsDirectionalInput,
@@ -87,6 +102,14 @@ public:
   int getMaxCharges() const { return m_maxCharges; }
   bool useActionResources(Creature &creature);
   bool canBeUsed(Creature &creature);
+
+  bool isType(ActionType type) const {
+    for (const auto &t : m_types) {
+      if (t == type)
+        return true;
+    }
+    return false;
+  }
 
   virtual json toJson() const = 0;
 

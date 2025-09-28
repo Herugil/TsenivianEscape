@@ -5,7 +5,10 @@
 Haste::Haste(int value, int cost, int maxCharges, int cooldown,
              std::string_view name)
     : Action{name, false, false, Stat::nbStats, cost, maxCharges, cooldown},
-      m_value{value} {}
+      m_value{value} {
+  m_types = {ActionType::offenseBuff, ActionType::defenseBuff};
+  // haste gives one AP, so its a generic buff
+}
 
 std::string Haste::execute(GameSession &gameSession, Creature &actor,
                            Creature &target) {

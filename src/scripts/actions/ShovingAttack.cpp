@@ -18,7 +18,10 @@ ShovingAttack::ShovingAttack(
     : Action{name, false, true, Stat::Strength, cost, maxCharges, cooldown},
       m_shoveDistanceFormula{shoveDistanceFormula},
       m_damageFormula{damageFormula}, m_hitChanceFormula{hitChanceFormula},
-      m_rangeFormula{rangeFormula} {}
+      m_rangeFormula{rangeFormula} {
+  m_types.clear();
+  m_types = {ActionType::attack, ActionType::control};
+}
 
 std::string ShovingAttack::execute(GameSession &gameSession, Creature &actor,
                                    Creature &target) {

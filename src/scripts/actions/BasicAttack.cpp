@@ -14,6 +14,7 @@ BasicAttack::BasicAttack(std::string_view name, Stat usedStat,
   for (auto &effect : applyOnHit) {
     m_applyOnHit.emplace_back(effect->clone());
   }
+  m_types.push_back(ActionType::attack);
 }
 
 std::string BasicAttack::execute([[maybe_unused]] GameSession &gameSession,

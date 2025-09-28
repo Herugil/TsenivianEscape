@@ -14,6 +14,8 @@ HealingAttack::HealingAttack(
   m_maxCharges = charges;
   m_cooldown = cooldown;
   m_cost = cost;
+  m_types.push_back(ActionType::selfHeal);
+  // healing attack shouldnt be used just to deal damage
 }
 
 std::string HealingAttack::execute(GameSession &gameSession, Creature &actor,

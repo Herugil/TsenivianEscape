@@ -6,7 +6,9 @@ CubeAoe::CubeAoe(std::string_view name, int radius,
                  int cost, int maxCharges, int cooldown)
     : Action(name, false, false, Stat::Intelligence, cost, maxCharges,
              cooldown),
-      m_radius{radius}, m_damageFormula{damageFormula} {}
+      m_radius{radius}, m_damageFormula{damageFormula} {
+  m_types.push_back(ActionType::attack);
+}
 
 std::string CubeAoe::playerExecute(GameSession &gameSession) {
   return execute(gameSession, gameSession.getPlayer(), gameSession.getPlayer());
