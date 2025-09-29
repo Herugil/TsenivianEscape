@@ -82,6 +82,40 @@
     "distanceDamage": 0,
     "description": "A giant rat, hungry and mean looking.",
     "deadDescription": "A dead giant rat body.",
-    "xpValue": 50
+    "xpValue": 50,
+    "stats": {
+      "strength": 2,
+      "dexterity": 0,
+      "constitution": 1,
+      "intelligence": 0
+    },
+    "armor": 1
+  },
+  "enemyVampire": {
+    "name": "Vampire",
+    "type": "boss",
+    "maxHealth": 30,
+    "evasion": 15,
+    "meleeHitChance": 80,
+    "distanceHitChance": 0,
+    "meleeDamage": 4,
+    "distanceDamage": 0,
+    "description": "A ghastly looking vampire, .",
+    "deadDescription": "A dead giant rat body.",
+    "xpValue": 50,
+    "stats": {
+      "strength": 4,
+      "dexterity": 4,
+      "constitution": 4,
+      "intelligence": 4
+    },
+    "actions": [
+      { "name": "Haste", "currentCharges": 2 },
+      { "name": "Swirling Flames", "currentCharges": 1 },
+      { "name": "Backbreaker", "currentCharges": 2 },
+      { "name": "Rejuvenating Strike", "currentCharges": 3 },
+      { "name": "Basic Attack", "isBasicAttack": true }
+    ],
+    "armor": 2
   }
 }
