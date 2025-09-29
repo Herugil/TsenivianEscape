@@ -21,6 +21,7 @@ ShovingAttack::ShovingAttack(
       m_rangeFormula{rangeFormula} {
   m_types.clear();
   m_types = {ActionType::attack, ActionType::control};
+  m_targetType = enemyTarget;
 }
 
 std::string ShovingAttack::execute(GameSession &gameSession, Creature &actor,

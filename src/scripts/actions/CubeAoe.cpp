@@ -8,6 +8,7 @@ CubeAoe::CubeAoe(std::string_view name, int radius,
              cooldown),
       m_radius{radius}, m_damageFormula{damageFormula} {
   m_types.push_back(ActionType::attack);
+  m_targetType = aoe;
 }
 
 std::string CubeAoe::playerExecute(GameSession &gameSession) {

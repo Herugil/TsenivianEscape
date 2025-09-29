@@ -98,8 +98,31 @@ int NonPlayableCharacter::getConstitution() const {
 
 std::string NonPlayableCharacter::executeBasicAttack(Creature &target,
                                                      GameSession &gameSession) {
-  auto basicAction{m_actions[0].get()};
+  auto basicAction{getBasicAction()};
   return basicAction->execute(gameSession, *this, target);
+}
+
+int NonPlayableCharacter::getBasicActionRange() const {
+  return getBasicAction()->getRange(*this);
+}
+
+std::vector<Action *>
+NonPlayableCharacter::getUsableActionFromType(Action::ActionType type) const {
+  std::vector<Action *> availableActions{};
+  for (auto &action : m_actions) {
+    if (action->canBeUsed(*this) && action->isType(type))
+      availableActions.push_back(action.get());
+  }
+  return availableActions;
+}
+
+Action *NonPlayableCharacter::getBasicAction() const {
+  for (const auto &action : m_actions) {
+    if (action->isType(Action::defaultAttack)) {
+      return action.get();
+    }
+  }
+  return nullptr;
 }
 
 std::string NonPlayableCharacter::setCurrentBehavior(
@@ -124,6 +147,9 @@ std::string NonPlayableCharacter::setCurrentBehavior(
       } else
         m_currentBehavior = basicAttack;
       break;
+    case boss:
+      m_currentBehavior = setFighterBossBehavior(gameSession);
+      break;
     default:
       m_currentBehavior = defaultBehavior;
     }
@@ -132,10 +158,41 @@ std::string NonPlayableCharacter::setCurrentBehavior(
 }
 
 NonPlayableCharacter::Behaviors
+NonPlayableCharacter::setFighterBossBehavior(GameSession &gameSession) {
+  std::vector<Action *> availableActions{};
+  if (m_healthPoints <= m_maxHealthPoints / 2) {
+    availableActions = getUsableActionFromType(Action::selfHeal);
+    if (!availableActions.empty()) {
+      return selfHeal;
+    }
+  }
+  if (gameSession.getCurrentTurn() <= 1) {
+    // this should be checking for current usable buffs, current passives
+    // on the creature, etc...
+    availableActions = getUsableActionFromType(Action::defenseBuff);
+    if (!availableActions.empty()) {
+      return defenseBuff;
+    }
+    availableActions = getUsableActionFromType(Action::offenseBuff);
+    if (!availableActions.empty()) {
+      return offenseBuff;
+    }
+  }
+  availableActions = getUsableActionFromType(Action::attack);
+  if (!availableActions.empty()) {
+    return attack;
+  }
+  return basicAttack; // no action found
+}
+
+NonPlayableCharacter::Behaviors
 NonPlayableCharacter::getCurrentBehavior() const {
   return m_currentBehavior;
 }
-void NonPlayableCharacter::setSkipTurn() { m_currentBehavior = skipTurn; }
+void NonPlayableCharacter::setSkipTurn() {
+  m_currentBehavior = skipTurn;
+  m_hasActed = false;
+}
 void NonPlayableCharacter::setDefaultBehavior() {
   m_currentBehavior = defaultBehavior;
 }
@@ -146,6 +203,10 @@ std::deque<Point> &NonPlayableCharacter::getCurrentPath() {
 void NonPlayableCharacter::setCurrentPath(GameSession &gameSession) {
   switch (m_currentBehavior) {
   case basicAttack:
+  case attack:
+  case selfHeal: // this depends on the target (self heal)
+                 // can be an attack targetting the player for ex
+                 // this function needs a target parameter probably
     m_currentPath = getPathAttack(gameSession);
     return;
   case flee:
@@ -223,7 +284,9 @@ NonPlayableCharacter::stringToAIType(std::string_view str) {
   else if (str == "waryMelee")
     return waryMelee;
   else if (str == "aggressiveRanged")
-    return aggressiveRanged; // currently no ranged AI implemented
+    return aggressiveRanged;
+  else if (str == "boss")
+    return boss;
   else
     return defaultAI;
 }

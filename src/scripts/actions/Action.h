@@ -15,6 +15,7 @@ class Action {
 public:
   enum ActionType { // this enum allows to group actions by type
     // to enable AI decision making
+    defaultAttack,
     attack,
     selfHeal,
     heal,
@@ -24,6 +25,14 @@ public:
     defenseDebuff,
     control,
     defaultType,
+  };
+
+  enum TargetType { // this allows target selection
+    selfTarget,
+    friendTarget,
+    enemyTarget,
+    aoe,
+    defaultTarget,
   };
 
 protected:
@@ -42,6 +51,7 @@ protected:
   int m_cooldown{0};
   int m_currentCooldown{0};
   std::vector<ActionType> m_types{ActionType::defaultType};
+  TargetType m_targetType{defaultTarget};
 
 public:
   Action(std::string_view name, bool needsDirectionalInput,
@@ -100,8 +110,9 @@ public:
   }
   int getCurrentCharges() const { return m_currentCharges; }
   int getMaxCharges() const { return m_maxCharges; }
+  int getCost() const { return m_cost; }
   bool useActionResources(Creature &creature);
-  bool canBeUsed(Creature &creature);
+  bool canBeUsed(const Creature &creature) const;
 
   bool isType(ActionType type) const {
     for (const auto &t : m_types) {
@@ -110,6 +121,8 @@ public:
     }
     return false;
   }
+
+  TargetType getTargetType() const { return m_targetType; }
 
   virtual json toJson() const = 0;
 

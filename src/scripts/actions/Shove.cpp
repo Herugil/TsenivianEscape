@@ -11,6 +11,7 @@ Shove::Shove(std::string_view name)
   m_types.push_back(ActionType::control);
   // this is probably terrible for npcs since it
   // pushes the the target out of range
+  m_targetType = enemyTarget;
 }
 
 std::string Shove::execute([[maybe_unused]] GameSession &gameSession,

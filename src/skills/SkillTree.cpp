@@ -39,7 +39,7 @@ std::unique_ptr<Action> SkillTree::createBackbreakerAction() {
       [](const Creature &actor, const Creature &target) {
         return actor.getMeleeHitChance() - target.getEvasion();
       },
-      [](const Creature &actor) { return actor.getStrength(); }, 1, 4, 1);
+      [](const Creature &actor) { return actor.getMeleeRange(); }, 1, 4, 1);
 }
 
 std::unique_ptr<Action> SkillTree::createSwirlingFlamesAction() {

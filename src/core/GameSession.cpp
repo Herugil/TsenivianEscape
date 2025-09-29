@@ -293,7 +293,7 @@ void GameSession::resetInitiative() {
   m_player->unsetCombat();
   m_turnOrder.clear();
   m_currentTurnIndex = 0;
-  m_currentTurn = 0;
+  m_currentTurn = 1;
 }
 
 int GameSession::getCurrentTurn() const { return m_currentTurn; }

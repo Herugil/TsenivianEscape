@@ -9,6 +9,7 @@ Dodge::Dodge(std::string_view name) : Action{name, false, false} {
   m_cooldown = 1;
   m_currentCooldown = 0;
   m_types.push_back(ActionType::defenseBuff);
+  m_targetType = selfTarget;
 }
 
 std::string Dodge::execute([[maybe_unused]] GameSession &gameSession,

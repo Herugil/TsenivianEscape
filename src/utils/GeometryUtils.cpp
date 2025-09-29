@@ -18,17 +18,19 @@ Directions::Direction GeometryUtils::getRequiredDirection(const Point &p1,
   // point and a direction
   int xDelta{p2.getX() - p1.getX()};
   int yDelta{p2.getY() - p1.getY()};
-  if (xDelta != 0 && yDelta != 0)
-    // invalid move
-    return Directions::nbDirections;
-  if (xDelta > 0)
-    return Directions::right;
-  if (xDelta < 0)
-    return Directions::left;
-  if (yDelta > 0)
-    return Directions::bottom;
-  if (yDelta < 0)
-    return Directions::top;
+  if (std::abs(xDelta) >= std::abs(yDelta)) {
+    // horizontal move
+    if (xDelta > 0)
+      return Directions::right;
+    if (xDelta < 0)
+      return Directions::left;
+  } else if (std::abs(yDelta) > std::abs(xDelta)) {
+    // vertical move
+    if (yDelta > 0)
+      return Directions::bottom;
+    if (yDelta < 0)
+      return Directions::top;
+  }
   return Directions::nbDirections;
 }
 

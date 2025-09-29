@@ -17,6 +17,10 @@ class NonPlayableCharacter : public Creature {
 public:
   enum Behaviors {
     basicAttack,
+    attack,
+    selfHeal,
+    defenseBuff,
+    offenseBuff,
     skipTurn,
     flee,
     defaultBehavior,
@@ -25,6 +29,7 @@ public:
     aggressiveMelee,
     waryMelee,
     aggressiveRanged,
+    boss,
     defaultAI,
   };
 
@@ -42,6 +47,7 @@ protected:
   AITypes m_AIType{defaultAI};
   int m_xpValue{}; // xp given to player on kill
   int m_armor{0};
+  bool m_hasActed{false};
 
 public:
   NonPlayableCharacter(std::string_view id, char symbol, const Point &point,
@@ -85,6 +91,13 @@ public:
   int getDexterity() const override;
   int getIntelligence() const override;
   int getConstitution() const override;
+  int getBasicActionRange() const;
+  bool hasActed() const { return m_hasActed; }
+  void setHasActed() { m_hasActed = true; }
+  void resetHasActed() { m_hasActed = false; }
+  Action *getBasicAction() const;
+  std::vector<Action *> getUsableActionFromType(Action::ActionType type) const;
+  Behaviors setFighterBossBehavior(GameSession &gameSession);
 
   json toJson() const override;
 
