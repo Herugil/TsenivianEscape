@@ -19,4 +19,6 @@ bool checkTargetAvailable(GameSession &gameSession,
 Creature *getTarget(GameSession &gameSession,
                     std::shared_ptr<NonPlayableCharacter> actor,
                     Action *action);
+std::string useAction(GameSession &gameSession,
+                      std::shared_ptr<NonPlayableCharacter> actor);
 } // namespace NpcCombatAI

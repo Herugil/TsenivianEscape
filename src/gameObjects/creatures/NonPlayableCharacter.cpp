@@ -128,6 +128,11 @@ Action *NonPlayableCharacter::getBasicAction() const {
 std::string NonPlayableCharacter::setCurrentBehavior(
     [[maybe_unused]] GameSession &gameSession) {
   std::ostringstream res{};
+  if (getActionPoints() == 0 && getMovementPoints() == 0) {
+    m_currentBehavior = skipTurn;
+    m_hasActed = false;
+    return res.str();
+  }
   switch (m_AIType) {
   case aggressiveMelee:
   case aggressiveRanged:
@@ -153,29 +158,52 @@ std::string NonPlayableCharacter::setCurrentBehavior(
   return res.str();
 }
 
+void NonPlayableCharacter::setCurrentAction(Action *action) {
+  m_currentAction = action;
+}
+
+Action *
+NonPlayableCharacter::determineCurrentAction(Action::ActionType type) const {
+  auto availableActions{getUsableActionFromType(type)};
+  auto r{Random::get<std::size_t>(0, availableActions.size() - 1)};
+  if (!availableActions.empty()) {
+    return availableActions[r];
+  } else {
+    return nullptr;
+  }
+}
+
+Action *NonPlayableCharacter::getCurrentAction() const {
+  return m_currentAction;
+}
+
 NonPlayableCharacter::Behaviors
 NonPlayableCharacter::setFighterBossBehavior(GameSession &gameSession) {
-  std::vector<Action *> availableActions{};
+  Action *availableAction{};
   if (m_healthPoints <= m_maxHealthPoints / 2) {
-    availableActions = getUsableActionFromType(Action::selfHeal);
-    if (!availableActions.empty()) {
+    availableAction = determineCurrentAction(Action::selfHeal);
+    if (availableAction) {
+      setCurrentAction(availableAction);
       return selfHeal;
     }
   }
   if (gameSession.getCurrentTurn() <= 1) {
     // this should be checking for current usable buffs, current passives
     // on the creature, etc...
-    availableActions = getUsableActionFromType(Action::defenseBuff);
-    if (!availableActions.empty()) {
+    availableAction = determineCurrentAction(Action::defenseBuff);
+    if (availableAction) {
+      setCurrentAction(availableAction);
       return defenseBuff;
     }
-    availableActions = getUsableActionFromType(Action::offenseBuff);
-    if (!availableActions.empty()) {
+    availableAction = determineCurrentAction(Action::offenseBuff);
+    if (availableAction) {
+      setCurrentAction(availableAction);
       return offenseBuff;
     }
   }
-  availableActions = getUsableActionFromType(Action::attack);
-  if (!availableActions.empty()) {
+  availableAction = determineCurrentAction(Action::attack);
+  if (availableAction) {
+    setCurrentAction(availableAction);
     return attack;
   }
   return basicAttack; // no action found

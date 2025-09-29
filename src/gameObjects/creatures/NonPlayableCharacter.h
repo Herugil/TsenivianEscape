@@ -48,6 +48,7 @@ protected:
   int m_xpValue{}; // xp given to player on kill
   int m_armor{0};
   bool m_hasActed{false};
+  Action *m_currentAction{nullptr};
 
 public:
   NonPlayableCharacter(std::string_view id, char symbol, const Point &point,
@@ -98,6 +99,9 @@ public:
   Action *getBasicAction() const;
   std::vector<Action *> getUsableActionFromType(Action::ActionType type) const;
   Behaviors setFighterBossBehavior(GameSession &gameSession);
+  Action *determineCurrentAction(Action::ActionType type) const;
+  void setCurrentAction(Action *action);
+  Action *getCurrentAction() const;
 
   json toJson() const override;
 

@@ -16,7 +16,6 @@ std::string
 NpcCombatAI::npcActCombat(GameSession &gameSession,
                           std::shared_ptr<NonPlayableCharacter> actor) {
   std::ostringstream res;
-  Creature *target{};
   auto &player{gameSession.getPlayer()};
   if (!(actor->hasActed())) {
     res << actor->setCurrentBehavior(gameSession); // thisll need to check if
@@ -25,7 +24,6 @@ NpcCombatAI::npcActCombat(GameSession &gameSession,
     actor->setHasActed();
   }
   std::vector<Action *> availableActions{};
-  Action *selectedAction{};
   switch (actor->getCurrentBehavior()) {
   case NonPlayableCharacter::basicAttack:
     if (checkTargetAvailable(gameSession, actor, player,
@@ -41,74 +39,11 @@ NpcCombatAI::npcActCombat(GameSession &gameSession,
     }
     return res.str();
 
-    // below is the exact same code copy pasted a gazillion times
   case NonPlayableCharacter::attack:
-    availableActions = actor->getUsableActionFromType(Action::attack);
-    selectedAction = availableActions[Random::get<std::size_t>(
-        0, availableActions.size() - 1)];
-    if (!selectedAction) {
-      actor->setSkipTurn();
-      return res.str();
-    }
-    if (checkTargetAvailable(gameSession, actor, player, selectedAction)) {
-      res << tryCreatureAction(gameSession, actor, gameSession.getPlayer(),
-                               selectedAction);
-    } else if (!actor->getCurrentPath().empty()) {
-      res << tryCreatureMove(gameSession, actor);
-    } else
-      actor->setSkipTurn();
-    return res.str();
-
   case NonPlayableCharacter::selfHeal:
-    availableActions = actor->getUsableActionFromType(Action::selfHeal);
-    selectedAction = availableActions[Random::get<std::size_t>(
-        0, availableActions.size() - 1)];
-    if (!selectedAction) {
-      actor->setSkipTurn();
-      return res.str();
-    }
-    target = getTarget(gameSession, actor, selectedAction);
-    if (checkTargetAvailable(gameSession, actor, *target, selectedAction)) {
-      res << tryCreatureAction(gameSession, actor, *target, selectedAction);
-    } else if (!actor->getCurrentPath().empty()) {
-      res << tryCreatureMove(gameSession, actor);
-    } else
-      actor->setSkipTurn();
-    return res.str();
-
   case NonPlayableCharacter::offenseBuff:
-    availableActions = actor->getUsableActionFromType(Action::offenseBuff);
-    selectedAction = availableActions[Random::get<std::size_t>(
-        0, availableActions.size() - 1)];
-    if (!selectedAction) {
-      actor->setSkipTurn();
-      return res.str();
-    }
-    target = getTarget(gameSession, actor, selectedAction);
-    if (checkTargetAvailable(gameSession, actor, *target, selectedAction)) {
-      res << tryCreatureAction(gameSession, actor, *target, selectedAction);
-    } else if (!actor->getCurrentPath().empty()) {
-      res << tryCreatureMove(gameSession, actor);
-    } else
-      actor->setSkipTurn();
-    return res.str();
-
   case NonPlayableCharacter::defenseBuff:
-    availableActions = actor->getUsableActionFromType(Action::defenseBuff);
-    selectedAction = availableActions[Random::get<std::size_t>(
-        0, availableActions.size() - 1)];
-    if (!selectedAction) {
-      actor->setSkipTurn();
-      return res.str();
-    }
-    target = getTarget(gameSession, actor, selectedAction);
-    if (checkTargetAvailable(gameSession, actor, *target, selectedAction)) {
-      res << tryCreatureAction(gameSession, actor, *target, selectedAction);
-    } else if (!actor->getCurrentPath().empty()) {
-      res << tryCreatureMove(gameSession, actor);
-    } else
-      actor->setSkipTurn();
-    return res.str();
+    return useAction(gameSession, actor);
 
   case NonPlayableCharacter::flee:
     if (!actor->getCurrentPath().empty()) {
@@ -137,11 +72,12 @@ NpcCombatAI::tryCreatureMove(GameSession &gameSession,
   Directions::Direction direction{
       GeometryUtils::getRequiredDirection(actor->getPosition(), nextPoint)};
   int costNextPoint{1}; // will be cost to get to nextPoint
-  int actionBeforeMove{actor->getActionPoints()};
   if (actor->canMove(costNextPoint)) {
     gameSession.moveCreature(actor, direction);
     actor->getCurrentPath().pop_front(); // remove current point from path
-    if (actionBeforeMove != actor->getActionPoints())
+    if (actor->getCurrentBehavior() != NonPlayableCharacter::flee &&
+        actor->getCurrentBehavior() != NonPlayableCharacter::basicAttack &&
+        !actor->canAct(actor->getCurrentAction()->getCost()))
       actor->resetHasActed();
   } else {
     actor->resetHasActed(); // this should make npc skip turn
@@ -199,4 +135,23 @@ Creature *NpcCombatAI::getTarget(GameSession &gameSession,
   if (action->getTargetType() == Action::aoe)
     return &gameSession.getPlayer();
   return nullptr;
+}
+
+std::string
+NpcCombatAI::useAction(GameSession &gameSession,
+                       std::shared_ptr<NonPlayableCharacter> actor) {
+  std::string res;
+  auto *selectedAction{actor->getCurrentAction()};
+  if (!selectedAction) {
+    actor->setSkipTurn();
+    return res;
+  }
+  auto target = getTarget(gameSession, actor, selectedAction);
+  if (checkTargetAvailable(gameSession, actor, *target, selectedAction)) {
+    res = tryCreatureAction(gameSession, actor, *target, selectedAction);
+  } else if (!actor->getCurrentPath().empty()) {
+    res = tryCreatureMove(gameSession, actor);
+  } else
+    actor->setSkipTurn();
+  return res;
 }
