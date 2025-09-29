@@ -128,31 +128,27 @@ Action *NonPlayableCharacter::getBasicAction() const {
 std::string NonPlayableCharacter::setCurrentBehavior(
     [[maybe_unused]] GameSession &gameSession) {
   std::ostringstream res{};
-  if (m_actionPoints == 0) {
-    m_currentBehavior = skipTurn;
-  } else {
-    switch (m_AIType) {
-    case aggressiveMelee:
-    case aggressiveRanged:
-      m_currentBehavior = basicAttack;
-      break;
-    case waryMelee:
-      if (m_healthPoints <=
-          m_maxHealthPoints * AISettings::g_waryMeleeFleeHealthPercent / 100) {
-        if (Random::rollD100() < AISettings::g_waryMeleeFleeChance) {
-          m_currentBehavior = flee;
-          res << getName() << " starts fleeing!\n";
-        } else
-          m_currentBehavior = basicAttack;
+  switch (m_AIType) {
+  case aggressiveMelee:
+  case aggressiveRanged:
+    m_currentBehavior = basicAttack;
+    break;
+  case waryMelee:
+    if (m_healthPoints <=
+        m_maxHealthPoints * AISettings::g_waryMeleeFleeHealthPercent / 100) {
+      if (Random::rollD100() < AISettings::g_waryMeleeFleeChance) {
+        m_currentBehavior = flee;
+        res << getName() << " starts fleeing!\n";
       } else
         m_currentBehavior = basicAttack;
-      break;
-    case boss:
-      m_currentBehavior = setFighterBossBehavior(gameSession);
-      break;
-    default:
-      m_currentBehavior = defaultBehavior;
-    }
+    } else
+      m_currentBehavior = basicAttack;
+    break;
+  case boss:
+    m_currentBehavior = setFighterBossBehavior(gameSession);
+    break;
+  default:
+    m_currentBehavior = defaultBehavior;
   }
   return res.str();
 }

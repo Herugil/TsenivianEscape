@@ -27,10 +27,10 @@
   ],
   "enemies": [
     {
-      "id": "enemyRat",
-      "position": [5, 5],
-      "symbol": "r",
-      "inventory": ["itemBanana"]
+      "symbol": "V",
+      "position": [8, 5],
+      "id": "enemyVampire",
+      "inventory": ["itemSwordOfWrath"]
     }
   ],
   "gameObjects": [

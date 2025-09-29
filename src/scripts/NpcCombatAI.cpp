@@ -121,7 +121,9 @@ NpcCombatAI::npcActCombat(GameSession &gameSession,
     }
 
   default:
-    res << actor->getName() << " doesn't know what to do!\n";
+    if (actor->getActionPoints() > 0)
+      res << actor->getName() << " doesn't know what to do!\n";
+    actor->setSkipTurn();
     break;
   }
   return res.str();
@@ -135,12 +137,14 @@ NpcCombatAI::tryCreatureMove(GameSession &gameSession,
   Directions::Direction direction{
       GeometryUtils::getRequiredDirection(actor->getPosition(), nextPoint)};
   int costNextPoint{1}; // will be cost to get to nextPoint
+  int actionBeforeMove{actor->getActionPoints()};
   if (actor->canMove(costNextPoint)) {
     gameSession.moveCreature(actor, direction);
     actor->getCurrentPath().pop_front(); // remove current point from path
+    if (actionBeforeMove != actor->getActionPoints())
+      actor->resetHasActed();
   } else {
-    res = actor->setCurrentBehavior(gameSession);
-    actor->setCurrentPath(gameSession);
+    actor->resetHasActed(); // this should make npc skip turn
   }
   return res;
 }

@@ -27,29 +27,14 @@
   ],
   "enemies": [
     {
-      "symbol": "R",
+      "symbol": "V",
       "position": [8, 5],
-      "id": "enemyGiantRat",
-      "inventory": ["itemBanana"]
+      "id": "enemyVampire",
+      "inventory": ["itemSwordOfWrath"]
     },
     {
       "symbol": "r",
       "position": [3, 8],
-      "id": "enemyRat"
-    },
-    {
-      "symbol": "r",
-      "position": [3, 7],
-      "id": "enemyRat"
-    },
-    {
-      "symbol": "r",
-      "position": [7, 7],
-      "id": "enemyRat"
-    },
-    {
-      "symbol": "r",
-      "position": [2, 8],
       "id": "enemyRat"
     }
   ],
