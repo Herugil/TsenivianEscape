@@ -15,7 +15,7 @@ Dodge::Dodge(std::string_view name) : Action{name, false, false} {
 std::string Dodge::execute([[maybe_unused]] GameSession &gameSession,
                            [[maybe_unused]] Creature &actor,
                            [[maybe_unused]] Creature &target) {
-  return {};
+  return execute(actor);
 }
 
 std::string Dodge::execute(Creature &actor) {

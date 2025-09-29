@@ -44,7 +44,7 @@ std::unique_ptr<Action> SkillTree::createBackbreakerAction() {
 
 std::unique_ptr<Action> SkillTree::createSwirlingFlamesAction() {
   return std::make_unique<CubeAoe>(
-      "Swirling flames", 1,
+      "Swirling Flames", 1,
       [](const Creature &actor) { return actor.getIntelligence() + 3; }, 2, 2,
       2);
 }
@@ -69,7 +69,7 @@ std::unique_ptr<Action> SkillTree::createDodgeAction() {
 std::unique_ptr<Action> SkillTree::createActionByName(std::string_view name) {
   if (name == "Backbreaker")
     return SkillTree::createBackbreakerAction();
-  if (name == "Swirling flames")
+  if (name == "Swirling Flames")
     return SkillTree::createSwirlingFlamesAction();
   if (name == "Rejuvenating Strike")
     return SkillTree::createRejuvenatingStrikeAction();

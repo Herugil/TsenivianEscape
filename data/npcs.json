@@ -114,7 +114,8 @@
       { "name": "Swirling Flames", "currentCharges": 1 },
       { "name": "Backbreaker", "currentCharges": 2 },
       { "name": "Rejuvenating Strike", "currentCharges": 3 },
-      { "name": "Basic Attack", "isBasicAttack": true }
+      { "name": "Basic Attack", "isBasicAttack": true },
+      { "name": "Dodge" }
     ],
     "armor": 2
   }

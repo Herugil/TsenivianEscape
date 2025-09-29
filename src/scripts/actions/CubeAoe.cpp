@@ -21,6 +21,7 @@ std::string CubeAoe::execute(GameSession &gameSession, Creature &actor,
   if (useActionResources(actor)) {
     auto &map{gameSession.getMap()};
     auto center{actor.getPosition()};
+    result << actor.getName() + " uses " + m_name + "\n";
     for (int dx = -m_radius; dx <= m_radius; ++dx) {
       for (int dy = -m_radius; dy <= m_radius; ++dy) {
         Point targetPoint{center.getX() + dx, center.getY() + dy};
@@ -43,6 +44,12 @@ std::string CubeAoe::execute(GameSession &gameSession, Creature &actor,
 
 int CubeAoe::getDamage(const Creature &actor) const {
   return m_damageFormula(actor);
+}
+
+int CubeAoe::getRange([[maybe_unused]] const Creature &actor) const {
+  return m_radius; // this is actually supposed to be sqrt 2 * radius but
+  // this means changing the return type to double for every action
+  // this should do for now
 }
 
 json CubeAoe::toJson() const {

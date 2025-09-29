@@ -40,6 +40,8 @@ std::string HealingAttack::execute(GameSession &gameSession, Creature &actor,
       result << actor.getName() << " missed " << target.getName() << ".\n";
     } else {
       int inflictedDamage{target.takeDamage(getDamage(actor))};
+      result << actor.getName() + " uses " + m_name + " on " +
+                    target.getName() + ".\n";
       result << inflictedDamage << "  damage dealt to " << target.getName()
              << " by " << actor.getName() << ".\n";
       int healAmount{m_healAmountFunc(actor, target)};
