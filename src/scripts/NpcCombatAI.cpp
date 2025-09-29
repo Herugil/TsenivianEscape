@@ -16,19 +16,20 @@ std::string
 NpcCombatAI::npcActCombat(GameSession &gameSession,
                           std::shared_ptr<NonPlayableCharacter> actor) {
   std::ostringstream res;
-  auto &player{gameSession.getPlayer()};
+  auto target{actor->getCurrentTarget()};
+  if (!target)
+    target = gameSession.getPlayerPtr().get();
   if (!(actor->hasActed())) {
-    res << actor->setCurrentBehavior(gameSession); // thisll need to check if
-    // any available target before returning a behavior
-    actor->setCurrentPath(gameSession); // thisll soon need to take target param
+    res << actor->setCurrentBehavior(gameSession);
+    actor->setCurrentPath(gameSession, *target);
     actor->setHasActed();
   }
   std::vector<Action *> availableActions{};
   switch (actor->getCurrentBehavior()) {
   case NonPlayableCharacter::basicAttack:
-    if (checkTargetAvailable(gameSession, actor, player,
+    if (checkTargetAvailable(gameSession, actor, *target,
                              actor->getBasicAction())) {
-      res << tryCreatureAction(gameSession, actor, gameSession.getPlayer(),
+      res << tryCreatureAction(gameSession, actor, *target,
                                actor->getBasicAction());
     } else {
       if (!actor->getCurrentPath().empty())
@@ -109,34 +110,6 @@ bool NpcCombatAI::checkTargetAvailable(
                                           target.getPosition()));
 }
 
-Creature *NpcCombatAI::getTarget(GameSession &gameSession,
-                                 std::shared_ptr<NonPlayableCharacter> actor,
-                                 Action *action) {
-  if (action->getTargetType() == Action::selfTarget)
-    return actor.get();
-  if (action->getTargetType() == Action::enemyTarget)
-    return &gameSession.getPlayer();
-  if (action->getTargetType() == Action::friendTarget) {
-    if (actor->getAIType() == NonPlayableCharacter::boss)
-      // for now bosses are considered "lone fighter" types
-      return actor.get();
-    auto npcList{gameSession.getEnemiesInMap()};
-    return npcList[Random::get<std::size_t>(0, npcList.size())].lock().get();
-    // This might return a non accessible npc. Ideally, a function should be
-    // called here to check if a npc can be accessed considering the action
-    // range and visibility constraints. For now, buffs will have a large range
-  }
-  if (action->getTargetType() == Action::aoe &&
-      (action->isType(Action::defenseBuff) ||
-       action->isType(Action::offenseBuff))) {
-    auto npcList{gameSession.getEnemiesInMap()};
-    return npcList[Random::get<std::size_t>(0, npcList.size())].lock().get();
-  }
-  if (action->getTargetType() == Action::aoe)
-    return &gameSession.getPlayer();
-  return nullptr;
-}
-
 std::string
 NpcCombatAI::useAction(GameSession &gameSession,
                        std::shared_ptr<NonPlayableCharacter> actor) {
@@ -146,7 +119,7 @@ NpcCombatAI::useAction(GameSession &gameSession,
     actor->setSkipTurn();
     return res;
   }
-  auto target = getTarget(gameSession, actor, selectedAction);
+  auto target{actor->getCurrentTarget()};
   if (checkTargetAvailable(gameSession, actor, *target, selectedAction)) {
     res = tryCreatureAction(gameSession, actor, *target, selectedAction);
   } else if (!actor->getCurrentPath().empty()) {

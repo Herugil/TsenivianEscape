@@ -16,9 +16,6 @@ std::string tryCreatureAction(GameSession &gameSession,
 bool checkTargetAvailable(GameSession &gameSession,
                           std::shared_ptr<NonPlayableCharacter> actor,
                           Creature &target, Action *action);
-Creature *getTarget(GameSession &gameSession,
-                    std::shared_ptr<NonPlayableCharacter> actor,
-                    Action *action);
 std::string useAction(GameSession &gameSession,
                       std::shared_ptr<NonPlayableCharacter> actor);
 } // namespace NpcCombatAI

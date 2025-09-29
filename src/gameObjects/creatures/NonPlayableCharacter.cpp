@@ -137,6 +137,7 @@ std::string NonPlayableCharacter::setCurrentBehavior(
   case aggressiveMelee:
   case aggressiveRanged:
     m_currentBehavior = basicAttack;
+    m_currentTarget = &gameSession.getPlayer();
     break;
   case waryMelee:
     if (m_healthPoints <=
@@ -144,13 +145,20 @@ std::string NonPlayableCharacter::setCurrentBehavior(
       if (Random::rollD100() < AISettings::g_waryMeleeFleeChance) {
         m_currentBehavior = flee;
         res << getName() << " starts fleeing!\n";
-      } else
+      } else {
         m_currentBehavior = basicAttack;
-    } else
+        m_currentTarget = &gameSession.getPlayer();
+      }
+    } else {
       m_currentBehavior = basicAttack;
+      m_currentTarget = &gameSession.getPlayer();
+    }
     break;
   case boss:
     m_currentBehavior = setFighterBossBehavior(gameSession);
+    break;
+  case support:
+    m_currentBehavior = setSupportBehavior(gameSession);
     break;
   default:
     m_currentBehavior = defaultBehavior;
@@ -158,55 +166,103 @@ std::string NonPlayableCharacter::setCurrentBehavior(
   return res.str();
 }
 
-void NonPlayableCharacter::setCurrentAction(Action *action) {
-  m_currentAction = action;
-}
-
-Action *
-NonPlayableCharacter::determineCurrentAction(Action::ActionType type) const {
+Action *NonPlayableCharacter::determineCurrentAction(Action::ActionType type,
+                                                     GameSession &gameSession) {
   auto availableActions{getUsableActionFromType(type)};
   auto r{Random::get<std::size_t>(0, availableActions.size() - 1)};
   if (!availableActions.empty()) {
-    return availableActions[r];
-  } else {
-    return nullptr;
+    m_currentAction = availableActions[r];
+    m_currentTarget = pickTargetForAction(gameSession, m_currentAction);
+    if (m_currentTarget)
+      return m_currentAction;
   }
+  return nullptr;
 }
 
 Action *NonPlayableCharacter::getCurrentAction() const {
   return m_currentAction;
 }
 
+Creature *NonPlayableCharacter::pickTargetForAction(GameSession &gameSession,
+                                                    Action *action) {
+  if (action->getTargetType() == Action::selfTarget)
+    return this;
+  if (action->getTargetType() == Action::enemyTarget)
+    return &gameSession.getPlayer();
+  if (action->getTargetType() == Action::friendTarget) {
+    if (this->getAIType() == NonPlayableCharacter::boss)
+      // for now bosses are considered "lone fighter" types
+      return this;
+    auto npcList{gameSession.getEnemiesInMap()};
+    return npcList[Random::get<std::size_t>(0, npcList.size())].lock().get();
+    // This might return a non accessible npc. Ideally, a function should be
+    // called here to check if a npc can be accessed considering the action
+    // range and visibility constraints. For now, buffs will have a large range
+  }
+  if (action->getTargetType() == Action::aoe &&
+      (action->isType(Action::defenseBuff) ||
+       action->isType(Action::offenseBuff))) {
+    auto npcList{gameSession.getEnemiesInMap()};
+    return npcList[Random::get<std::size_t>(0, npcList.size())].lock().get();
+  }
+  if (action->getTargetType() == Action::aoe)
+    return &gameSession.getPlayer();
+  return nullptr;
+}
+
+Creature *NonPlayableCharacter::getCurrentTarget() const {
+  return m_currentTarget;
+}
+
 NonPlayableCharacter::Behaviors
 NonPlayableCharacter::setFighterBossBehavior(GameSession &gameSession) {
   Action *availableAction{};
   if (m_healthPoints <= m_maxHealthPoints / 2) {
-    availableAction = determineCurrentAction(Action::selfHeal);
-    if (availableAction) {
-      setCurrentAction(availableAction);
+    availableAction = determineCurrentAction(Action::selfHeal, gameSession);
+    if (availableAction)
       return selfHeal;
-    }
   }
   if (gameSession.getCurrentTurn() <= 1) {
     // this should be checking for current usable buffs, current passives
     // on the creature, etc...
-    availableAction = determineCurrentAction(Action::defenseBuff);
+    availableAction = determineCurrentAction(Action::defenseBuff, gameSession);
     if (availableAction) {
-      setCurrentAction(availableAction);
       return defenseBuff;
     }
-    availableAction = determineCurrentAction(Action::offenseBuff);
+    availableAction = determineCurrentAction(Action::offenseBuff, gameSession);
     if (availableAction) {
-      setCurrentAction(availableAction);
       return offenseBuff;
     }
   }
-  availableAction = determineCurrentAction(Action::attack);
+  availableAction = determineCurrentAction(Action::attack, gameSession);
   if (availableAction) {
-    setCurrentAction(availableAction);
     return attack;
   }
+  m_currentTarget = &gameSession.getPlayer();
   return basicAttack; // no action found
+}
+
+NonPlayableCharacter::Behaviors
+NonPlayableCharacter::setSupportBehavior(GameSession &gameSession) {
+  Action *availableAction{};
+  if (Random::rollD100() < 50) {
+    availableAction = determineCurrentAction(Action::defenseBuff, gameSession);
+    if (availableAction) {
+      return defenseBuff;
+    }
+    availableAction = determineCurrentAction(Action::offenseBuff, gameSession);
+    if (availableAction) {
+      return offenseBuff;
+    }
+  } else {
+    availableAction = determineCurrentAction(Action::offenseBuff, gameSession);
+    if (availableAction)
+      return selfHeal;
+    availableAction = determineCurrentAction(Action::defenseBuff, gameSession);
+    if (availableAction)
+      return defenseBuff;
+  }
+  return basicAttack;
 }
 
 NonPlayableCharacter::Behaviors
@@ -224,14 +280,15 @@ std::deque<Point> &NonPlayableCharacter::getCurrentPath() {
   return m_currentPath;
 }
 
-void NonPlayableCharacter::setCurrentPath(GameSession &gameSession) {
+void NonPlayableCharacter::setCurrentPath(GameSession &gameSession,
+                                          const Creature &target) {
   switch (m_currentBehavior) {
   case basicAttack:
   case attack:
   case selfHeal: // this depends on the target (self heal)
                  // can be an attack targetting the player for ex
                  // this function needs a target parameter probably
-    m_currentPath = getPathAttack(gameSession);
+    m_currentPath = getPathToTarget(gameSession, target);
     return;
   case flee:
     m_currentPath = getPathFlee(gameSession);
@@ -241,7 +298,8 @@ void NonPlayableCharacter::setCurrentPath(GameSession &gameSession) {
   }
 }
 
-std::deque<Point> NonPlayableCharacter::getPathFlee(GameSession &gameSession) {
+std::deque<Point>
+NonPlayableCharacter::getPathFlee(GameSession &gameSession) const {
   std::vector<Point> possiblePoints{};
   std::vector<Point> safePoints{};
   std::vector<Point> mapChangers{};
@@ -282,7 +340,8 @@ std::deque<Point> NonPlayableCharacter::getPathFlee(GameSession &gameSession) {
 }
 
 std::deque<Point>
-NonPlayableCharacter::getPathAttack(GameSession &gameSession) {
+NonPlayableCharacter::getPathToTarget(GameSession &gameSession,
+                                      const Creature &target) const {
   std::vector<Point> possiblePoints{};
   for (int i{0}; i < gameSession.getMap().getWidth(); ++i) {
     for (int j{0}; j < gameSession.getMap().getHeight(); ++j) {
@@ -290,14 +349,14 @@ NonPlayableCharacter::getPathAttack(GameSession &gameSession) {
       if (!gameSession.getMap().isAvailable(potentialDestination))
         continue; // cant go there
       if (GeometryUtils::distanceL2(potentialDestination,
-                                    gameSession.getPlayerPos()) >=
-          GeometryUtils::distanceL2(getPosition(), gameSession.getPlayerPos()))
-        continue; // would get farther to player
+                                    target.getPosition()) >=
+          GeometryUtils::distanceL2(getPosition(), target.getPosition()))
+        continue; // would get farther to target
       possiblePoints.push_back(potentialDestination);
     }
   }
   return GeometryUtils::sortPointsAndFindPath(
-      possiblePoints, getPosition(), gameSession, gameSession.getPlayerPos());
+      possiblePoints, getPosition(), gameSession, target.getPosition());
   return {};
 }
 
@@ -311,8 +370,9 @@ NonPlayableCharacter::stringToAIType(std::string_view str) {
     return aggressiveRanged;
   else if (str == "boss")
     return boss;
-  else
-    return defaultAI;
+  else if (str == "support")
+    return support;
+  return defaultAI;
 }
 
 int NonPlayableCharacter::getXpValue() const { return m_xpValue; }
