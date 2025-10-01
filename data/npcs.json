@@ -10,7 +10,20 @@
     "distanceDamage": 0,
     "description": "An aggressive rat with tiny red eyes.",
     "deadDescription": "A dead rat body.",
-    "xpValue": 5,
+    "xpValue": 5
+  },
+  "enemyPlagueRat": {
+    "name": "Plague Rat",
+    "type": "waryMelee",
+    "maxHealth": 4,
+    "evasion": 10,
+    "meleeHitChance": 50,
+    "distanceHitChance": 0,
+    "meleeDamage": 2,
+    "distanceDamage": 0,
+    "description": "A large rat, emitting a foul odor.",
+    "deadDescription": "A dead diseased rat body.",
+    "xpValue": 7,
     "actions": {
       "meleeAttack": {
         "name": "Rat bite",
@@ -112,7 +125,7 @@
   "enemyRatMaster": {
     "name": "Rat Master",
     "type": "support",
-    "maxHealth": 10,
+    "maxHealth": 6,
     "evasion": 10,
     "meleeHitChance": 70,
     "distanceHitChance": 70,
@@ -120,7 +133,7 @@
     "distanceDamage": 2,
     "description": "A sinister looking humanoid figure, surrounded by rats.",
     "deadDescription": "A dead rat master body.",
-    "xpValue": 100,
+    "xpValue": 10,
     "stats": {
       "strength": 1,
       "dexterity": 2,
@@ -129,6 +142,8 @@
     },
     "actions": [
       { "name": "Haste", "currentCharges": 4 },
+      { "name": "Precise Strikes", "currentCharges": 4 },
+      { "name": "Powerful Strikes", "currentCharges": 2 },
       { "name": "Basic Attack", "isBasicAttack": true, "type": "ranged" }
     ],
     "armor": 1

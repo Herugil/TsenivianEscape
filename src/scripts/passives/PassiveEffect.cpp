@@ -49,6 +49,14 @@ PassiveEffect::Type PassiveEffect::typeFromString(std::string_view type) {
     return Type::DamageOverTime;
   if (type == "composite")
     return Type::Composite;
+  if (type == "meleeHitBonus")
+    return Type::MeleeHitBonus;
+  if (type == "distanceHitBonus")
+    return Type::DistanceHitBonus;
+  if (type == "meleeDamageBonus")
+    return Type::MeleeDamageBonus;
+  if (type == "distanceDamageBonus")
+    return Type::DistanceDamageBonus;
   throw std::invalid_argument("Invalid passive effect type: " +
                               std::string(type));
 }
@@ -78,6 +86,22 @@ int PassiveEffect::getStatModifier(Stat stat) const {
     if (stat == Stat::Armor)
       return m_value;
     break;
+  case Type::MeleeDamageBonus:
+    if (stat == Stat::MeleeDamage)
+      return m_value;
+    break;
+  case Type::DistanceDamageBonus:
+    if (stat == Stat::DistanceDamage)
+      return m_value;
+    break;
+  case Type::MeleeHitBonus:
+    if (stat == Stat::MeleeHitChance)
+      return m_value;
+    break;
+  case Type::DistanceHitBonus:
+    if (stat == Stat::DistanceHitChance)
+      return m_value;
+    break;
   default:
     break;
   }
@@ -104,6 +128,16 @@ std::string PassiveEffect::typeToString(Type type) {
     return "constitutionBonus";
   case Type::DamageOverTime:
     return "damageOverTime";
+  case Type::ArmorBonus:
+    return "armorBonus";
+  case Type::MeleeHitBonus:
+    return "meleeHitBonus";
+  case Type::DistanceHitBonus:
+    return "distanceHitBonus";
+  case Type::MeleeDamageBonus:
+    return "meleeDamageBonus";
+  case Type::DistanceDamageBonus:
+    return "distanceDamageBonus";
   case Type::Composite:
     return "composite";
   default:
@@ -130,6 +164,10 @@ bool PassiveEffect::isBuff() const {
   case Type::ArmorBonus:
   case Type::IntelligenceBonus:
   case Type::ConstitutionBonus:
+  case Type::MeleeDamageBonus:
+  case Type::DistanceDamageBonus:
+  case Type::MeleeHitBonus:
+  case Type::DistanceHitBonus:
     return m_value > 0;
   default:
     return false;
@@ -144,6 +182,10 @@ bool PassiveEffect::isDebuff() const {
   case Type::ArmorBonus:
   case Type::IntelligenceBonus:
   case Type::ConstitutionBonus:
+  case Type::MeleeDamageBonus:
+  case Type::DistanceDamageBonus:
+  case Type::MeleeHitBonus:
+  case Type::DistanceHitBonus:
     return m_value < 0;
   default:
     return false;

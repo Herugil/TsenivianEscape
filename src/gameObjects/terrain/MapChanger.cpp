@@ -15,6 +15,8 @@ MapChanger::MapChanger(std::string_view currentMap, Point position,
       m_targetMap{targetMap}, m_spawningPoint{spawningPoint} {
   m_locked = locked;
   m_keyId = keyId;
+  if (locked)
+    m_traversable = false;
 }
 
 void MapChanger::activateWalkOn(std::shared_ptr<GameObject> gameObject,
@@ -60,4 +62,9 @@ void MapChanger::activateWalkOn(std::shared_ptr<GameObject> gameObject,
       return;
     }
   }
+}
+
+void MapChanger::unlock() {
+  m_locked = false;
+  m_traversable = true;
 }

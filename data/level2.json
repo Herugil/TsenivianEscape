@@ -1,69 +1,79 @@
 {
   "introTextFile": "level2.txt",
-  "mapWidth": 13,
+  "mapWidth": 15,
   "mapHeight": 10,
   "wallDescription": "A simple wall of rough hewn stone",
   "walls": [
     [0, 0],
-    [0, 3],
+    [7, 0],
 
-    [0, 5],
-    [0, 12],
+    [9, 0],
+    [14, 0],
 
-    [12, 0],
-    [12, 4],
+    [14, 0],
+    [14, 4],
 
-    [12, 6],
-    [12, 12],
-
-    [12, 0],
-    [0, 0],
+    [14, 6],
+    [14, 9],
 
     [0, 9],
-    [12, 9],
+    [14, 9],
 
-    [4, 0],
-    [4, 5]
+    [0, 0],
+    [0, 4],
+
+    [0, 6],
+    [0, 9],
+
+    [0, 4],
+    [4, 4],
+
+    [6, 4],
+    [7, 4],
+
+    [7, 4],
+    [7, 0]
   ],
   "enemies": [
     {
-      "symbol": "V",
-      "position": [8, 5],
-      "id": "enemyVampire",
-      "inventory": ["itemSwordOfWrath"]
+      "symbol": "r",
+      "position": [1, 1],
+      "id": "enemyRat"
     },
     {
       "symbol": "r",
-      "position": [3, 8],
+      "position": [12, 8],
       "id": "enemyRat"
     }
   ],
   "gameObjects": [
     {
-      "symbol": "X",
-      "position": [12, 5],
-      "type": "container",
-      "name": "hidden items in the wall",
-      "description": "A brick you could dig out of the wall with the appropriate tools.",
-      "contents": ["itemSword", "itemBanana"]
-    },
-    {
-      "symbol": " ",
-      "position": [12, 5],
+      "symbol": "D",
+      "position": [8, 0],
       "type": "mapChanger",
-      "name": "passage to the next room",
-      "description": "A creaking, half open wooden door.",
-      "destLevel": "level3",
-      "destPosition": [8, 3]
+      "name": "Cave in",
+      "description": "Some heavy rocks blocking a pathway. You could dig it out with an appropriate tool.",
+      "locked": true,
+      "keyId": "itemPickaxe",
+      "destLevel": "level2b",
+      "destPosition": [8, 9]
     },
     {
       "symbol": " ",
-      "position": [0, 4],
+      "position": [0, 5],
       "type": "mapChanger",
       "name": "passage to the next room",
       "description": "A creaking, half open wooden door.",
       "destLevel": "level1",
-      "destPosition": [8, 3]
+      "destPosition": [13, 5]
+    },
+    {
+      "symbol": "C",
+      "position": [13, 8],
+      "type": "container",
+      "name": "Dusty skeleton",
+      "description": "A crumbling skeleton, with yellowed bones and a cracked skull.",
+      "contents": ["itemPickaxe", "itemLeatherHelmet", "itemSmallHealthPotion"]
     }
   ]
 }

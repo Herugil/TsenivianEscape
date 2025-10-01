@@ -48,7 +48,7 @@
       "name": "passage to the next room",
       "description": "A surprisingly sturdy wooden door, with a rusty keyhole.",
       "destLevel": "level2",
-      "destPosition": [1, 4],
+      "destPosition": [0, 5],
       "locked": true,
       "keyId": "itemRustyKeyLevel1"
     },

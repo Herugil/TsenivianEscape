@@ -77,6 +77,12 @@
     "description": "A leather helmet, offering basic protection for the head.",
     "armorValue": 1
   },
+  "itemLeatherGloves": {
+    "name": "Leather Gloves",
+    "itemType": "gloves",
+    "description": "A pair of leather gloves. They are decorated with silver patterns which are all but faded.",
+    "armorValue": 1
+  },
   "itemRustyKeyLevel1": {
     "name": "Rusty Key",
     "description": "A simple rusty iron key."

@@ -72,13 +72,19 @@ void NonPlayableCharacter::addItemToInventory(std::shared_ptr<Item> item) {
 // considering using only specific stat modifiers such as melee hit chance
 // modifier, but not strength modifier
 // will depend on balancing probably
-int NonPlayableCharacter::getMeleeHitChance() const { return m_meleeHitChance; }
-int NonPlayableCharacter::getDistanceHitChance() const {
-  return m_distanceHitChance;
+int NonPlayableCharacter::getMeleeHitChance() const {
+  return m_meleeHitChance + getStatModifier(Stat::MeleeHitChance);
 }
-int NonPlayableCharacter::getMeleeDamage() const { return m_meleeDamage; }
+int NonPlayableCharacter::getDistanceHitChance() const {
+  return m_distanceHitChance + getStatModifier(Stat::DistanceHitChance);
+}
+int NonPlayableCharacter::getMeleeDamage() const {
+  return m_meleeDamage + getStatModifier(Stat::MeleeDamage);
+}
 int NonPlayableCharacter::getMeleeRange() const { return m_meleeRange; }
-int NonPlayableCharacter::getDistanceDamage() const { return m_distanceDamage; }
+int NonPlayableCharacter::getDistanceDamage() const {
+  return m_distanceDamage + getStatModifier(Stat::DistanceDamage);
+}
 int NonPlayableCharacter::getDistanceRange() const { return m_distanceRange; }
 int NonPlayableCharacter::getArmor() const {
   return m_armor + getStatModifier(Stat::Armor);
@@ -286,7 +292,7 @@ NonPlayableCharacter::setSupportBehavior(GameSession &gameSession) {
   } else {
     availableAction = determineCurrentAction(Action::offenseBuff, gameSession);
     if (availableAction)
-      return selfHeal;
+      return offenseBuff;
     availableAction = determineCurrentAction(Action::defenseBuff, gameSession);
     if (availableAction)
       return defenseBuff;
@@ -314,6 +320,8 @@ std::deque<Point> &NonPlayableCharacter::getCurrentPath() {
 void NonPlayableCharacter::setCurrentPath(GameSession &gameSession,
                                           const Creature &target) {
   switch (m_currentBehavior) {
+  case offenseBuff:
+  case defenseBuff:
   case basicAttack:
   case attack:
   case selfHeal: // this depends on the target (self heal)

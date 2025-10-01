@@ -41,9 +41,9 @@ public:
   bool isMoveable() const;
   void setPosition(const Point &point);
   const std::string &getKeyId() const;
-  void unlock();
+  virtual void unlock();
   virtual void setUsed();
-  InteractionResult virtual playerInteraction(); // not const because some
+  virtual InteractionResult playerInteraction(); // not const because some
                                                  // object states can be changed
                                                  // through this function
 

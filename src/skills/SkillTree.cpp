@@ -5,6 +5,7 @@
 #include "scripts/actions/Haste.h"
 #include "scripts/actions/HealingAttack.h"
 #include "scripts/actions/ShovingAttack.h"
+#include "scripts/actions/StatModifier.h"
 
 std::vector<std::unique_ptr<Action>>
 SkillTree::getSkillsStatSpread(const Stats &stat) {
@@ -66,6 +67,18 @@ std::unique_ptr<Action> SkillTree::createDodgeAction() {
   return std::make_unique<Dodge>("Dodge");
 }
 
+std::unique_ptr<Action> SkillTree::createPreciseStrikesAction() {
+  return std::make_unique<StatModifier>("Precise strikes",
+                                        PassiveEffect::Type::MeleeHitBonus, 10,
+                                        2, 1, 1, 4, 10);
+}
+
+std::unique_ptr<Action> SkillTree::createPowerfulStrikesAction() {
+  return std::make_unique<StatModifier>("Powerful strikes",
+                                        PassiveEffect::Type::MeleeDamageBonus,
+                                        1, 2, 1, 1, 4, 10);
+}
+
 std::unique_ptr<Action> SkillTree::createActionByName(std::string_view name) {
   if (name == "Backbreaker")
     return SkillTree::createBackbreakerAction();
@@ -77,5 +90,9 @@ std::unique_ptr<Action> SkillTree::createActionByName(std::string_view name) {
     return SkillTree::createHasteAction();
   if (name == "Dodge")
     return SkillTree::createDodgeAction();
+  if (name == "Precise Strikes")
+    return SkillTree::createPreciseStrikesAction();
+  if (name == "Powerful Strikes")
+    return SkillTree::createPowerfulStrikesAction();
   return nullptr;
 }
