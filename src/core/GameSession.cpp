@@ -160,6 +160,11 @@ bool GameSession::dropItem(std::shared_ptr<Item> item, const Point &point) {
   return false;
 }
 
+std::vector<std::shared_ptr<Container>> &
+GameSession::getSessionOwnedContainers() {
+  return m_sessionOwnedContainers;
+}
+
 const std::vector<std::shared_ptr<NonPlayableCharacter>> &
 GameSession::getNpcs() const {
   return m_npcs;

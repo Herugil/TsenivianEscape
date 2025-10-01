@@ -13,6 +13,9 @@
 #include <fstream>
 #include <thread>
 
+// TODO: this class probably does too much low level stuff, will
+// need to be broken down
+
 GameStateManager::GameStateManager(GameSession &&gameSession)
     : m_gameSession{std::move(gameSession)} {
   m_gameSession.respawnPlayer();
@@ -268,6 +271,21 @@ void GameStateManager::handleContainer() {
         if (item) {
           player.takeItem(item);
           container->displayContents();
+        }
+        if (container->getContents().empty()) {
+          if (container->getName() == "Left items bag") {
+            auto containers = m_gameSession.getSessionOwnedContainers();
+            auto it = std::find_if(
+                containers.begin(), containers.end(),
+                [container](const std::shared_ptr<Container> &ptr) {
+                  return ptr.get() == container;
+                });
+            if (it != containers.end()) {
+              m_gameSession.removeContainer(*it);
+            }
+          }
+          m_interactionResult.interactedObject = nullptr;
+          m_currentState = GameState::Exploration;
         }
       } else {
         m_currentState = GameState::Exploration;

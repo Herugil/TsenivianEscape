@@ -59,6 +59,7 @@ public:
   void resetInitiative();
   int getCurrentTurn() const;
   void incrementCurrentTurn();
+  std::vector<std::shared_ptr<Container>> &getSessionOwnedContainers();
 
   std::vector<std::weak_ptr<NonPlayableCharacter>> getEnemiesInMap() const;
   void displayEnemiesInMap(
