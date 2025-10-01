@@ -82,7 +82,8 @@ NpcCombatAI::tryCreatureMove(GameSession &gameSession,
     actor->getCurrentPath().pop_front(); // remove current point from path
     if (actor->getCurrentBehavior() != NonPlayableCharacter::flee &&
         actor->getCurrentBehavior() != NonPlayableCharacter::basicAttack &&
-        !actor->canAct(actor->getCurrentAction()->getCost()))
+        (!actor->getCurrentAction() ||
+         !actor->canAct(actor->getCurrentAction()->getCost())))
       actor->resetHasActed();
   } else {
     actor->resetHasActed(); // this should make npc skip turn

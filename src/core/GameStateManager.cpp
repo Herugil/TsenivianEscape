@@ -712,6 +712,7 @@ void GameStateManager::newGame(std::string_view name) {
   std::unordered_map<std::string, std::shared_ptr<NonPlayableCharacter>> npcs{
       DataLoader::getAllNpcs()};
   DataLoader::populateGameSession(items, npcs, m_gameSession);
+  m_gameSession.setCurrentMap("level1");
   m_gameSession.respawnPlayer();
 }
 

@@ -2,8 +2,8 @@
 
 namespace AISettings {
 // fleeing behaviors
-constexpr int g_waryMeleeFleeChance{25};
-constexpr int g_waryMeleeFleeHealthPercent{40};
+constexpr int g_waryMeleeFleeChance{100};
+constexpr int g_waryMeleeFleeHealthPercent{100};
 
 // buffing behavior
 constexpr int g_buffChanceBaseMult{15};
