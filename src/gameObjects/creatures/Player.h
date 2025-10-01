@@ -36,7 +36,7 @@ private:
   Stats m_stats{};
   PlayerEquipment m_equipment{};
   Shove m_shoveAction{};
-  int m_currentXP{100};
+  int m_currentXP{0};
   int m_level{1};
   int m_xpToNextLevel{100}; // const, linear exp ?
 

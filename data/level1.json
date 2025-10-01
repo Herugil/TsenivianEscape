@@ -1,74 +1,49 @@
 {
   "introTextFile": "level1.txt",
-  "mapWidth": 10,
+  "mapWidth": 14,
   "mapHeight": 10,
   "wallDescription": "A simple wall of rough hewn stone",
   "walls": [
-    [0, 0],
     [0, 3],
+    [0, 7],
 
-    [0, 5],
-    [0, 9],
+    [0, 3],
+    [4, 3],
 
-    [9, 0],
-    [9, 2],
+    [0, 7],
+    [4, 7],
 
-    [9, 4],
-    [9, 5],
+    [5, 0],
+    [5, 4],
 
-    [9, 6],
-    [9, 9],
+    [5, 6],
+    [5, 9],
 
-    [9, 0],
-    [0, 0],
+    [5, 0],
+    [13, 0],
 
-    [0, 9],
-    [9, 9]
+    [5, 9],
+    [13, 9],
+
+    [13, 0],
+    [13, 4],
+
+    [13, 6],
+    [13, 9]
   ],
-  "enemies": [
-    {
-      "symbol": "m",
-      "position": [3, 3],
-      "id": "enemyVampire",
-      "inventory": ["itemBowOfFury", "itemSmallHealthPotion"]
-    }
-  ],
+  "enemies": [],
   "gameObjects": [
     {
-      "symbol": "X",
-      "position": [9, 5],
-      "type": "container",
-      "name": "hidden items in the wall",
-      "description": "A brick you could dig out of the wall with the appropriate tools.",
-      "contents": [
-        "itemSword",
-        "itemSpear",
-        "itemBow",
-        "itemSmallHealthPotion",
-        "itemSwordOfWrath",
-        "itemSmallHealthPotion",
-        "itemBowOfFury"
-      ],
-      "locked": true,
-      "keyId": "itemPickaxe"
-    },
-    {
-      "symbol": "D",
-      "position": [1, 2],
+      "symbol": "C",
+      "position": [6, 1],
       "type": "container",
       "name": "Dead body",
       "description": "The body of an older inmate, half rotten. You find some items on him:",
-      "contents": [
-        "itemTornLeatherArmor",
-        "itemLeatherHelmet",
-        "itemRustyKeyLevel1",
-        "itemPickaxe",
-        "itemBowOfFury"
-      ]
+      "contents": ["itemRustyKeyLevel1", "itemDagger"]
     },
     {
       "symbol": "D",
-      "position": [9, 3],
+      "position": [13, 5],
       "type": "mapChanger",
       "name": "passage to the next room",
       "description": "A surprisingly sturdy wooden door, with a rusty keyhole.",
@@ -76,6 +51,16 @@
       "destPosition": [1, 4],
       "locked": true,
       "keyId": "itemRustyKeyLevel1"
+    },
+    {
+      "symbol": "D",
+      "position": [
+        [0, 4],
+        [0, 5],
+        [0, 6]
+      ],
+      "name": "Prison wall",
+      "description": "Through the bars of your prison cell, you can see the sentinel guarding your door, crushed to death by the fallen debris."
     }
   ]
 }

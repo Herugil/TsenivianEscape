@@ -2,15 +2,15 @@
   "enemyRat": {
     "name": "Rat",
     "type": "waryMelee",
-    "maxHealth": 2,
+    "maxHealth": 4,
     "evasion": 10,
     "meleeHitChance": 50,
     "distanceHitChance": 0,
-    "meleeDamage": 1,
+    "meleeDamage": 2,
     "distanceDamage": 0,
     "description": "An aggressive rat with tiny red eyes.",
     "deadDescription": "A dead rat body.",
-    "xpValue": 20,
+    "xpValue": 5,
     "actions": {
       "meleeAttack": {
         "name": "Rat bite",
@@ -18,21 +18,12 @@
         "type": "melee",
         "effects": [
           {
-            "type": "composite",
-            "id": "ratBiteEffect",
+            "type": "strengthBonus",
+            "id": "ratDiseaseEffect",
             "name": "Rat's disease",
             "target": "enemy",
             "stackable": false,
-            "components": [
-              {
-                "type": "damageOverTime",
-                "value": 1
-              },
-              {
-                "type": "strengthBonus",
-                "value": -1
-              }
-            ],
+            "value": -1,
             "duration": -1
           }
         ]
