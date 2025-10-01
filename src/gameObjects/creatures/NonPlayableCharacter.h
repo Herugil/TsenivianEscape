@@ -99,6 +99,8 @@ public:
   bool hasActed() const { return m_hasActed; }
   void setHasActed() { m_hasActed = true; }
   void resetHasActed() { m_hasActed = false; }
+  int getChanceToBuff() const;
+
   Action *getBasicAction() const;
   std::vector<Action *> getUsableActionFromType(Action::ActionType type) const;
   Behaviors setFighterBossBehavior(GameSession &gameSession);

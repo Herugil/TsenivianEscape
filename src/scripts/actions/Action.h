@@ -19,6 +19,7 @@ public:
     attack,
     selfHeal,
     heal,
+    selfBuff,
     offenseBuff,
     defenseBuff,
     offenseDebuff,

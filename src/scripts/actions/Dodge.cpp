@@ -9,6 +9,7 @@ Dodge::Dodge(std::string_view name) : Action{name, false, false} {
   m_cooldown = 1;
   m_currentCooldown = 0;
   m_types.push_back(ActionType::defenseBuff);
+  m_types.push_back(ActionType::selfBuff);
   m_targetType = selfTarget;
 }
 
@@ -24,6 +25,7 @@ std::string Dodge::execute(Creature &actor) {
     actor.addPassiveEffect(PassiveEffect{PassiveEffect::Type::EvasionBonus, 10,
                                          2, "dodge", "dodge", false});
     res << actor.getName() << " starts dodging.\n";
+    actor.setBuffedThisTurn();
     m_currentCooldown = m_cooldown;
   }
   return res.str();

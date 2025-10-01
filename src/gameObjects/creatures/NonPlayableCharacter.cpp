@@ -194,10 +194,21 @@ Creature *NonPlayableCharacter::pickTargetForAction(GameSession &gameSession,
       // for now bosses are considered "lone fighter" types
       return this;
     auto npcList{gameSession.getEnemiesInMap()};
-    return npcList[Random::get<std::size_t>(0, npcList.size())].lock().get();
-    // This might return a non accessible npc. Ideally, a function should be
-    // called here to check if a npc can be accessed considering the action
-    // range and visibility constraints. For now, buffs will have a large range
+    Creature *bestTarget = nullptr;
+    int bestChance = -1;
+    for (auto &weakNpc : npcList) {
+      auto npc = weakNpc.lock().get();
+      if (!npc)
+        continue;
+      int chance = npc->getChanceToBuff();
+      if (npc == this)
+        chance -= AISettings::g_selfBuffLikelihoodPenalty;
+      if (chance > bestChance) {
+        bestChance = chance;
+        bestTarget = npc;
+      }
+    }
+    return bestTarget;
   }
   if (action->getTargetType() == Action::aoe &&
       (action->isType(Action::defenseBuff) ||
@@ -214,29 +225,47 @@ Creature *NonPlayableCharacter::getCurrentTarget() const {
   return m_currentTarget;
 }
 
+int NonPlayableCharacter::getChanceToBuff() const {
+  int diffBuffDebuff{countActiveBuffs() - countActiveDebuffs()};
+  int alreadyBuffedValue{
+      hasBuffedThisTurn() ? 0 : AISettings::g_alreadyBuffedPenalty};
+  int chance{AISettings::g_buffChanceBase -
+             AISettings::g_buffChanceBaseMult * diffBuffDebuff +
+             alreadyBuffedValue}; // if buff debuff eq at all, equals 75
+                                  // with each buff decreases by 15
+                                  // if already buffed this turn, decrease by 25
+  return std::clamp(chance, 0, AISettings::g_buffChanceMax);
+}
+
 NonPlayableCharacter::Behaviors
 NonPlayableCharacter::setFighterBossBehavior(GameSession &gameSession) {
   Action *availableAction{};
-  if (m_healthPoints <= m_maxHealthPoints / 2) {
-    availableAction = determineCurrentAction(Action::selfHeal, gameSession);
-    if (availableAction)
-      return selfHeal;
-  }
-  if (gameSession.getCurrentTurn() <= 1) {
-    // this should be checking for current usable buffs, current passives
-    // on the creature, etc...
-    availableAction = determineCurrentAction(Action::defenseBuff, gameSession);
-    if (availableAction) {
-      return defenseBuff;
+  if (m_healthPoints <=
+      m_maxHealthPoints * AISettings::g_bossHealHealthPercent / 100) {
+    if (Random::rollD100() < getChanceToBuff()) {
+      availableAction =
+          determineCurrentAction(Action::defenseBuff, gameSession);
+      if (availableAction) {
+        return defenseBuff;
+      }
     }
+    if (Random::rollD100() < AISettings::g_bossHealChance) {
+      availableAction = determineCurrentAction(Action::selfHeal, gameSession);
+      if (availableAction)
+        return selfHeal;
+    }
+  }
+  if (Random::rollD100() < getChanceToBuff()) {
     availableAction = determineCurrentAction(Action::offenseBuff, gameSession);
     if (availableAction) {
       return offenseBuff;
     }
   }
-  availableAction = determineCurrentAction(Action::attack, gameSession);
-  if (availableAction) {
-    return attack;
+  if (Random::rollD100() < AISettings::g_bossActionChance) {
+    availableAction = determineCurrentAction(Action::attack, gameSession);
+    if (availableAction) {
+      return attack;
+    }
   }
   m_currentTarget = &gameSession.getPlayer();
   return basicAttack; // no action found
@@ -262,6 +291,7 @@ NonPlayableCharacter::setSupportBehavior(GameSession &gameSession) {
     if (availableAction)
       return defenseBuff;
   }
+  m_currentTarget = &gameSession.getPlayer();
   return basicAttack;
 }
 
@@ -272,6 +302,7 @@ NonPlayableCharacter::getCurrentBehavior() const {
 void NonPlayableCharacter::setSkipTurn() {
   m_currentBehavior = skipTurn;
   m_hasActed = false;
+  resetBuffedThisTurn();
 }
 void NonPlayableCharacter::setDefaultBehavior() {
   m_currentBehavior = defaultBehavior;

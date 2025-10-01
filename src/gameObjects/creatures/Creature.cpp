@@ -175,3 +175,21 @@ const std::vector<std::shared_ptr<Item>> &Creature::getInventory() const {
 std::vector<std::shared_ptr<Item>> &Creature::getInventory() {
   return m_inventory;
 }
+
+int Creature::countActiveBuffs() const {
+  int buffCount{0};
+  for (const auto &effect : m_passiveEffects) {
+    if (effect->isBuff())
+      ++buffCount;
+  }
+  return buffCount;
+}
+
+int Creature::countActiveDebuffs() const {
+  int debuffCount{0};
+  for (const auto &effect : m_passiveEffects) {
+    if (effect->isDebuff())
+      ++debuffCount;
+  }
+  return debuffCount;
+}

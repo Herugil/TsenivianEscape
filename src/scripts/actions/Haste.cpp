@@ -9,7 +9,6 @@ Haste::Haste(int value, int cost, int maxCharges, int cooldown,
   m_types = {ActionType::offenseBuff, ActionType::defenseBuff};
   // haste gives one AP, so its a generic buff
   m_targetType = friendTarget;
-  // thisll probably allow
 }
 
 std::string Haste::execute(GameSession &gameSession, Creature &actor,
@@ -20,6 +19,7 @@ std::string Haste::execute(GameSession &gameSession, Creature &actor,
     return "Target not visible\n";
   if (useActionResources(actor)) {
     target.addActionPoints(m_value);
+    target.setBuffedThisTurn();
     return actor.getName() + " uses " + static_cast<std::string>(getName()) +
            " on " + target.getName() + ", granting " + std::to_string(m_value) +
            " action points.\n";

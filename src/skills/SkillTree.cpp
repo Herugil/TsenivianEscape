@@ -59,7 +59,7 @@ std::unique_ptr<Action> SkillTree::createRejuvenatingStrikeAction() {
 }
 
 std::unique_ptr<Action> SkillTree::createHasteAction() {
-  return std::make_unique<Haste>(1, 0, 2, 1, "Haste");
+  return std::make_unique<Haste>(1, 0, 2, 3, "Haste");
 }
 
 std::unique_ptr<Action> SkillTree::createDodgeAction() {

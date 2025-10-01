@@ -74,6 +74,9 @@ int PassiveEffect::getStatModifier(Stat stat) const {
   case Type::ConstitutionBonus:
     if (stat == Stat::Constitution)
       return m_value;
+  case Type::ArmorBonus:
+    if (stat == Stat::Armor)
+      return m_value;
     break;
   default:
     break;
@@ -117,6 +120,34 @@ std::string PassiveEffect::display() const {
   else
     result += "Until rest";
   return result;
+}
+
+bool PassiveEffect::isBuff() const {
+  switch (m_type) {
+  case Type::EvasionBonus:
+  case Type::StrengthBonus:
+  case Type::DexterityBonus:
+  case Type::ArmorBonus:
+  case Type::IntelligenceBonus:
+  case Type::ConstitutionBonus:
+    return m_value > 0;
+  default:
+    return false;
+  }
+}
+
+bool PassiveEffect::isDebuff() const {
+  switch (m_type) {
+  case Type::EvasionBonus:
+  case Type::StrengthBonus:
+  case Type::DexterityBonus:
+  case Type::ArmorBonus:
+  case Type::IntelligenceBonus:
+  case Type::ConstitutionBonus:
+    return m_value < 0;
+  default:
+    return false;
+  }
 }
 
 using json = nlohmann::json;

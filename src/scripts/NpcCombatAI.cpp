@@ -16,14 +16,18 @@ std::string
 NpcCombatAI::npcActCombat(GameSession &gameSession,
                           std::shared_ptr<NonPlayableCharacter> actor) {
   std::ostringstream res;
-  auto target{actor->getCurrentTarget()};
-  if (!target)
-    target = gameSession.getPlayerPtr().get();
+  Creature *target{};
   if (!(actor->hasActed())) {
     res << actor->setCurrentBehavior(gameSession);
+    target = actor->getCurrentTarget();
+    if (!target)
+      target = gameSession.getPlayerPtr().get();
     actor->setCurrentPath(gameSession, *target);
     actor->setHasActed();
   }
+  target = actor->getCurrentTarget();
+  if (!target)
+    target = gameSession.getPlayerPtr().get();
   std::vector<Action *> availableActions{};
   switch (actor->getCurrentBehavior()) {
   case NonPlayableCharacter::basicAttack:
