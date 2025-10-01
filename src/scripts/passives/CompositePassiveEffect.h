@@ -18,6 +18,8 @@ public:
   std::unique_ptr<PassiveEffect> clone() const override;
   int getStatModifier(Stat stat) const override;
   std::string display() const override;
+  bool isBuff() const override;
+  bool isDebuff() const override;
 
   json toJson() const override;
 

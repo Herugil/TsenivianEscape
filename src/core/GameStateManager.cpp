@@ -688,7 +688,7 @@ void GameStateManager::loadGame(const std::string &filename) {
 
 void GameStateManager::newGame(std::string_view name) {
   m_gameSession =
-      GameSession(std::make_shared<Player>(Point(2, 1), "level1", 10, name));
+      GameSession(std::make_shared<Player>(Point(2, 1), "level1", 100, name));
   std::unordered_map<std::string, std::shared_ptr<Item>> items{
       DataLoader::getAllItems()};
   std::unordered_map<std::string, std::shared_ptr<NonPlayableCharacter>> npcs{

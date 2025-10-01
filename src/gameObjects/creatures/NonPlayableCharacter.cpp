@@ -98,44 +98,212 @@ int NonPlayableCharacter::getConstitution() const {
 
 std::string NonPlayableCharacter::executeBasicAttack(Creature &target,
                                                      GameSession &gameSession) {
-  auto basicAction{m_actions[0].get()};
+  auto basicAction{getBasicAction()};
   return basicAction->execute(gameSession, *this, target);
+}
+
+int NonPlayableCharacter::getBasicActionRange() const {
+  return getBasicAction()->getRange(*this);
+}
+
+std::vector<Action *>
+NonPlayableCharacter::getUsableActionFromType(Action::ActionType type) const {
+  std::vector<Action *> availableActions{};
+  for (auto &action : m_actions) {
+    if (action->canBeUsed(*this) && action->isType(type))
+      availableActions.push_back(action.get());
+  }
+  return availableActions;
+}
+
+Action *NonPlayableCharacter::getBasicAction() const {
+  for (const auto &action : m_actions) {
+    if (action->isType(Action::defaultAttack)) {
+      return action.get();
+    }
+  }
+  return nullptr;
 }
 
 std::string NonPlayableCharacter::setCurrentBehavior(
     [[maybe_unused]] GameSession &gameSession) {
   std::ostringstream res{};
-  if (m_actionPoints == 0) {
+  if (getActionPoints() == 0 && getMovementPoints() == 0) {
     m_currentBehavior = skipTurn;
-  } else {
-    switch (m_AIType) {
-    case aggressiveMelee:
-    case aggressiveRanged:
-      m_currentBehavior = basicAttack;
-      break;
-    case waryMelee:
-      if (m_healthPoints <=
-          m_maxHealthPoints * AISettings::g_waryMeleeFleeHealthPercent / 100) {
-        if (Random::rollD100() < AISettings::g_waryMeleeFleeChance) {
-          m_currentBehavior = flee;
-          res << getName() << " starts fleeing!\n";
-        } else
-          m_currentBehavior = basicAttack;
-      } else
+    m_hasActed = false;
+    return res.str();
+  }
+  switch (m_AIType) {
+  case aggressiveMelee:
+  case aggressiveRanged:
+    m_currentBehavior = basicAttack;
+    m_currentTarget = &gameSession.getPlayer();
+    break;
+  case waryMelee:
+    if (m_healthPoints <=
+        m_maxHealthPoints * AISettings::g_waryMeleeFleeHealthPercent / 100) {
+      if (Random::rollD100() < AISettings::g_waryMeleeFleeChance) {
+        m_currentBehavior = flee;
+        res << getName() << " starts fleeing!\n";
+      } else {
         m_currentBehavior = basicAttack;
-      break;
-    default:
-      m_currentBehavior = defaultBehavior;
+        m_currentTarget = &gameSession.getPlayer();
+      }
+    } else {
+      m_currentBehavior = basicAttack;
+      m_currentTarget = &gameSession.getPlayer();
     }
+    break;
+  case boss:
+    m_currentBehavior = setFighterBossBehavior(gameSession);
+    break;
+  case support:
+    m_currentBehavior = setSupportBehavior(gameSession);
+    break;
+  default:
+    m_currentBehavior = defaultBehavior;
   }
   return res.str();
+}
+
+Action *NonPlayableCharacter::determineCurrentAction(Action::ActionType type,
+                                                     GameSession &gameSession) {
+  auto availableActions{getUsableActionFromType(type)};
+  auto r{Random::get<std::size_t>(0, availableActions.size() - 1)};
+  if (!availableActions.empty()) {
+    m_currentAction = availableActions[r];
+    m_currentTarget = pickTargetForAction(gameSession, m_currentAction);
+    if (m_currentTarget)
+      return m_currentAction;
+  }
+  return nullptr;
+}
+
+Action *NonPlayableCharacter::getCurrentAction() const {
+  return m_currentAction;
+}
+
+Creature *NonPlayableCharacter::pickTargetForAction(GameSession &gameSession,
+                                                    Action *action) {
+  if (action->getTargetType() == Action::selfTarget)
+    return this;
+  if (action->getTargetType() == Action::enemyTarget)
+    return &gameSession.getPlayer();
+  if (action->getTargetType() == Action::friendTarget) {
+    if (this->getAIType() == NonPlayableCharacter::boss)
+      // for now bosses are considered "lone fighter" types
+      return this;
+    auto npcList{gameSession.getEnemiesInMap()};
+    Creature *bestTarget = nullptr;
+    int bestChance = -1;
+    for (auto &weakNpc : npcList) {
+      auto npc = weakNpc.lock().get();
+      if (!npc)
+        continue;
+      int chance = npc->getChanceToBuff();
+      if (npc == this)
+        chance -= AISettings::g_selfBuffLikelihoodPenalty;
+      if (chance > bestChance) {
+        bestChance = chance;
+        bestTarget = npc;
+      }
+    }
+    return bestTarget;
+  }
+  if (action->getTargetType() == Action::aoe &&
+      (action->isType(Action::defenseBuff) ||
+       action->isType(Action::offenseBuff))) {
+    auto npcList{gameSession.getEnemiesInMap()};
+    return npcList[Random::get<std::size_t>(0, npcList.size())].lock().get();
+  }
+  if (action->getTargetType() == Action::aoe)
+    return &gameSession.getPlayer();
+  return nullptr;
+}
+
+Creature *NonPlayableCharacter::getCurrentTarget() const {
+  return m_currentTarget;
+}
+
+int NonPlayableCharacter::getChanceToBuff() const {
+  int diffBuffDebuff{countActiveBuffs() - countActiveDebuffs()};
+  int alreadyBuffedValue{
+      hasBuffedThisTurn() ? 0 : AISettings::g_alreadyBuffedPenalty};
+  int chance{AISettings::g_buffChanceBase -
+             AISettings::g_buffChanceBaseMult * diffBuffDebuff +
+             alreadyBuffedValue}; // if buff debuff eq at all, equals 75
+                                  // with each buff decreases by 15
+                                  // if already buffed this turn, decrease by 25
+  return std::clamp(chance, 0, AISettings::g_buffChanceMax);
+}
+
+NonPlayableCharacter::Behaviors
+NonPlayableCharacter::setFighterBossBehavior(GameSession &gameSession) {
+  Action *availableAction{};
+  if (m_healthPoints <=
+      m_maxHealthPoints * AISettings::g_bossHealHealthPercent / 100) {
+    if (Random::rollD100() < getChanceToBuff()) {
+      availableAction =
+          determineCurrentAction(Action::defenseBuff, gameSession);
+      if (availableAction) {
+        return defenseBuff;
+      }
+    }
+    if (Random::rollD100() < AISettings::g_bossHealChance) {
+      availableAction = determineCurrentAction(Action::selfHeal, gameSession);
+      if (availableAction)
+        return selfHeal;
+    }
+  }
+  if (Random::rollD100() < getChanceToBuff()) {
+    availableAction = determineCurrentAction(Action::offenseBuff, gameSession);
+    if (availableAction) {
+      return offenseBuff;
+    }
+  }
+  if (Random::rollD100() < AISettings::g_bossActionChance) {
+    availableAction = determineCurrentAction(Action::attack, gameSession);
+    if (availableAction) {
+      return attack;
+    }
+  }
+  m_currentTarget = &gameSession.getPlayer();
+  return basicAttack; // no action found
+}
+
+NonPlayableCharacter::Behaviors
+NonPlayableCharacter::setSupportBehavior(GameSession &gameSession) {
+  Action *availableAction{};
+  if (Random::rollD100() < 50) {
+    availableAction = determineCurrentAction(Action::defenseBuff, gameSession);
+    if (availableAction) {
+      return defenseBuff;
+    }
+    availableAction = determineCurrentAction(Action::offenseBuff, gameSession);
+    if (availableAction) {
+      return offenseBuff;
+    }
+  } else {
+    availableAction = determineCurrentAction(Action::offenseBuff, gameSession);
+    if (availableAction)
+      return selfHeal;
+    availableAction = determineCurrentAction(Action::defenseBuff, gameSession);
+    if (availableAction)
+      return defenseBuff;
+  }
+  m_currentTarget = &gameSession.getPlayer();
+  return basicAttack;
 }
 
 NonPlayableCharacter::Behaviors
 NonPlayableCharacter::getCurrentBehavior() const {
   return m_currentBehavior;
 }
-void NonPlayableCharacter::setSkipTurn() { m_currentBehavior = skipTurn; }
+void NonPlayableCharacter::setSkipTurn() {
+  m_currentBehavior = skipTurn;
+  m_hasActed = false;
+  resetBuffedThisTurn();
+}
 void NonPlayableCharacter::setDefaultBehavior() {
   m_currentBehavior = defaultBehavior;
 }
@@ -143,10 +311,15 @@ std::deque<Point> &NonPlayableCharacter::getCurrentPath() {
   return m_currentPath;
 }
 
-void NonPlayableCharacter::setCurrentPath(GameSession &gameSession) {
+void NonPlayableCharacter::setCurrentPath(GameSession &gameSession,
+                                          const Creature &target) {
   switch (m_currentBehavior) {
   case basicAttack:
-    m_currentPath = getPathAttack(gameSession);
+  case attack:
+  case selfHeal: // this depends on the target (self heal)
+                 // can be an attack targetting the player for ex
+                 // this function needs a target parameter probably
+    m_currentPath = getPathToTarget(gameSession, target);
     return;
   case flee:
     m_currentPath = getPathFlee(gameSession);
@@ -156,7 +329,8 @@ void NonPlayableCharacter::setCurrentPath(GameSession &gameSession) {
   }
 }
 
-std::deque<Point> NonPlayableCharacter::getPathFlee(GameSession &gameSession) {
+std::deque<Point>
+NonPlayableCharacter::getPathFlee(GameSession &gameSession) const {
   std::vector<Point> possiblePoints{};
   std::vector<Point> safePoints{};
   std::vector<Point> mapChangers{};
@@ -197,7 +371,8 @@ std::deque<Point> NonPlayableCharacter::getPathFlee(GameSession &gameSession) {
 }
 
 std::deque<Point>
-NonPlayableCharacter::getPathAttack(GameSession &gameSession) {
+NonPlayableCharacter::getPathToTarget(GameSession &gameSession,
+                                      const Creature &target) const {
   std::vector<Point> possiblePoints{};
   for (int i{0}; i < gameSession.getMap().getWidth(); ++i) {
     for (int j{0}; j < gameSession.getMap().getHeight(); ++j) {
@@ -205,14 +380,14 @@ NonPlayableCharacter::getPathAttack(GameSession &gameSession) {
       if (!gameSession.getMap().isAvailable(potentialDestination))
         continue; // cant go there
       if (GeometryUtils::distanceL2(potentialDestination,
-                                    gameSession.getPlayerPos()) >=
-          GeometryUtils::distanceL2(getPosition(), gameSession.getPlayerPos()))
-        continue; // would get farther to player
+                                    target.getPosition()) >=
+          GeometryUtils::distanceL2(getPosition(), target.getPosition()))
+        continue; // would get farther to target
       possiblePoints.push_back(potentialDestination);
     }
   }
   return GeometryUtils::sortPointsAndFindPath(
-      possiblePoints, getPosition(), gameSession, gameSession.getPlayerPos());
+      possiblePoints, getPosition(), gameSession, target.getPosition());
   return {};
 }
 
@@ -223,9 +398,12 @@ NonPlayableCharacter::stringToAIType(std::string_view str) {
   else if (str == "waryMelee")
     return waryMelee;
   else if (str == "aggressiveRanged")
-    return aggressiveRanged; // currently no ranged AI implemented
-  else
-    return defaultAI;
+    return aggressiveRanged;
+  else if (str == "boss")
+    return boss;
+  else if (str == "support")
+    return support;
+  return defaultAI;
 }
 
 int NonPlayableCharacter::getXpValue() const { return m_xpValue; }

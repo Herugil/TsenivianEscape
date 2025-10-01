@@ -17,6 +17,10 @@ class NonPlayableCharacter : public Creature {
 public:
   enum Behaviors {
     basicAttack,
+    attack,
+    selfHeal,
+    defenseBuff,
+    offenseBuff,
     skipTurn,
     flee,
     defaultBehavior,
@@ -25,6 +29,8 @@ public:
     aggressiveMelee,
     waryMelee,
     aggressiveRanged,
+    boss,
+    support,
     defaultAI,
   };
 
@@ -42,6 +48,9 @@ protected:
   AITypes m_AIType{defaultAI};
   int m_xpValue{}; // xp given to player on kill
   int m_armor{0};
+  bool m_hasActed{false};
+  Action *m_currentAction{nullptr};
+  Creature *m_currentTarget{nullptr};
 
 public:
   NonPlayableCharacter(std::string_view id, char symbol, const Point &point,
@@ -73,9 +82,10 @@ public:
   void setSkipTurn();
   void setDefaultBehavior();
   std::deque<Point> &getCurrentPath();
-  void setCurrentPath(GameSession &gameSession);
-  std::deque<Point> getPathFlee(GameSession &gameSession);
-  std::deque<Point> getPathAttack(GameSession &gameSession);
+  void setCurrentPath(GameSession &gameSession, const Creature &target);
+  std::deque<Point> getPathFlee(GameSession &gameSession) const;
+  std::deque<Point> getPathToTarget(GameSession &gameSession,
+                                    const Creature &target) const;
   void clearCurrentPath() { m_currentPath.clear(); }
   static AITypes stringToAIType(std::string_view str);
   AITypes getAIType() const { return m_AIType; }
@@ -85,6 +95,23 @@ public:
   int getDexterity() const override;
   int getIntelligence() const override;
   int getConstitution() const override;
+  int getBasicActionRange() const;
+  bool hasActed() const { return m_hasActed; }
+  void setHasActed() { m_hasActed = true; }
+  void resetHasActed() { m_hasActed = false; }
+  int getChanceToBuff() const;
+
+  Action *getBasicAction() const;
+  std::vector<Action *> getUsableActionFromType(Action::ActionType type) const;
+  Behaviors setFighterBossBehavior(GameSession &gameSession);
+  Behaviors setSupportBehavior(GameSession &gameSession);
+  Action *determineCurrentAction(Action::ActionType type,
+                                 GameSession &gameSession);
+  // this function sets current action and target. If no action set,
+  // returns nullptr
+  Creature *pickTargetForAction(GameSession &gameSession, Action *action);
+  Action *getCurrentAction() const;
+  Creature *getCurrentTarget() const;
 
   json toJson() const override;
 

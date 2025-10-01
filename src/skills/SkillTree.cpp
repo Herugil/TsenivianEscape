@@ -39,12 +39,12 @@ std::unique_ptr<Action> SkillTree::createBackbreakerAction() {
       [](const Creature &actor, const Creature &target) {
         return actor.getMeleeHitChance() - target.getEvasion();
       },
-      [](const Creature &actor) { return actor.getStrength(); }, 1, 4, 1);
+      [](const Creature &actor) { return actor.getMeleeRange(); }, 1, 4, 1);
 }
 
 std::unique_ptr<Action> SkillTree::createSwirlingFlamesAction() {
   return std::make_unique<CubeAoe>(
-      "Swirling flames", 1,
+      "Swirling Flames", 1,
       [](const Creature &actor) { return actor.getIntelligence() + 3; }, 2, 2,
       2);
 }
@@ -59,7 +59,7 @@ std::unique_ptr<Action> SkillTree::createRejuvenatingStrikeAction() {
 }
 
 std::unique_ptr<Action> SkillTree::createHasteAction() {
-  return std::make_unique<Haste>(1, 0, 2, 1, "Haste");
+  return std::make_unique<Haste>(1, 0, 2, 3, "Haste");
 }
 
 std::unique_ptr<Action> SkillTree::createDodgeAction() {
@@ -69,7 +69,7 @@ std::unique_ptr<Action> SkillTree::createDodgeAction() {
 std::unique_ptr<Action> SkillTree::createActionByName(std::string_view name) {
   if (name == "Backbreaker")
     return SkillTree::createBackbreakerAction();
-  if (name == "Swirling flames")
+  if (name == "Swirling Flames")
     return SkillTree::createSwirlingFlamesAction();
   if (name == "Rejuvenating Strike")
     return SkillTree::createRejuvenatingStrikeAction();

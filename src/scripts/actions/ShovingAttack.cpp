@@ -18,7 +18,11 @@ ShovingAttack::ShovingAttack(
     : Action{name, false, true, Stat::Strength, cost, maxCharges, cooldown},
       m_shoveDistanceFormula{shoveDistanceFormula},
       m_damageFormula{damageFormula}, m_hitChanceFormula{hitChanceFormula},
-      m_rangeFormula{rangeFormula} {}
+      m_rangeFormula{rangeFormula} {
+  m_types.clear();
+  m_types = {ActionType::attack, ActionType::control};
+  m_targetType = enemyTarget;
+}
 
 std::string ShovingAttack::execute(GameSession &gameSession, Creature &actor,
                                    Creature &target) {
@@ -31,17 +35,19 @@ std::string ShovingAttack::execute(GameSession &gameSession, Creature &actor,
     return {};
   }
   if (useActionResources(actor)) {
+    result =
+        actor.getName() + " uses " + m_name + " on " + target.getName() + ".\n";
     if (gameSession.getMap().isPointVisible(actor.getPosition(),
                                             target.getPosition()) == false) {
-      result = actor.getName() +
-               " cannot see the target and misses the shoving attack.\n";
+      result += actor.getName() +
+                " cannot see the target and misses the shoving attack.\n";
     } else if (Random::rollD100() >
                m_hitChanceFormula(actor, target) - target.getEvasion()) {
-      result = actor.getName() + " missed " + target.getName() + ".\n";
+      result += actor.getName() + " missed " + target.getName() + ".\n";
     } else {
-      result = std::to_string(target.takeDamage(getDamage(actor))) +
-               " damage dealt to " + target.getName() + " by " +
-               actor.getName() + ".\n";
+      result += std::to_string(target.takeDamage(getDamage(actor))) +
+                " damage dealt to " + target.getName() + " by " +
+                actor.getName() + ".\n";
       int shoveDistance{m_shoveDistanceFormula(actor, target)};
       for (int i = 0; i < shoveDistance; ++i) {
         auto creature{gameSession.getMap().getTopObject(target.getPosition())};

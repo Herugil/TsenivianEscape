@@ -15,6 +15,8 @@ public:
   std::string playerExecute(GameSession &gameSession) override;
   std::unique_ptr<Action> clone() const override;
 
+  int getRange(const Creature &actor) const override;
+
   json toJson() const override;
   virtual ~Haste() = default;
 };

@@ -21,7 +21,7 @@ public:
     return std::make_unique<CubeAoe>(*this);
   }
   int getDamage(const Creature &actor) const override;
-
+  int getRange([[maybe_unused]] const Creature &actor) const override;
   json toJson() const override;
   virtual ~CubeAoe() = default;
 };

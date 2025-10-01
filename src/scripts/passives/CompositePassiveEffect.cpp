@@ -43,6 +43,24 @@ std::string CompositePassiveEffect::display() const {
   return result;
 }
 
+bool CompositePassiveEffect::isBuff() const {
+  std::size_t buffCount{0};
+  for (const auto &effect : m_effects) {
+    if (effect->isBuff())
+      ++buffCount;
+  }
+  return buffCount > (m_effects.size() / 2); // this may be a stupid approach
+}
+
+bool CompositePassiveEffect::isDebuff() const {
+  std::size_t debuffCount{0};
+  for (const auto &effect : m_effects) {
+    if (effect->isDebuff())
+      ++debuffCount;
+  }
+  return debuffCount > (m_effects.size() / 2);
+}
+
 nlohmann::json CompositePassiveEffect::toJson() const {
   nlohmann::json j;
   j["type"] = "composite";

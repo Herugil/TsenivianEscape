@@ -12,6 +12,7 @@ class Creature;
 class PassiveEffect {
 public:
   enum class Type {
+    ArmorBonus,
     EvasionBonus,
     StrengthBonus,
     DexterityBonus,
@@ -49,6 +50,8 @@ public:
   virtual std::unique_ptr<PassiveEffect> clone() const;
   virtual std::string display() const;
   static std::string typeToString(Type type);
+  bool virtual isBuff() const;
+  bool virtual isDebuff() const;
 
   virtual json toJson() const;
 

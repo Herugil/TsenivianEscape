@@ -25,6 +25,7 @@ protected:
   int m_movementPoints{0};
   int m_actionPoints{Settings::g_numActions};
   bool m_inCombat{false};
+  bool m_buffedThisTurn{false};
 
 public:
   Creature(char symbol, const Point &position, std::string_view currentMap,
@@ -74,4 +75,9 @@ public:
   const std::vector<std::shared_ptr<Item>> &getInventory() const;
   std::vector<std::shared_ptr<Item>> &getInventory();
   int getStatModifier(Stat stat) const;
+  int countActiveBuffs() const;
+  int countActiveDebuffs() const;
+  bool hasBuffedThisTurn() const { return m_buffedThisTurn; }
+  void setBuffedThisTurn() { m_buffedThisTurn = true; }
+  void resetBuffedThisTurn() { m_buffedThisTurn = false; }
 };

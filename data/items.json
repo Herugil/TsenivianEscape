@@ -28,7 +28,7 @@
     "itemType": "twoHanded",
     "weaponType": "melee",
     "description": "A large sword, with a red tinted blade. The ripple of light on the blade makes it look like a beating heart.",
-    "damage": 10,
+    "damage": 100,
     "range": 1
   },
   "itemBow": {
@@ -86,7 +86,7 @@
     "itemType": "twoHanded",
     "description": "A sturdy pickaxe, useful for mining.",
     "weaponType": "melee",
-    "damage": 3,
+    "damage": 4,
     "range": 1
   }
 }

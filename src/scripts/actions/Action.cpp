@@ -25,7 +25,7 @@ bool Action::useActionResources(Creature &creature) {
   return false;
 }
 
-bool Action::canBeUsed(Creature &creature) {
+bool Action::canBeUsed(const Creature &creature) const {
   // check if the action can be used by the creature
   // but does not use the resources/ set cooldown
   if (m_currentCooldown > 0)

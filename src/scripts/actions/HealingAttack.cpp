@@ -14,6 +14,10 @@ HealingAttack::HealingAttack(
   m_maxCharges = charges;
   m_cooldown = cooldown;
   m_cost = cost;
+  m_types.clear();
+  m_types.push_back(ActionType::selfHeal);
+  // healing attack shouldnt be used just to deal damage
+  m_targetType = enemyTarget;
 }
 
 std::string HealingAttack::execute(GameSession &gameSession, Creature &actor,
@@ -36,6 +40,8 @@ std::string HealingAttack::execute(GameSession &gameSession, Creature &actor,
       result << actor.getName() << " missed " << target.getName() << ".\n";
     } else {
       int inflictedDamage{target.takeDamage(getDamage(actor))};
+      result << actor.getName() + " uses " + m_name + " on " +
+                    target.getName() + ".\n";
       result << inflictedDamage << "  damage dealt to " << target.getName()
              << " by " << actor.getName() << ".\n";
       int healAmount{m_healAmountFunc(actor, target)};

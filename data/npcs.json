@@ -74,7 +74,7 @@
   "enemyGiantRat": {
     "name": "Giant Rat",
     "type": "waryMelee",
-    "maxHealth": 20,
+    "maxHealth": 6,
     "evasion": 5,
     "meleeHitChance": 60,
     "distanceHitChance": 0,
@@ -82,6 +82,64 @@
     "distanceDamage": 0,
     "description": "A giant rat, hungry and mean looking.",
     "deadDescription": "A dead giant rat body.",
-    "xpValue": 50
+    "xpValue": 50,
+    "stats": {
+      "strength": 2,
+      "dexterity": 0,
+      "constitution": 1,
+      "intelligence": 0
+    },
+    "armor": 1
+  },
+  "enemyVampire": {
+    "name": "Vampire",
+    "type": "boss",
+    "maxHealth": 30,
+    "evasion": 15,
+    "meleeHitChance": 95,
+    "distanceHitChance": 0,
+    "meleeDamage": 4,
+    "distanceDamage": 0,
+    "description": "A ghastly looking vampire.",
+    "deadDescription": "A hideously dessicated body, which once belonged to a powerful vampire.",
+    "xpValue": 50,
+    "stats": {
+      "strength": 4,
+      "dexterity": 4,
+      "constitution": 4,
+      "intelligence": 4
+    },
+    "actions": [
+      { "name": "Haste", "currentCharges": 2 },
+      { "name": "Swirling Flames", "currentCharges": 1 },
+      { "name": "Backbreaker", "currentCharges": 2 },
+      { "name": "Rejuvenating Strike", "currentCharges": 3 },
+      { "name": "Basic Attack", "isBasicAttack": true }
+    ],
+    "armor": 2
+  },
+  "enemyRatMaster": {
+    "name": "Rat Master",
+    "type": "support",
+    "maxHealth": 10,
+    "evasion": 10,
+    "meleeHitChance": 70,
+    "distanceHitChance": 70,
+    "meleeDamage": 3,
+    "distanceDamage": 2,
+    "description": "A sinister looking humanoid figure, surrounded by rats.",
+    "deadDescription": "A dead rat master body.",
+    "xpValue": 100,
+    "stats": {
+      "strength": 1,
+      "dexterity": 2,
+      "constitution": 1,
+      "intelligence": 2
+    },
+    "actions": [
+      { "name": "Haste", "currentCharges": 4 },
+      { "name": "Basic Attack", "isBasicAttack": true, "type": "ranged" }
+    ],
+    "armor": 1
   }
 }

@@ -27,10 +27,10 @@
   ],
   "enemies": [
     {
-      "id": "enemyRat",
-      "position": [5, 5],
-      "symbol": "r",
-      "inventory": ["itemBanana"]
+      "symbol": "m",
+      "position": [3, 3],
+      "id": "enemyVampire",
+      "inventory": ["itemBowOfFury", "itemSmallHealthPotion"]
     }
   ],
   "gameObjects": [
@@ -62,7 +62,8 @@
         "itemTornLeatherArmor",
         "itemLeatherHelmet",
         "itemRustyKeyLevel1",
-        "itemPickaxe"
+        "itemPickaxe",
+        "itemBowOfFury"
       ]
     },
     {

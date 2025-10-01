@@ -5,7 +5,11 @@
 Haste::Haste(int value, int cost, int maxCharges, int cooldown,
              std::string_view name)
     : Action{name, false, false, Stat::nbStats, cost, maxCharges, cooldown},
-      m_value{value} {}
+      m_value{value} {
+  m_types = {ActionType::offenseBuff, ActionType::defenseBuff};
+  // haste gives one AP, so its a generic buff
+  m_targetType = friendTarget;
+}
 
 std::string Haste::execute(GameSession &gameSession, Creature &actor,
                            Creature &target) {
@@ -15,6 +19,7 @@ std::string Haste::execute(GameSession &gameSession, Creature &actor,
     return "Target not visible\n";
   if (useActionResources(actor)) {
     target.addActionPoints(m_value);
+    target.setBuffedThisTurn();
     return actor.getName() + " uses " + static_cast<std::string>(getName()) +
            " on " + target.getName() + ", granting " + std::to_string(m_value) +
            " action points.\n";
@@ -28,6 +33,10 @@ std::string Haste::playerExecute(GameSession &gameSession) {
 
 std::unique_ptr<Action> Haste::clone() const {
   return std::make_unique<Haste>(*this);
+}
+
+int Haste::getRange([[maybe_unused]] const Creature &actor) const {
+  return 10; // this is very arbitrary
 }
 
 json Haste::toJson() const {
