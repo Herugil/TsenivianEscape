@@ -389,3 +389,7 @@ GameSession GameSession::loadFromJson(const json &jsonFile) {
   gameSession.respawnPlayer();
   return gameSession;
 }
+
+bool GameSession::isGameActive() const {
+  return !m_player->getName().empty() && !m_player->isDead();
+}

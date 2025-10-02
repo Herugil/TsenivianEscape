@@ -3,13 +3,13 @@
 #include "core/Combat.h"
 #include "core/GameState.h"
 #include "core/SaveManager.h"
+#include "core/UserInterface.h"
 #include "gameObjects/creatures/Stats.h"
 #include "gameObjects/items/UsableItem.h"
 #include "gameObjects/terrain/RestingPlace.h"
 #include "input/Input.h"
 #include "scripts/NpcCombatAI.h"
 #include "skills/SkillTree.h"
-#include "utils/Interface.h"
 #include "utils/ScreenUtils.h"
 #include <chrono>
 #include <fstream>
@@ -101,7 +101,7 @@ void GameStateManager::handleDisplayBlocking() {
   ScreenUtils::clearScreen();
   if (m_gameSession.getPlayer().inCombat()) {
     m_gameSession.displayMap();
-    Interface::displayCombatInterface(m_gameSession.getPlayer());
+    UserInterface::displayCombatInterface(m_gameSession.getPlayer());
   }
   if (!m_logsToDisplay.str().empty()) {
     std::cout << m_logsToDisplay.str();
@@ -121,7 +121,7 @@ void GameStateManager::handleDisplay() {
   ScreenUtils::clearScreen();
   if (m_gameSession.getPlayer().inCombat()) {
     m_gameSession.displayMap();
-    Interface::displayCombatInterface(m_gameSession.getPlayer());
+    UserInterface::displayCombatInterface(m_gameSession.getPlayer());
   }
   if (!m_logsToDisplay.str().empty()) {
     std::cout << m_logsToDisplay.str();
@@ -498,11 +498,6 @@ void GameStateManager::confirmLevelUp(Player &player, Stat stat,
   }
 }
 
-// Note: below this, a bunch of functions probably belong to another class
-// altogether
-
-// main menu manager could be its own class
-
 void GameStateManager::handleMainMenu() {
   ScreenUtils::clearScreen();
   std::cout << "Main Menu\n";
@@ -515,63 +510,32 @@ void GameStateManager::handleMainMenu() {
   auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
   auto pressedKey{CommandHandler::getPressedKey(command)};
   if (pressedKey == 0) {
-    ScreenUtils::clearScreen();
-    std::string name;
-    while (true) {
-      std::cout << "Enter your character's name: ";
-      std::getline(std::cin, name);
-      if (!name.empty()) {
-        break;
-      }
-    }
-    m_gameSession = SaveManager::newGame(name);
+    UserInterface::NewGameResult result{
+        UserInterface::newGame(m_gameSession.isGameActive())};
+    if (!result.confirmed)
+      return;
+    m_gameSession = SaveManager::newGame(result.playerName);
     m_currentState = GameState::Exploration;
   } else if (pressedKey == 1) {
     ScreenUtils::clearScreen();
-    if (m_gameSession.getPlayer().getName().empty() ||
-        m_gameSession.getPlayer().isDead()) {
+    if (!m_gameSession.isGameActive()) {
       std::cout << "You currently are not in a game session.\n";
       std::cout << "Press any key to return to main menu.\n";
       Input::getKeyBlocking();
       return;
-    } else
-      m_currentState = GameState::Exploration;
+    }
+    m_currentState = GameState::Exploration;
   } else if (pressedKey == 2) {
-    ScreenUtils::clearScreen();
-    if (m_gameSession.getPlayer().getName().empty() ||
-        m_gameSession.getPlayer().isDead()) {
-      std::cout << "You currently are not in a game session.\n";
-      std::cout << "Press any key to return to main menu.\n";
-      Input::getKeyBlocking();
-      return;
-    }
-    if (m_gameSession.getPlayer().inCombat()) {
-      std::cout << "You cannot save the game while in combat!\n";
-      std::cout << "Press any key to return to main menu.\n";
-      Input::getKeyBlocking();
-      return;
-    } else
+    if (UserInterface::saveGameMenu(m_gameSession.isGameActive(),
+                                    m_gameSession.getPlayer().inCombat()))
       SaveManager::saveGame(m_gameSession);
-  } else if (pressedKey == 3) {
-    ScreenUtils::clearScreen();
-    auto saveList{SaveManager::getAvailableSaves()};
-    if (saveList.empty()) {
-      std::cout << "No saves available.\n";
-      std::cout << "Press any key to return to main menu.\n";
-      Input::getKeyBlocking();
+    else
       return;
-    }
-    std::cout << "Available saves:\n";
-    for (std::size_t i = 0; i < saveList.size(); ++i) {
-      std::cout << i + 1 << ": " << saveList[i] << '\n';
-    }
-    std::cout << "Select a save to load: ";
-    auto loadCommand{CommandHandler::getCommand(Input::getKeyBlocking())};
-    auto loadPressedKey{
-        static_cast<std::size_t>(CommandHandler::getPressedKey(loadCommand))};
-    if (loadPressedKey >= 0 && loadPressedKey < saveList.size()) {
+  } else if (pressedKey == 3) {
+    auto result{UserInterface::loadGameMenu(SaveManager::getAvailableSaves())};
+    {
       try {
-        m_gameSession = SaveManager::loadGame(saveList[loadPressedKey]);
+        m_gameSession = SaveManager::loadGame(result.saveSlot);
         m_currentState = GameState::Exploration;
       } catch (const std::exception &e) {
         std::cerr << "Error loading game: " << e.what() << '\n';

@@ -1,7 +1,7 @@
 #include "core/Combat.h"
 #include "core/GameSession.h"
+#include "core/UserInterface.h"
 #include "scripts/NpcCombatAI.h"
-#include "utils/Interface.h"
 #include "utils/ScreenUtils.h"
 #include <chrono>
 #include <thread>
@@ -26,7 +26,7 @@ GameState Combat::playerTurn(GameSession &gameSession) {
   gameSession.displayMap();
   std::cout << "Round " << gameSession.getCurrentTurn() << "\n";
   std::cout << "Your turn: \n";
-  Interface::displayCombatInterface(player);
+  UserInterface::displayCombatInterface(player);
   return GameState::CombatPlayerTurn;
 }
 
@@ -45,7 +45,7 @@ GameState Combat::enemyTurn(GameSession &gameSession,
       gameSession.displayMap();
       std::cout << "Round " << gameSession.getCurrentTurn() << "\n";
       std::cout << enemy->getName() << " turn: \n";
-      Interface::displayCombatInterface(gameSession.getPlayer());
+      UserInterface::displayCombatInterface(gameSession.getPlayer());
       std::this_thread::sleep_for(
           std::chrono::milliseconds(Settings::g_timeEnemyActionMS));
       if (enemy->getCurrentBehavior() == NonPlayableCharacter::skipTurn) {
