@@ -16,17 +16,14 @@ private:
   std::ostringstream m_logsToDisplay{};
   std::weak_ptr<Item> m_inspectedItem{};
   InteractionResult m_interactionResult;
-  void HandleWorld();
+  void handleWorld();
   void handleInventory();
   void handleContainer();
   void handleDisplay();
   void handleDisplayBlocking();
   void handleActions();
-  void handleCombatPlayerTurn();
-  void handleCombatEnemyTurn();
   void handleItemInspect();
   void handleGameOver();
-  void setCombatState();
   void handleRestMenu();
   void handleUnlockMenu();
   void handleLevelUp();

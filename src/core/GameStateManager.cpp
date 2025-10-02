@@ -1,5 +1,6 @@
 #include "core/GameStateManager.h"
 #include "Settings.h"
+#include "core/Combat.h"
 #include "core/GameState.h"
 #include "core/SaveManager.h"
 #include "gameObjects/creatures/Stats.h"
@@ -31,7 +32,7 @@ void GameStateManager::mainLoop() {
     case GameState::Exploration:
       m_interactionResult.interactedObject = nullptr;
       if (m_gameSession.enemiesInMap()) {
-        setCombatState();
+        m_currentState = Combat::getCombatState(m_gameSession);
         break;
       } else {
         m_gameSession.getPlayer().unsetCombat();
@@ -44,7 +45,7 @@ void GameStateManager::mainLoop() {
         std::cout << "You have enough XP to level up! Press 'c' to open "
                      "character sheet and level up.\n";
       }
-      HandleWorld();
+      handleWorld();
       break;
     case GameState::DisplayBlocking:
       handleDisplayBlocking();
@@ -62,10 +63,11 @@ void GameStateManager::mainLoop() {
       handleActions();
       break;
     case GameState::CombatPlayerTurn:
-      handleCombatPlayerTurn();
+      m_currentState = Combat::playerTurn(m_gameSession);
+      handleWorld();
       break;
     case GameState::CombatEnemyTurn:
-      handleCombatEnemyTurn();
+      m_currentState = Combat::enemyTurn(m_gameSession, m_logsToDisplay);
       break;
     case GameState::ItemInspect:
       handleItemInspect();
@@ -135,7 +137,7 @@ void GameStateManager::handleDisplay() {
   m_currentState = GameState::Exploration;
 }
 
-void GameStateManager::HandleWorld() {
+void GameStateManager::handleWorld() {
   auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
   if (CommandHandler::isMovementCommand(command)) {
     m_gameSession.moveCreature(m_gameSession.getPlayerPtr(),
@@ -341,69 +343,6 @@ void GameStateManager::handleActions() {
   if (!m_logsToDisplay.str().empty())
     m_currentState = GameState::Display;
   else
-    m_currentState = GameState::Exploration;
-}
-
-void GameStateManager::setCombatState() {
-  m_gameSession.initializeTurnOrder();
-  auto activeCreature{m_gameSession.getActiveCreature().lock()};
-  if (activeCreature && activeCreature == m_gameSession.getPlayerPtr()) {
-    m_currentState = GameState::CombatPlayerTurn;
-  } else {
-    m_currentState = GameState::CombatEnemyTurn;
-  }
-}
-
-void GameStateManager::handleCombatPlayerTurn() {
-  if (!m_gameSession.enemiesInMap()) {
-    m_gameSession.getPlayer().unsetCombat();
-    m_currentState = GameState::Exploration;
-    return;
-  }
-  auto &player{m_gameSession.getPlayer()};
-  ScreenUtils::clearScreen();
-  m_gameSession.displayMap();
-  std::cout << "Round " << m_gameSession.getCurrentTurn() << "\n";
-  std::cout << "Your turn: \n";
-  Interface::displayCombatInterface(player);
-  HandleWorld();
-}
-
-void GameStateManager::handleCombatEnemyTurn() {
-  if (!m_gameSession.enemiesInMap()) {
-    m_gameSession.getPlayer().unsetCombat();
-    m_currentState = GameState::Exploration;
-    m_gameSession.resetInitiative();
-    return;
-  }
-  auto activeCreature{m_gameSession.getActiveCreature().lock()};
-  if (activeCreature) {
-    if (auto enemy{
-            std::dynamic_pointer_cast<NonPlayableCharacter>(activeCreature)}) {
-      ScreenUtils::clearScreen();
-      m_gameSession.displayMap();
-      std::cout << "Round " << m_gameSession.getCurrentTurn() << "\n";
-      std::cout << enemy->getName() << " turn: \n";
-      Interface::displayCombatInterface(m_gameSession.getPlayer());
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(Settings::g_timeEnemyActionMS));
-      if (enemy->getCurrentBehavior() == NonPlayableCharacter::skipTurn) {
-        enemy->resetTurn();
-        enemy->reduceCooldowns();
-        enemy->setDefaultBehavior();
-        m_gameSession.incrementTurnIndex();
-        if (m_logsToDisplay.str().empty()) {
-          m_currentState = GameState::Exploration;
-        } else
-          m_currentState = GameState::Display;
-        return;
-      }
-      m_logsToDisplay << NpcCombatAI::npcActCombat(m_gameSession, enemy)
-                      << m_gameSession.cleanDeadNpcs();
-      if (!m_logsToDisplay.str().empty())
-        m_currentState = GameState::Display;
-    }
-  } else
     m_currentState = GameState::Exploration;
 }
 
