@@ -18,4 +18,5 @@ void displayCombatInterface(const Player &player);
 NewGameResult newGame(bool inSession);
 bool saveGameMenu(bool inSession, bool inCombat);
 LoadGameResult loadGameMenu(const std::vector<std::string> &saveFiles);
+int mainMenu(bool inSession);
 } // namespace UserInterface

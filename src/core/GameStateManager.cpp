@@ -499,39 +499,24 @@ void GameStateManager::confirmLevelUp(Player &player, Stat stat,
 }
 
 void GameStateManager::handleMainMenu() {
-  ScreenUtils::clearScreen();
-  std::cout << "Main Menu\n";
-  std::cout << "1: New Game\n";
-  std::cout << "2: Continue Game\n";
-  std::cout << "3: Save Game\n";
-  std::cout << "4: Load Game\n";
-  std::cout << "5: Exit to Desktop\n";
-  std::cout << "Press the corresponding number key to choose an option.\n";
-  auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
-  auto pressedKey{CommandHandler::getPressedKey(command)};
+  bool inSession{m_gameSession.isGameActive()};
+  int pressedKey{UserInterface::mainMenu(inSession)};
   if (pressedKey == 0) {
-    UserInterface::NewGameResult result{
-        UserInterface::newGame(m_gameSession.isGameActive())};
+    UserInterface::NewGameResult result{UserInterface::newGame(inSession)};
     if (!result.confirmed)
       return;
     m_gameSession = SaveManager::newGame(result.playerName);
     m_currentState = GameState::Exploration;
-  } else if (pressedKey == 1) {
-    ScreenUtils::clearScreen();
-    if (!m_gameSession.isGameActive()) {
-      std::cout << "You currently are not in a game session.\n";
-      std::cout << "Press any key to return to main menu.\n";
-      Input::getKeyBlocking();
-      return;
-    }
+  } else if (inSession && pressedKey == 1) {
     m_currentState = GameState::Exploration;
-  } else if (pressedKey == 2) {
+  } else if (inSession && pressedKey == 2) {
     if (UserInterface::saveGameMenu(m_gameSession.isGameActive(),
                                     m_gameSession.getPlayer().inCombat()))
       SaveManager::saveGame(m_gameSession);
     else
       return;
-  } else if (pressedKey == 3) {
+  } else if ((inSession && pressedKey == 3) ||
+             (!inSession && pressedKey == 1)) {
     auto result{UserInterface::loadGameMenu(SaveManager::getAvailableSaves())};
     {
       try {
@@ -541,7 +526,13 @@ void GameStateManager::handleMainMenu() {
         std::cerr << "Error loading game: " << e.what() << '\n';
       }
     }
-  } else if (pressedKey == 4) {
+  } else if ((inSession && pressedKey == 4) ||
+             (!inSession && pressedKey == 2)) {
+    std::cout << "Are you sure you want to exit? All unsaved progress will be "
+                 "lost. Press 'e' to confirm.\n";
+    auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
+    if (!CommandHandler::isInteractionCommand(command))
+      return;
     ScreenUtils::clearScreen();
     std::exit(0);
   }

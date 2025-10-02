@@ -86,3 +86,23 @@ UserInterface::loadGameMenu(const std::vector<std::string> &saveFiles) {
     return LoadGameResult{false, ""};
   }
 }
+
+int UserInterface::mainMenu(bool inSession) {
+  ScreenUtils::clearScreen();
+  if (inSession) {
+    std::cout << "Main Menu\n";
+    std::cout << "1: New Game\n";
+    std::cout << "2: Continue Game\n";
+    std::cout << "3: Save Game\n";
+    std::cout << "4: Load Game\n";
+    std::cout << "5: Exit to Desktop\n";
+  } else {
+    std::cout << "Main Menu\n";
+    std::cout << "1: New Game\n";
+    std::cout << "2: Load Game\n";
+    std::cout << "3: Exit to Desktop\n";
+  }
+  std::cout << "Press the corresponding number key to choose an option.\n";
+  auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
+  return CommandHandler::getPressedKey(command);
+}
