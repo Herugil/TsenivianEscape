@@ -3,6 +3,7 @@
 #include "gameObjects/creatures/Creature.h"
 #include "gameObjects/creatures/Player.h"
 #include "map/Map.h"
+#include "utils/GeometryUtils.h"
 #include <unordered_map>
 
 MapChanger::MapChanger(std::string_view currentMap, Point position,
@@ -14,6 +15,8 @@ MapChanger::MapChanger(std::string_view currentMap, Point position,
       m_targetMap{targetMap}, m_spawningPoint{spawningPoint} {
   m_locked = locked;
   m_keyId = keyId;
+  if (locked)
+    m_traversable = false;
 }
 
 void MapChanger::activateWalkOn(std::shared_ptr<GameObject> gameObject,
@@ -36,22 +39,32 @@ void MapChanger::activateWalkOn(std::shared_ptr<GameObject> gameObject,
     return;
   } else if (auto creature{
                  std::dynamic_pointer_cast<NonPlayableCharacter>(gameObject)}) {
-    for (int i{0}; i < Directions::nbDirections; ++i) {
-      auto adjPoint{m_spawningPoint.getAdjacentPoint(
-          static_cast<Directions::Direction>(i))};
-      if (gameSession.getMap(m_targetMap).isAvailable(adjPoint)) {
-        gameSession.getMap().removeTop(creature->getPosition());
-        creature->unsetCombat();
-        creature->setCurrentMap(m_targetMap);
-        gameSession.getMap(m_targetMap).placeTop(creature, adjPoint);
-        // if a creature changed maps, map state should be saved
-        gameSession.getMap(m_targetMap).setVisited();
-        creature->setPosition(adjPoint);
-        creature->resetTurn();
-        creature->setDefaultBehavior();
-        // if creature was fleeing, it shouldnt be anymore
-        return;
+    auto &targetMap = gameSession.getMap(m_targetMap);
+    Point destPoint{m_spawningPoint};
+    if (targetMap.isAvailable(destPoint)) {
+      gameSession.getMap().removeTop(creature->getPosition());
+      creature->unsetCombat();
+      for (int i = 0; i < targetMap.getHeight(); ++i) {
+        for (int j = 0; j < targetMap.getWidth(); ++j) {
+          if (!targetMap.isAvailable(Point{i, j}) ||
+              GeometryUtils::distanceL1(Point{i, j}, m_spawningPoint) > 5)
+            continue;
+          auto path{targetMap.findPath(m_spawningPoint, Point{i, j})};
+          if (path.size() >= 2)
+            destPoint = Point{i, j};
+        }
       }
+      creature->setCurrentMap(m_targetMap);
+      targetMap.placeTop(creature, destPoint);
+      // if a creature changed maps, map state should be saved
+      targetMap.setVisited();
+      creature->setPosition(destPoint);
+      return;
     }
   }
+}
+
+void MapChanger::unlock() {
+  m_locked = false;
+  m_traversable = true;
 }

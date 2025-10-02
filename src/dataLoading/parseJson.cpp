@@ -184,8 +184,12 @@ void placeObjects(
   const auto &arrObjects{data["gameObjects"]};
   for (auto object : arrObjects) {
     char symbol{std::string(object["symbol"])[0]}; // json doesnt have char
-    Point pos{object["position"][0], object["position"][1]};
-    const std::string type{object["type"]};
+    json pos{object["position"]};
+    if (pos[0].is_number())
+      pos = json::array({json::array({pos[0], pos[1]})});
+    std::string type{};
+    if (object.contains("type"))
+      type = object["type"];
     const std::string name{object["name"]};
     const std::string desc{object["description"]};
     bool locked{false};
@@ -194,23 +198,32 @@ void placeObjects(
       locked = object["locked"];
       keyId = object["keyId"];
     }
-    if (type == "container") {
-      Container container{
-          Container::loadFromJson(object, items, map.getName())};
-      map.placeFloor(std::make_unique<Container>(std::move(container)), pos);
-    } else if (type == "mapChanger") {
-      const std::string nextMap{object["destLevel"]};
-      Point spawningPoint{object["destPosition"][0], object["destPosition"][1]};
-      MapChanger obj{map.getName(), pos,  nextMap, spawningPoint, symbol,
-                     name,          desc, locked,  keyId};
-      map.placeFloor(std::make_unique<MapChanger>(std::move(obj)), pos);
-    } else if (type == "restingPlace") {
-      RestingPlace obj{map.getName(), pos, symbol, name, desc};
-      map.placeFloor(std::make_unique<RestingPlace>(std::move(obj)), pos);
-    } else {
-      GameObject obj{false, false, symbol, map.getName(), pos,
-                     name,  desc,  locked, keyId};
-      map.placeFloor(std::make_unique<GameObject>(std::move(obj)), pos);
+    for (const auto &p : pos) {
+      Point positition{p[0], p[1]};
+      if (type == "container") {
+        Container container{
+            Container::loadFromJson(object, items, map.getName())};
+        map.placeFloor(std::make_unique<Container>(std::move(container)),
+                       positition);
+      } else if (type == "mapChanger") {
+        const std::string nextMap{object["destLevel"]};
+        Point spawningPoint{object["destPosition"][0],
+                            object["destPosition"][1]};
+        MapChanger obj{map.getName(), positition, nextMap,
+                       spawningPoint, symbol,     name,
+                       desc,          locked,     keyId};
+        map.placeFloor(std::make_unique<MapChanger>(std::move(obj)),
+                       positition);
+      } else if (type == "restingPlace") {
+        RestingPlace obj{map.getName(), positition, symbol, name, desc};
+        map.placeFloor(std::make_unique<RestingPlace>(std::move(obj)),
+                       positition);
+      } else {
+        GameObject obj{false, false, symbol, map.getName(), positition,
+                       name,  desc,  locked, keyId};
+        map.placeFloor(std::make_unique<GameObject>(std::move(obj)),
+                       positition);
+      }
     }
   }
 }

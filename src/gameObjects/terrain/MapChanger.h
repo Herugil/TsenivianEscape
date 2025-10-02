@@ -18,4 +18,5 @@ public:
              bool locked = false, std::string_view keyId = "");
   void activateWalkOn(std::shared_ptr<GameObject> gameObject,
                       GameSession &gameSession) override;
+  void unlock() override;
 };

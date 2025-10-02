@@ -14,5 +14,7 @@ std::unique_ptr<Action> createSwirlingFlamesAction();
 std::unique_ptr<Action> createRejuvenatingStrikeAction();
 std::unique_ptr<Action> createHasteAction();
 std::unique_ptr<Action> createDodgeAction();
+std::unique_ptr<Action> createPreciseStrikesAction();
+std::unique_ptr<Action> createPowerfulStrikesAction();
 std::unique_ptr<Action> createActionByName(std::string_view name);
 } // namespace SkillTree

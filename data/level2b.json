@@ -1,0 +1,71 @@
+{
+  "introTextFile": "level2b.txt",
+  "mapWidth": 15,
+  "mapHeight": 10,
+  "wallDescription": "A simple wall of rough hewn stone",
+  "walls": [
+    [0, 0],
+    [14, 0],
+
+    [0, 9],
+    [7, 9],
+
+    [9, 9],
+    [14, 9],
+
+    [0, 0],
+    [0, 9],
+
+    [14, 0],
+    [14, 9],
+
+    [10, 0],
+    [10, 6],
+
+    [0, 5],
+    [2, 5],
+
+    [4, 5],
+    [5, 5],
+
+    [5, 0],
+    [5, 5]
+  ],
+  "enemies": [
+    {
+      "symbol": "m",
+      "position": [6, 4],
+      "id": "enemyRatMaster",
+      "inventory": ["itemBow"]
+    },
+    {
+      "symbol": "r",
+      "position": [1, 1],
+      "id": "enemyRat"
+    },
+    {
+      "symbol": "r",
+      "position": [6, 1],
+      "id": "enemyRat"
+    }
+  ],
+  "gameObjects": [
+    {
+      "symbol": "D",
+      "position": [8, 9],
+      "type": "mapChanger",
+      "name": "Cave in",
+      "description": "Some heavy rocks blocking a pathway. You could dig it out with an appropriate tool.",
+      "destLevel": "level2",
+      "destPosition": [8, 0]
+    },
+    {
+      "symbol": "C",
+      "position": [13, 8],
+      "type": "container",
+      "name": "Battered chest",
+      "description": "An old, worn wooden chest, half open.",
+      "contents": ["itemLeatherGloves"]
+    }
+  ]
+}

@@ -13,6 +13,9 @@
 #include <fstream>
 #include <thread>
 
+// TODO: this class probably does too much low level stuff, will
+// need to be broken down
+
 GameStateManager::GameStateManager(GameSession &&gameSession)
     : m_gameSession{std::move(gameSession)} {
   m_gameSession.respawnPlayer();
@@ -268,6 +271,21 @@ void GameStateManager::handleContainer() {
         if (item) {
           player.takeItem(item);
           container->displayContents();
+        }
+        if (container->getContents().empty()) {
+          if (container->getName() == "Left items bag") {
+            auto containers = m_gameSession.getSessionOwnedContainers();
+            auto it = std::find_if(
+                containers.begin(), containers.end(),
+                [container](const std::shared_ptr<Container> &ptr) {
+                  return ptr.get() == container;
+                });
+            if (it != containers.end()) {
+              m_gameSession.removeContainer(*it);
+            }
+          }
+          m_interactionResult.interactedObject = nullptr;
+          m_currentState = GameState::Exploration;
         }
       } else {
         m_currentState = GameState::Exploration;
@@ -543,6 +561,8 @@ void GameStateManager::confirmLevelUp(Player &player, Stat stat,
 // Note: below this, a bunch of functions probably belong to another class
 // altogether
 
+// main menu manager could be its own class
+
 void GameStateManager::handleMainMenu() {
   ScreenUtils::clearScreen();
   std::cout << "Main Menu\n";
@@ -619,6 +639,8 @@ void GameStateManager::handleMainMenu() {
   }
 }
 
+// save manager could be its own class
+
 void GameStateManager::saveGame() const {
   if (m_gameSession.getPlayer().getName().empty()) {
     std::cout << "You currently are not in a game session.\n";
@@ -688,12 +710,13 @@ void GameStateManager::loadGame(const std::string &filename) {
 
 void GameStateManager::newGame(std::string_view name) {
   m_gameSession =
-      GameSession(std::make_shared<Player>(Point(2, 1), "level1", 100, name));
+      GameSession(std::make_shared<Player>(Point(1, 4), "level1", 10, name));
   std::unordered_map<std::string, std::shared_ptr<Item>> items{
       DataLoader::getAllItems()};
   std::unordered_map<std::string, std::shared_ptr<NonPlayableCharacter>> npcs{
       DataLoader::getAllNpcs()};
   DataLoader::populateGameSession(items, npcs, m_gameSession);
+  m_gameSession.setCurrentMap("level1");
   m_gameSession.respawnPlayer();
 }
 

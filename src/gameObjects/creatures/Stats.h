@@ -7,6 +7,10 @@ enum class Stat {
   Constitution,
   Evasion,
   Armor,
+  MeleeHitChance,
+  MeleeDamage,
+  DistanceHitChance,
+  DistanceDamage,
   nbStats
 };
 struct Stats {

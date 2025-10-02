@@ -19,6 +19,10 @@ public:
     IntelligenceBonus,
     ConstitutionBonus,
     DamageOverTime,
+    MeleeHitBonus,
+    DistanceHitBonus,
+    MeleeDamageBonus,
+    DistanceDamageBonus,
     Composite,
   };
 
