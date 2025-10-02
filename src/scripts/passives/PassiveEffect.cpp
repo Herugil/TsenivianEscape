@@ -57,6 +57,8 @@ PassiveEffect::Type PassiveEffect::typeFromString(std::string_view type) {
     return Type::MeleeDamageBonus;
   if (type == "distanceDamageBonus")
     return Type::DistanceDamageBonus;
+  if (type == "armorBonus")
+    return Type::ArmorBonus;
   throw std::invalid_argument("Invalid passive effect type: " +
                               std::string(type));
 }

@@ -201,7 +201,9 @@ Creature *NonPlayableCharacter::pickTargetForAction(GameSession &gameSession,
       return this;
     auto npcList{gameSession.getEnemiesInMap()};
     Creature *bestTarget = nullptr;
-    int bestChance = -1;
+    int currChance{0};
+    std::vector<int> cumBuffChances{};
+    std::vector<NonPlayableCharacter *> candidates{};
     for (auto &weakNpc : npcList) {
       auto npc = weakNpc.lock().get();
       if (!npc)
@@ -209,9 +211,18 @@ Creature *NonPlayableCharacter::pickTargetForAction(GameSession &gameSession,
       int chance = npc->getChanceToBuff();
       if (npc == this)
         chance -= AISettings::g_selfBuffLikelihoodPenalty;
-      if (chance > bestChance) {
-        bestChance = chance;
-        bestTarget = npc;
+      if (gameSession.getMap().isPointVisible(npc->getPosition(),
+                                              this->getPosition()) == false) {
+        chance -= AISettings::g_nonVisibleTargetPenalty;
+      }
+      cumBuffChances.emplace_back(currChance += chance);
+      candidates.push_back(npc);
+    }
+    int roll{Random::get(0, currChance - 1)};
+    for (std::size_t i{0}; i < cumBuffChances.size(); ++i) {
+      if (roll < cumBuffChances[i]) {
+        bestTarget = candidates[i];
+        break;
       }
     }
     return bestTarget;

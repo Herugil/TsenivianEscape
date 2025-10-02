@@ -561,6 +561,8 @@ void GameStateManager::confirmLevelUp(Player &player, Stat stat,
 // Note: below this, a bunch of functions probably belong to another class
 // altogether
 
+// main menu manager could be its own class
+
 void GameStateManager::handleMainMenu() {
   ScreenUtils::clearScreen();
   std::cout << "Main Menu\n";
@@ -636,6 +638,8 @@ void GameStateManager::handleMainMenu() {
     std::exit(0);
   }
 }
+
+// save manager could be its own class
 
 void GameStateManager::saveGame() const {
   if (m_gameSession.getPlayer().getName().empty()) {
