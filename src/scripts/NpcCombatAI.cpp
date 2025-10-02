@@ -1,10 +1,10 @@
 #include "scripts/NpcCombatAI.h"
 #include "core/GameSession.h"
+#include "core/UserInterface.h"
 #include "gameObjects/creatures/NonPlayableCharacter.h"
 #include "input/Directions.h"
 #include "map/Point.h"
 #include "utils/GeometryUtils.h"
-#include "utils/Interface.h"
 #include "utils/Random.h"
 #include "utils/ScreenUtils.h"
 #include <algorithm>

@@ -60,6 +60,7 @@ public:
   int getCurrentTurn() const;
   void incrementCurrentTurn();
   std::vector<std::shared_ptr<Container>> &getSessionOwnedContainers();
+  bool isGameActive() const;
 
   std::vector<std::weak_ptr<NonPlayableCharacter>> getEnemiesInMap() const;
   void displayEnemiesInMap(

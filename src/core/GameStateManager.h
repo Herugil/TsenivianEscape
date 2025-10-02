@@ -16,29 +16,20 @@ private:
   std::ostringstream m_logsToDisplay{};
   std::weak_ptr<Item> m_inspectedItem{};
   InteractionResult m_interactionResult;
-  void HandleWorld();
+  void handleWorld();
   void handleInventory();
   void handleContainer();
   void handleDisplay();
   void handleDisplayBlocking();
   void handleActions();
-  void handleCombatPlayerTurn();
-  void handleCombatEnemyTurn();
   void handleItemInspect();
   void handleGameOver();
-  void setCombatState();
   void handleRestMenu();
   void handleUnlockMenu();
   void handleLevelUp();
   void handleCharacterSheet();
   void confirmLevelUp(Player &player, Stat stat, Stats playerStats);
-  void saveGame() const;
-  void loadGame(const std::string &filename);
-  void newGame(std::string_view name);
   void handleMainMenu();
-  std::vector<std::string> getAvailableSaves() const;
-  std::string getSaveFileName(std::string_view saveOverwrite = "") const;
-  bool deleteSave(std::string_view filename) const;
 
 public:
   GameStateManager(GameSession &&gameSession);
