@@ -3,7 +3,6 @@
 #include "dataLoading/parseJson.h"
 #include "gameObjects/creatures/Player.h"
 #include <memory>
-#include <unordered_map>
 
 int main() {
   GameSession gameSession{

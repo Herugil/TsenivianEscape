@@ -18,4 +18,12 @@ bool checkTargetAvailable(GameSession &gameSession,
                           Creature &target, Action *action);
 std::string useAction(GameSession &gameSession,
                       std::shared_ptr<NonPlayableCharacter> actor);
+std::deque<Point> getPathFlee(GameSession &gameSession,
+                              NonPlayableCharacter &actor);
+std::deque<Point> getPathToTarget(GameSession &gameSession,
+                                  const Creature &actor,
+                                  const Creature &target);
+Creature *pickTargetForAction(GameSession &gameSession,
+                              const NonPlayableCharacter &actor,
+                              Action *action);
 } // namespace NpcCombatAI

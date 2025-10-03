@@ -18,11 +18,8 @@ private:
   InteractionResult m_interactionResult;
   void handleWorld();
   void handleInventory();
-  void handleContainer();
   void handleDisplay();
   void handleDisplayBlocking();
-  void handleActions();
-  void handleItemInspect();
   void handleGameOver();
   void handleRestMenu();
   void handleUnlockMenu();

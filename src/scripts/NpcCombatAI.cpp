@@ -1,7 +1,9 @@
 #include "scripts/NpcCombatAI.h"
+#include "AISettings.h"
 #include "core/GameSession.h"
 #include "core/UserInterface.h"
 #include "gameObjects/creatures/NonPlayableCharacter.h"
+#include "gameObjects/terrain/MapChanger.h"
 #include "input/Directions.h"
 #include "map/Point.h"
 #include "utils/GeometryUtils.h"
@@ -132,4 +134,116 @@ NpcCombatAI::useAction(GameSession &gameSession,
   } else
     actor->setSkipTurn();
   return res;
+}
+
+std::deque<Point> NpcCombatAI::getPathFlee(GameSession &gameSession,
+                                           NonPlayableCharacter &actor) {
+  std::vector<Point> possiblePoints{};
+  std::vector<Point> safePoints{};
+  std::vector<Point> mapChangers{};
+  std::deque<Point> path{};
+  for (int i{0}; i < gameSession.getMap().getWidth(); ++i) {
+    for (int j{0}; j < gameSession.getMap().getHeight(); ++j) {
+      Point potentialDestination{i, j};
+      if (!gameSession.getMap().isAvailable(potentialDestination))
+        continue; // cant go there
+      if (GeometryUtils::distanceL2(potentialDestination,
+                                    gameSession.getPlayerPos()) <=
+          GeometryUtils::distanceL2(actor.getPosition(),
+                                    gameSession.getPlayerPos()))
+        continue; // would get closer to player
+      if (gameSession.getMap().getFloorObject(potentialDestination)) {
+        if (auto{dynamic_cast<MapChanger *>(
+                gameSession.getMap().getFloorObject(potentialDestination))})
+          mapChangers.push_back(potentialDestination);
+        else
+          continue;
+      }
+      safePoints.push_back(potentialDestination);
+    }
+  }
+  std::sort(mapChangers.begin(), mapChangers.end(),
+            [&actor](const Point &p1, const Point &p2) {
+              return (GeometryUtils::distanceL2(actor.getPosition(), p1) >=
+                      GeometryUtils::distanceL2(actor.getPosition(), p2));
+            });
+  path = GeometryUtils::sortPointsAndFindPath(
+      mapChangers, actor.getPosition(), gameSession, actor.getPosition(), true);
+  // this leads to the closest map changer
+  if (!path.empty())
+    return path;
+  else
+    return GeometryUtils::sortPointsAndFindPath(
+        safePoints, actor.getPosition(), gameSession,
+        gameSession.getPlayerPos(), false);
+}
+
+std::deque<Point> NpcCombatAI::getPathToTarget(GameSession &gameSession,
+                                               const Creature &actor,
+                                               const Creature &target) {
+  std::vector<Point> possiblePoints{};
+  for (int i{0}; i < gameSession.getMap().getWidth(); ++i) {
+    for (int j{0}; j < gameSession.getMap().getHeight(); ++j) {
+      Point potentialDestination{i, j};
+      if (!gameSession.getMap().isAvailable(potentialDestination))
+        continue; // cant go there
+      if (GeometryUtils::distanceL2(potentialDestination,
+                                    target.getPosition()) >=
+          GeometryUtils::distanceL2(actor.getPosition(), target.getPosition()))
+        continue; // would get farther to target
+      possiblePoints.push_back(potentialDestination);
+    }
+  }
+  return GeometryUtils::sortPointsAndFindPath(
+      possiblePoints, actor.getPosition(), gameSession, target.getPosition());
+}
+
+Creature *NpcCombatAI::pickTargetForAction(GameSession &gameSession,
+                                           const NonPlayableCharacter &actor,
+                                           Action *action) {
+  if (action->getTargetType() == Action::selfTarget)
+    return const_cast<NonPlayableCharacter *>(&actor);
+  if (action->getTargetType() == Action::enemyTarget)
+    return &gameSession.getPlayer();
+  if (action->getTargetType() == Action::friendTarget) {
+    if (actor.getAIType() == NonPlayableCharacter::boss)
+      // for now bosses are considered "lone fighter" types
+      return const_cast<NonPlayableCharacter *>(&actor);
+    auto npcList{gameSession.getEnemiesInMap()};
+    Creature *bestTarget = nullptr;
+    int currChance{0};
+    std::vector<int> cumBuffChances{};
+    std::vector<NonPlayableCharacter *> candidates{};
+    for (auto &weakNpc : npcList) {
+      auto npc = weakNpc.lock().get();
+      if (!npc)
+        continue;
+      int chance = npc->getChanceToBuff();
+      if (npc == &actor)
+        chance -= AISettings::g_selfBuffLikelihoodPenalty;
+      if (gameSession.getMap().isPointVisible(npc->getPosition(),
+                                              actor.getPosition()) == false) {
+        chance -= AISettings::g_nonVisibleTargetPenalty;
+      }
+      cumBuffChances.emplace_back(currChance += chance);
+      candidates.push_back(npc);
+    }
+    int roll{Random::get(0, currChance - 1)};
+    for (std::size_t i{0}; i < cumBuffChances.size(); ++i) {
+      if (roll < cumBuffChances[i]) {
+        bestTarget = candidates[i];
+        break;
+      }
+    }
+    return bestTarget;
+  }
+  if (action->getTargetType() == Action::aoe &&
+      (action->isType(Action::defenseBuff) ||
+       action->isType(Action::offenseBuff))) {
+    auto npcList{gameSession.getEnemiesInMap()};
+    return npcList[Random::get<std::size_t>(0, npcList.size())].lock().get();
+  }
+  if (action->getTargetType() == Action::aoe)
+    return &gameSession.getPlayer();
+  return nullptr;
 }

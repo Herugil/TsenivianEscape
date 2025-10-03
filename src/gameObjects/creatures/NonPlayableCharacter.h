@@ -83,10 +83,6 @@ public:
   void setDefaultBehavior();
   std::deque<Point> &getCurrentPath();
   void setCurrentPath(GameSession &gameSession, const Creature &target);
-  std::deque<Point> getPathFlee(GameSession &gameSession) const;
-  std::deque<Point> getPathToTarget(GameSession &gameSession,
-                                    const Creature &target) const;
-  void clearCurrentPath() { m_currentPath.clear(); }
   static AITypes stringToAIType(std::string_view str);
   AITypes getAIType() const { return m_AIType; }
   int getXpValue() const;
@@ -109,7 +105,6 @@ public:
                                  GameSession &gameSession);
   // this function sets current action and target. If no action set,
   // returns nullptr
-  Creature *pickTargetForAction(GameSession &gameSession, Action *action);
   Action *getCurrentAction() const;
   Creature *getCurrentTarget() const;
 

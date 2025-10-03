@@ -2,6 +2,7 @@
 #include "Settings.h"
 #include "core/Combat.h"
 #include "core/GameState.h"
+#include "core/MenuSystems.h"
 #include "core/SaveManager.h"
 #include "core/UserInterface.h"
 #include "gameObjects/creatures/Stats.h"
@@ -57,21 +58,33 @@ void GameStateManager::mainLoop() {
       handleInventory();
       break;
     case GameState::Container:
-      handleContainer();
+      m_currentState = MenuSystems::containerMenu(
+          m_gameSession, m_interactionResult.interactedObject);
       break;
-    case GameState::ActionMenu:
-      handleActions();
+    case GameState::ActionMenu: {
+      std::string result{MenuSystems::actionMenu(m_gameSession)};
+      m_logsToDisplay << result;
+      if (!m_logsToDisplay.str().empty())
+        m_currentState = GameState::Display;
+      else
+        m_currentState = GameState::Exploration;
       break;
+    }
     case GameState::CombatPlayerTurn:
       m_currentState = Combat::playerTurn(m_gameSession);
       handleWorld();
       break;
     case GameState::CombatEnemyTurn:
       m_currentState = Combat::enemyTurn(m_gameSession, m_logsToDisplay);
+      if (m_currentState == GameState::Exploration)
+        m_interactionResult.interactedObject = nullptr;
       break;
-    case GameState::ItemInspect:
-      handleItemInspect();
+    case GameState::ItemInspect: {
+      auto result{MenuSystems::inspectItem(m_gameSession, m_inspectedItem)};
+      m_logsToDisplay << result.logs;
+      m_currentState = result.nextState;
       break;
+    }
     case GameState::CharacterSheet:
       handleCharacterSheet();
       break;
@@ -215,137 +228,6 @@ void GameStateManager::handleInventory() {
     m_currentState = GameState::Exploration;
 }
 
-void GameStateManager::handleItemInspect() {
-  ScreenUtils::clearScreen();
-  if (auto item{m_inspectedItem.lock()}) {
-    std::cout << item->getDisplayItem() << "\n";
-    if (auto equipment = std::dynamic_pointer_cast<Equipment>(item))
-      std::cout << "E: Equip/Unequip   R: Drop\n";
-    else if (auto usable = std::dynamic_pointer_cast<UsableItem>(item))
-      std::cout << "E: Use   R: Drop\n";
-    else
-      std::cout << "R: Drop\n";
-    auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
-    if (CommandHandler::isInteractionCommand(command)) {
-      auto &player{m_gameSession.getPlayer()};
-      if (auto equipment = std::dynamic_pointer_cast<Equipment>(item))
-        player.equipItem(equipment);
-      else if (auto usable = std::dynamic_pointer_cast<UsableItem>(item)) {
-        m_logsToDisplay << player.useItem(usable);
-        m_logsToDisplay << m_gameSession.cleanDeadNpcs();
-        if (!m_logsToDisplay.str().empty()) {
-          m_currentState = GameState::Display;
-          return;
-        }
-      }
-    } else if (CommandHandler::isShoveCommand(command)) {
-      auto &player{m_gameSession.getPlayer()};
-      if (m_gameSession.dropItem(item, player.getPosition()))
-        player.removeItem(item);
-      else {
-        m_logsToDisplay << "Could not drop item! No space around you.\n";
-        m_currentState = GameState::Display;
-        return;
-      }
-    }
-  }
-  m_inspectedItem.reset();
-  m_currentState = GameState::Inventory;
-}
-
-void GameStateManager::handleContainer() {
-  ScreenUtils::clearScreen();
-  if (m_interactionResult.interactedObject) {
-    auto container{
-        dynamic_cast<Container *>(m_interactionResult.interactedObject)};
-    if (container) {
-      auto &player{m_gameSession.getPlayer()};
-      std::cout << container->getDescription() << "\n";
-      container->displayContents();
-      auto containerCommand{
-          CommandHandler::getCommand(Input::getKeyBlocking())};
-      if (CommandHandler::isTakeAllCommand(containerCommand)) {
-        player.takeAllItems(*container);
-        m_currentState = GameState::Exploration;
-      } else if (CommandHandler::isHotkeyCommand(containerCommand)) {
-        auto pressedKey{static_cast<std::size_t>(
-            CommandHandler::getPressedKey(containerCommand))};
-        auto item{container->popItem(pressedKey)};
-        if (item) {
-          player.takeItem(item);
-          container->displayContents();
-        }
-        if (container->getContents().empty()) {
-          if (container->getName() == "Left items bag") {
-            auto containers = m_gameSession.getSessionOwnedContainers();
-            auto it = std::find_if(
-                containers.begin(), containers.end(),
-                [container](const std::shared_ptr<Container> &ptr) {
-                  return ptr.get() == container;
-                });
-            if (it != containers.end()) {
-              m_gameSession.removeContainer(*it);
-            }
-          }
-          m_interactionResult.interactedObject = nullptr;
-          m_currentState = GameState::Exploration;
-        }
-      } else {
-        m_currentState = GameState::Exploration;
-      }
-    }
-  }
-}
-
-void GameStateManager::handleActions() {
-  Player &player{m_gameSession.getPlayer()};
-  player.displayActions();
-  auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
-  if (CommandHandler::isHotkeyCommand(command)) {
-    auto pressedKey{
-        static_cast<std::size_t>(CommandHandler::getPressedKey(command))};
-    auto action{player.getAction(pressedKey)};
-    if (!action)
-      return;
-    if (!action->canBeUsed(player))
-      m_logsToDisplay << "You cannot use this action right now.\n";
-    else if (action->needsHotkeyInput()) {
-      m_gameSession.displayEnemiesInMap([player, action](const Creature &c) {
-        return action->getHitChance(player, c);
-      });
-      auto hotkeyCommand{CommandHandler::getCommand(Input::getKeyBlocking())};
-      if (CommandHandler::isHotkeyCommand(hotkeyCommand)) {
-        auto pressedKey{static_cast<std::size_t>(
-            CommandHandler::getPressedKey(hotkeyCommand))};
-        if (pressedKey >= m_gameSession.getEnemiesInMap().size())
-          return;
-        auto targetCreature{m_gameSession.getEnemiesInMap()[pressedKey].lock()};
-        if (targetCreature) {
-          m_logsToDisplay << action->playerExecute(m_gameSession,
-                                                   *targetCreature);
-        }
-      }
-    } else if ((action->needsDirectionalInput())) {
-      auto directionCommand{
-          CommandHandler::getCommand(Input::getKeyBlocking())};
-      if (CommandHandler::isMovementCommand(directionCommand)) {
-        auto log{action->playerExecute(
-            m_gameSession,
-            static_cast<Directions::Direction>(directionCommand))};
-        m_logsToDisplay << log;
-      }
-    } else {
-      auto log{action->playerExecute(m_gameSession)};
-      m_logsToDisplay << log;
-    }
-  }
-  m_logsToDisplay << m_gameSession.cleanDeadNpcs();
-  if (!m_logsToDisplay.str().empty())
-    m_currentState = GameState::Display;
-  else
-    m_currentState = GameState::Exploration;
-}
-
 void GameStateManager::handleCharacterSheet() {
   ScreenUtils::clearScreen();
   auto &player{m_gameSession.getPlayer()};
@@ -420,6 +302,8 @@ void GameStateManager::handleUnlockMenu() {
   m_interactionResult.interactedObject = nullptr;
   m_currentState = GameState::Exploration;
 }
+
+// Level up functions could be moved out
 
 void GameStateManager::handleLevelUp() {
   ScreenUtils::clearScreen();
