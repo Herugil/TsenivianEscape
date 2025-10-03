@@ -27,8 +27,8 @@ std::string InstantUsableItem::use(Creature &user) {
     if (m_usesLeft > 0)
       --m_usesLeft;
   }
+  res << user.getName() << " uses " << m_name << " and ";
   switch (m_regenType) {
-    res << user.getName() << " uses " << m_name << " and ";
   case Type::healthRegen:
     user.addHealthPoints(m_effectValue);
     res << " regenerates " << m_effectValue << " health points.\n";
