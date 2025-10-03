@@ -12,4 +12,5 @@ struct ItemInspectResult {
 };
 ItemInspectResult inspectItem(GameSession &gameSession,
                               std::weak_ptr<Item> item);
+std::string actionMenu(GameSession &gameSession);
 } // namespace MenuSystems

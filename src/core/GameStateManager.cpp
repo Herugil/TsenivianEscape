@@ -60,9 +60,15 @@ void GameStateManager::mainLoop() {
     case GameState::Container:
       handleContainer();
       break;
-    case GameState::ActionMenu:
-      handleActions();
+    case GameState::ActionMenu: {
+      std::string result{MenuSystems::actionMenu(m_gameSession)};
+      m_logsToDisplay << result;
+      if (!m_logsToDisplay.str().empty())
+        m_currentState = GameState::Display;
+      else
+        m_currentState = GameState::Exploration;
       break;
+    }
     case GameState::CombatPlayerTurn:
       m_currentState = Combat::playerTurn(m_gameSession);
       handleWorld();
@@ -264,55 +270,6 @@ void GameStateManager::handleContainer() {
       }
     }
   }
-}
-
-void GameStateManager::handleActions() {
-  Player &player{m_gameSession.getPlayer()};
-  player.displayActions();
-  auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
-  if (CommandHandler::isHotkeyCommand(command)) {
-    auto pressedKey{
-        static_cast<std::size_t>(CommandHandler::getPressedKey(command))};
-    auto action{player.getAction(pressedKey)};
-    if (!action)
-      return;
-    if (!action->canBeUsed(player))
-      m_logsToDisplay << "You cannot use this action right now.\n";
-    else if (action->needsHotkeyInput()) {
-      m_gameSession.displayEnemiesInMap([player, action](const Creature &c) {
-        return action->getHitChance(player, c);
-      });
-      auto hotkeyCommand{CommandHandler::getCommand(Input::getKeyBlocking())};
-      if (CommandHandler::isHotkeyCommand(hotkeyCommand)) {
-        auto pressedKey{static_cast<std::size_t>(
-            CommandHandler::getPressedKey(hotkeyCommand))};
-        if (pressedKey >= m_gameSession.getEnemiesInMap().size())
-          return;
-        auto targetCreature{m_gameSession.getEnemiesInMap()[pressedKey].lock()};
-        if (targetCreature) {
-          m_logsToDisplay << action->playerExecute(m_gameSession,
-                                                   *targetCreature);
-        }
-      }
-    } else if ((action->needsDirectionalInput())) {
-      auto directionCommand{
-          CommandHandler::getCommand(Input::getKeyBlocking())};
-      if (CommandHandler::isMovementCommand(directionCommand)) {
-        auto log{action->playerExecute(
-            m_gameSession,
-            static_cast<Directions::Direction>(directionCommand))};
-        m_logsToDisplay << log;
-      }
-    } else {
-      auto log{action->playerExecute(m_gameSession)};
-      m_logsToDisplay << log;
-    }
-  }
-  m_logsToDisplay << m_gameSession.cleanDeadNpcs();
-  if (!m_logsToDisplay.str().empty())
-    m_currentState = GameState::Display;
-  else
-    m_currentState = GameState::Exploration;
 }
 
 void GameStateManager::handleCharacterSheet() {

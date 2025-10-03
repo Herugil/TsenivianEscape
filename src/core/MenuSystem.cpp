@@ -43,3 +43,47 @@ MenuSystems::inspectItem(GameSession &gameSession, std::weak_ptr<Item> item) {
   inspectedItem.reset();
   return {result, returnState};
 }
+
+std::string MenuSystems::actionMenu(GameSession &gameSession) {
+  std::string result;
+  Player &player{gameSession.getPlayer()};
+  player.displayActions();
+  auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
+  if (CommandHandler::isHotkeyCommand(command)) {
+    auto pressedKey{
+        static_cast<std::size_t>(CommandHandler::getPressedKey(command))};
+    auto action{player.getAction(pressedKey)};
+    if (!action)
+      return "";
+    if (!action->canBeUsed(player))
+      result += "You cannot use this action right now.\n";
+    else if (action->needsHotkeyInput()) {
+      gameSession.displayEnemiesInMap([player, action](const Creature &c) {
+        return action->getHitChance(player, c);
+      });
+      auto hotkeyCommand{CommandHandler::getCommand(Input::getKeyBlocking())};
+      if (CommandHandler::isHotkeyCommand(hotkeyCommand)) {
+        auto pressedKey{static_cast<std::size_t>(
+            CommandHandler::getPressedKey(hotkeyCommand))};
+        if (pressedKey >= gameSession.getEnemiesInMap().size())
+          return "";
+        auto targetCreature{gameSession.getEnemiesInMap()[pressedKey].lock()};
+        if (targetCreature) {
+          result += action->playerExecute(gameSession, *targetCreature);
+        }
+      }
+    } else if ((action->needsDirectionalInput())) {
+      auto directionCommand{
+          CommandHandler::getCommand(Input::getKeyBlocking())};
+      if (CommandHandler::isMovementCommand(directionCommand)) {
+        auto log{action->playerExecute(
+            gameSession, static_cast<Directions::Direction>(directionCommand))};
+        result += log;
+      }
+    } else {
+      auto log{action->playerExecute(gameSession)};
+      result += log;
+    }
+  }
+  return result += gameSession.cleanDeadNpcs();
+}
