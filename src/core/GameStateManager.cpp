@@ -58,7 +58,8 @@ void GameStateManager::mainLoop() {
       handleInventory();
       break;
     case GameState::Container:
-      handleContainer();
+      m_currentState = MenuSystems::containerMenu(
+          m_gameSession, m_interactionResult.interactedObject);
       break;
     case GameState::ActionMenu: {
       std::string result{MenuSystems::actionMenu(m_gameSession)};
@@ -75,6 +76,8 @@ void GameStateManager::mainLoop() {
       break;
     case GameState::CombatEnemyTurn:
       m_currentState = Combat::enemyTurn(m_gameSession, m_logsToDisplay);
+      if (m_currentState == GameState::Exploration)
+        m_interactionResult.interactedObject = nullptr;
       break;
     case GameState::ItemInspect: {
       auto result{MenuSystems::inspectItem(m_gameSession, m_inspectedItem)};
@@ -223,53 +226,6 @@ void GameStateManager::handleInventory() {
     }
   } else
     m_currentState = GameState::Exploration;
-}
-
-void GameStateManager::handleContainer() {
-  ScreenUtils::clearScreen();
-  if (m_interactionResult.interactedObject) {
-    bool tookItems{false};
-    auto container{
-        dynamic_cast<Container *>(m_interactionResult.interactedObject)};
-    if (container) {
-      auto &player{m_gameSession.getPlayer()};
-      std::cout << container->getDescription() << "\n";
-      container->displayContents();
-      auto containerCommand{
-          CommandHandler::getCommand(Input::getKeyBlocking())};
-      if (CommandHandler::isTakeAllCommand(containerCommand)) {
-        player.takeAllItems(*container);
-        tookItems = true;
-        m_currentState = GameState::Exploration;
-      } else if (CommandHandler::isHotkeyCommand(containerCommand)) {
-        auto pressedKey{static_cast<std::size_t>(
-            CommandHandler::getPressedKey(containerCommand))};
-        auto item{container->popItem(pressedKey)};
-        if (item) {
-          player.takeItem(item);
-          container->displayContents();
-          tookItems = true;
-        }
-      } else {
-        m_currentState = GameState::Exploration;
-      }
-      if (tookItems && container->getContents().empty()) {
-        if (container->getName() == "Left items bag") {
-          auto containers = m_gameSession.getSessionOwnedContainers();
-          auto it =
-              std::find_if(containers.begin(), containers.end(),
-                           [container](const std::shared_ptr<Container> &ptr) {
-                             return ptr.get() == container;
-                           });
-          if (it != containers.end()) {
-            m_gameSession.removeContainer(*it);
-          }
-        }
-        m_interactionResult.interactedObject = nullptr;
-        m_currentState = GameState::Exploration;
-      }
-    }
-  }
 }
 
 void GameStateManager::handleCharacterSheet() {

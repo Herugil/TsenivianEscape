@@ -87,3 +87,46 @@ std::string MenuSystems::actionMenu(GameSession &gameSession) {
   }
   return result += gameSession.cleanDeadNpcs();
 }
+
+GameState MenuSystems::containerMenu(GameSession &gameSession,
+                                     GameObject *container) {
+  ScreenUtils::clearScreen();
+  if (!container)
+    return GameState::Exploration;
+  GameState returnState{GameState::Container};
+  bool tookItems{false};
+  if (auto containerPtr = dynamic_cast<Container *>(container)) {
+    auto &player{gameSession.getPlayer()};
+    std::cout << containerPtr->getDescription() << "\n";
+    containerPtr->displayContents();
+    auto containerCommand{CommandHandler::getCommand(Input::getKeyBlocking())};
+    if (CommandHandler::isTakeAllCommand(containerCommand)) {
+      player.takeAllItems(*containerPtr);
+      tookItems = true;
+    } else if (CommandHandler::isHotkeyCommand(containerCommand)) {
+      auto pressedKey{static_cast<std::size_t>(
+          CommandHandler::getPressedKey(containerCommand))};
+      auto item{containerPtr->popItem(pressedKey)};
+      if (item) {
+        player.takeItem(item);
+        containerPtr->displayContents();
+        tookItems = true;
+      }
+    } else
+      returnState = GameState::Exploration;
+    if (tookItems && containerPtr->getContents().empty()) {
+      if (containerPtr->getName() == "Left items bag") {
+        auto containers = gameSession.getSessionOwnedContainers();
+        auto it =
+            std::find_if(containers.begin(), containers.end(),
+                         [containerPtr](const std::shared_ptr<Container> &ptr) {
+                           return ptr.get() == containerPtr;
+                         });
+        if (it != containers.end())
+          gameSession.removeContainer(*it);
+      }
+      returnState = GameState::Exploration;
+    }
+  }
+  return returnState;
+}

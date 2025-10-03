@@ -18,7 +18,6 @@ private:
   InteractionResult m_interactionResult;
   void handleWorld();
   void handleInventory();
-  void handleContainer();
   void handleDisplay();
   void handleDisplayBlocking();
   void handleGameOver();
