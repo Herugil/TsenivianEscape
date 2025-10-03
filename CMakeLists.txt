@@ -16,3 +16,6 @@ add_executable(game ${SOURCES})
 
 # Include directories
 target_include_directories(game PRIVATE src)
+
+find_package(nlohmann_json REQUIRED)
+target_link_libraries(game PRIVATE nlohmann_json::nlohmann_json)
