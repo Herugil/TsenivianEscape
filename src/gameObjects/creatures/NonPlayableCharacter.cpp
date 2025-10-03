@@ -10,6 +10,7 @@
 #include "gameObjects/terrain/MapChanger.h"
 #include "input/Directions.h"
 #include "map/Point.h"
+#include "scripts/NpcCombatAI.h"
 #include "utils/GeometryUtils.h"
 #include "utils/Random.h"
 #include <algorithm>
@@ -131,8 +132,7 @@ Action *NonPlayableCharacter::getBasicAction() const {
   return nullptr;
 }
 
-std::string NonPlayableCharacter::setCurrentBehavior(
-    [[maybe_unused]] GameSession &gameSession) {
+std::string NonPlayableCharacter::setCurrentBehavior(GameSession &gameSession) {
   std::ostringstream res{};
   if (getActionPoints() == 0 && getMovementPoints() == 0) {
     m_currentBehavior = skipTurn;
@@ -178,7 +178,8 @@ Action *NonPlayableCharacter::determineCurrentAction(Action::ActionType type,
   auto r{Random::get<std::size_t>(0, availableActions.size() - 1)};
   if (!availableActions.empty()) {
     m_currentAction = availableActions[r];
-    m_currentTarget = pickTargetForAction(gameSession, m_currentAction);
+    m_currentTarget =
+        NpcCombatAI::pickTargetForAction(gameSession, *this, m_currentAction);
     if (m_currentTarget)
       return m_currentAction;
   }
@@ -187,55 +188,6 @@ Action *NonPlayableCharacter::determineCurrentAction(Action::ActionType type,
 
 Action *NonPlayableCharacter::getCurrentAction() const {
   return m_currentAction;
-}
-
-Creature *NonPlayableCharacter::pickTargetForAction(GameSession &gameSession,
-                                                    Action *action) {
-  if (action->getTargetType() == Action::selfTarget)
-    return this;
-  if (action->getTargetType() == Action::enemyTarget)
-    return &gameSession.getPlayer();
-  if (action->getTargetType() == Action::friendTarget) {
-    if (this->getAIType() == NonPlayableCharacter::boss)
-      // for now bosses are considered "lone fighter" types
-      return this;
-    auto npcList{gameSession.getEnemiesInMap()};
-    Creature *bestTarget = nullptr;
-    int currChance{0};
-    std::vector<int> cumBuffChances{};
-    std::vector<NonPlayableCharacter *> candidates{};
-    for (auto &weakNpc : npcList) {
-      auto npc = weakNpc.lock().get();
-      if (!npc)
-        continue;
-      int chance = npc->getChanceToBuff();
-      if (npc == this)
-        chance -= AISettings::g_selfBuffLikelihoodPenalty;
-      if (gameSession.getMap().isPointVisible(npc->getPosition(),
-                                              this->getPosition()) == false) {
-        chance -= AISettings::g_nonVisibleTargetPenalty;
-      }
-      cumBuffChances.emplace_back(currChance += chance);
-      candidates.push_back(npc);
-    }
-    int roll{Random::get(0, currChance - 1)};
-    for (std::size_t i{0}; i < cumBuffChances.size(); ++i) {
-      if (roll < cumBuffChances[i]) {
-        bestTarget = candidates[i];
-        break;
-      }
-    }
-    return bestTarget;
-  }
-  if (action->getTargetType() == Action::aoe &&
-      (action->isType(Action::defenseBuff) ||
-       action->isType(Action::offenseBuff))) {
-    auto npcList{gameSession.getEnemiesInMap()};
-    return npcList[Random::get<std::size_t>(0, npcList.size())].lock().get();
-  }
-  if (action->getTargetType() == Action::aoe)
-    return &gameSession.getPlayer();
-  return nullptr;
 }
 
 Creature *NonPlayableCharacter::getCurrentTarget() const {
@@ -338,76 +290,14 @@ void NonPlayableCharacter::setCurrentPath(GameSession &gameSession,
   case selfHeal: // this depends on the target (self heal)
                  // can be an attack targetting the player for ex
                  // this function needs a target parameter probably
-    m_currentPath = getPathToTarget(gameSession, target);
+    m_currentPath = NpcCombatAI::getPathToTarget(gameSession, *this, target);
     return;
   case flee:
-    m_currentPath = getPathFlee(gameSession);
+    m_currentPath = NpcCombatAI::getPathFlee(gameSession, *this);
     return;
   default: // actor has no goal, so he doesnt really need to move..
     m_currentPath.clear(); // will remain in place
   }
-}
-
-std::deque<Point>
-NonPlayableCharacter::getPathFlee(GameSession &gameSession) const {
-  std::vector<Point> possiblePoints{};
-  std::vector<Point> safePoints{};
-  std::vector<Point> mapChangers{};
-  std::deque<Point> path{};
-  for (int i{0}; i < gameSession.getMap().getWidth(); ++i) {
-    for (int j{0}; j < gameSession.getMap().getHeight(); ++j) {
-      Point potentialDestination{i, j};
-      if (!gameSession.getMap().isAvailable(potentialDestination))
-        continue; // cant go there
-      if (GeometryUtils::distanceL2(potentialDestination,
-                                    gameSession.getPlayerPos()) <=
-          GeometryUtils::distanceL2(getPosition(), gameSession.getPlayerPos()))
-        continue; // would get closer to player
-      if (gameSession.getMap().getFloorObject(potentialDestination)) {
-        if (auto{dynamic_cast<MapChanger *>(
-                gameSession.getMap().getFloorObject(potentialDestination))})
-          mapChangers.push_back(potentialDestination);
-        else
-          continue;
-      }
-      safePoints.push_back(potentialDestination);
-    }
-  }
-  std::sort(mapChangers.begin(), mapChangers.end(),
-            [this](const Point &p1, const Point &p2) {
-              return (GeometryUtils::distanceL2(getPosition(), p1) >=
-                      GeometryUtils::distanceL2(getPosition(), p2));
-            });
-  path = GeometryUtils::sortPointsAndFindPath(mapChangers, getPosition(),
-                                              gameSession, getPosition(), true);
-  // this leads to the closest map changer
-  if (!path.empty())
-    return path;
-  else
-    return GeometryUtils::sortPointsAndFindPath(
-        safePoints, getPosition(), gameSession, gameSession.getPlayerPos(),
-        false);
-}
-
-std::deque<Point>
-NonPlayableCharacter::getPathToTarget(GameSession &gameSession,
-                                      const Creature &target) const {
-  std::vector<Point> possiblePoints{};
-  for (int i{0}; i < gameSession.getMap().getWidth(); ++i) {
-    for (int j{0}; j < gameSession.getMap().getHeight(); ++j) {
-      Point potentialDestination{i, j};
-      if (!gameSession.getMap().isAvailable(potentialDestination))
-        continue; // cant go there
-      if (GeometryUtils::distanceL2(potentialDestination,
-                                    target.getPosition()) >=
-          GeometryUtils::distanceL2(getPosition(), target.getPosition()))
-        continue; // would get farther to target
-      possiblePoints.push_back(potentialDestination);
-    }
-  }
-  return GeometryUtils::sortPointsAndFindPath(
-      possiblePoints, getPosition(), gameSession, target.getPosition());
-  return {};
 }
 
 NonPlayableCharacter::AITypes

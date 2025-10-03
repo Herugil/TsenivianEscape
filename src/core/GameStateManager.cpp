@@ -303,6 +303,8 @@ void GameStateManager::handleUnlockMenu() {
   m_currentState = GameState::Exploration;
 }
 
+// Level up functions could be moved out
+
 void GameStateManager::handleLevelUp() {
   ScreenUtils::clearScreen();
   auto &player{m_gameSession.getPlayer()};
