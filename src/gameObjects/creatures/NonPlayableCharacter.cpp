@@ -88,7 +88,7 @@ int NonPlayableCharacter::getDistanceDamage() const {
 }
 int NonPlayableCharacter::getDistanceRange() const { return m_distanceRange; }
 int NonPlayableCharacter::getArmor() const {
-  return m_armor + getStatModifier(Stat::Armor);
+  return std::max(0, m_armor + getStatModifier(Stat::Armor));
 }
 int NonPlayableCharacter::getStrength() const {
   return m_stats.strength + getStatModifier(Stat::Strength);

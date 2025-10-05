@@ -1,0 +1,63 @@
+#include "fixtures/fixtures.h"
+#include <gtest/gtest.h>
+
+class CombatTest : public testing::Test {
+protected:
+  std::unique_ptr<GameSession> gameSession;
+  void SetUp() override {
+    gameSession = std::make_unique<GameSession>(createTestGameSession());
+    gameSession->addNpc(createTestNPC());
+  }
+};
+
+TEST_F(CombatTest, CombatTurns) {
+  ASSERT_TRUE(gameSession->enemiesInMap());
+  gameSession->initializeTurnOrder();
+  ASSERT_EQ(gameSession->getCurrentTurn(), 1);
+  ASSERT_EQ(gameSession->getTurnOrder().size(), 2);
+  ASSERT_EQ(gameSession->getActiveCreature().lock(),
+            gameSession->getPlayerPtr());
+  gameSession->incrementTurnIndex();
+  ASSERT_EQ(gameSession->getActiveCreature().lock(),
+            gameSession->getTurnOrder()[1].lock());
+  gameSession->incrementTurnIndex();
+  ASSERT_EQ(gameSession->getActiveCreature().lock(),
+            gameSession->getPlayerPtr());
+  ASSERT_EQ(gameSession->getCurrentTurn(), 2);
+}
+
+TEST_F(CombatTest, MultipleNpcCombatTurns) {
+  gameSession->addNpc(createTestNPC());
+  ASSERT_TRUE(gameSession->enemiesInMap());
+  gameSession->initializeTurnOrder();
+  ASSERT_EQ(gameSession->getCurrentTurn(), 1);
+  ASSERT_EQ(gameSession->getTurnOrder().size(), 3);
+  ASSERT_EQ(gameSession->getActiveCreature().lock(),
+            gameSession->getPlayerPtr());
+  gameSession->incrementTurnIndex();
+  ASSERT_EQ(gameSession->getActiveCreature().lock(),
+            gameSession->getTurnOrder()[1].lock());
+  gameSession->incrementTurnIndex();
+  ASSERT_EQ(gameSession->getActiveCreature().lock(),
+            gameSession->getTurnOrder()[2].lock());
+  ASSERT_EQ(gameSession->getCurrentTurn(), 1);
+  gameSession->incrementTurnIndex();
+  ASSERT_EQ(gameSession->getActiveCreature().lock(),
+            gameSession->getPlayerPtr());
+  ASSERT_EQ(gameSession->getCurrentTurn(), 2);
+}
+
+TEST_F(CombatTest, NoNpcCombatTurns) {
+  gameSession->initializeTurnOrder();
+  gameSession->getNpcs()[0]->takeDamage(100);
+  gameSession->cleanDeadNpcs();
+  ASSERT_FALSE(gameSession->enemiesInMap());
+  ASSERT_EQ(gameSession->getCurrentTurn(), 1);
+  ASSERT_EQ(gameSession->getTurnOrder().size(), 1);
+  ASSERT_EQ(gameSession->getActiveCreature().lock(),
+            gameSession->getPlayerPtr());
+  gameSession->incrementTurnIndex();
+  ASSERT_EQ(gameSession->getActiveCreature().lock(),
+            gameSession->getPlayerPtr());
+  ASSERT_EQ(gameSession->getCurrentTurn(), 2);
+}

@@ -47,7 +47,7 @@ int Creature::getEvasion() const {
 int Creature::takeDamage(int damage, bool ignoreArmor) {
   if (!ignoreArmor)
     damage = std::max(0, damage - getArmor());
-  m_healthPoints -= damage;
+  m_healthPoints = std::max(0, m_healthPoints - damage);
   return damage;
 }
 void Creature::addHealthPoints(int healthPoints) {
@@ -134,7 +134,8 @@ bool Creature::canAct(int cost) const {
   return (!m_inCombat || m_actionPoints - cost >= 0);
 }
 bool Creature::canMove(int cost) const {
-  return (!m_inCombat || m_movementPoints - cost >= 0 || m_actionPoints > 0);
+  return (!m_inCombat || m_movementPoints - cost >= 0 ||
+          m_actionPoints * m_maxMovementPoints >= cost);
 }
 
 void Creature::refillActionPoints() { m_actionPoints = m_maxActionPoints; }
