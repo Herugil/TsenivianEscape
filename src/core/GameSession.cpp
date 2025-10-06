@@ -10,7 +10,7 @@
 using json = nlohmann::json;
 
 GameSession::GameSession(std::shared_ptr<Player> player)
-    : m_player{std::move(player)} {
+    : m_player{std::move(player)}, m_allMaps{} {
   m_allMaps.emplace("placeholder", Map{"placeholder"});
   m_currentMap = &m_allMaps.at("placeholder");
 }
