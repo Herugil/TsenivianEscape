@@ -15,6 +15,29 @@ GameSession::GameSession(std::shared_ptr<Player> player)
   m_currentMap = &m_allMaps.at("placeholder");
 }
 
+GameSession::GameSession(GameSession &&other) noexcept
+    : m_player{std::move(other.m_player)}, m_npcs{std::move(other.m_npcs)},
+      m_sessionOwnedContainers{std::move(other.m_sessionOwnedContainers)},
+      m_turnOrder{std::move(other.m_turnOrder)},
+      m_allMaps{std::move(other.m_allMaps)},
+      m_currentTurnIndex{other.m_currentTurnIndex},
+      m_currentMap{&m_allMaps.at(other.m_currentMap->getName())},
+      m_currentTurn{other.m_currentTurn} {}
+
+GameSession &GameSession::operator=(GameSession &&other) noexcept {
+  if (this != &other) {
+    m_player = std::move(other.m_player);
+    m_npcs = std::move(other.m_npcs);
+    m_sessionOwnedContainers = std::move(other.m_sessionOwnedContainers);
+    m_allMaps = std::move(other.m_allMaps);
+    m_currentMap = &m_allMaps.at(other.m_currentMap->getName());
+    m_turnOrder = std::move(other.m_turnOrder);
+    m_currentTurnIndex = other.m_currentTurnIndex;
+    m_currentTurn = other.m_currentTurn;
+  }
+  return *this;
+}
+
 void GameSession::respawnPlayer() {
   m_currentMap->placeTop(m_player, m_player->getPosition());
   m_currentMap->setVisited();
