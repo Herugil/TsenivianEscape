@@ -1,4 +1,6 @@
 #include "fixtures/fixtures.h"
+#include "scripts/NpcCombatAI.h"
+#include "utils/Random.h"
 #include <gtest/gtest.h>
 
 class CombatTest : public testing::Test {
@@ -7,6 +9,7 @@ protected:
   void SetUp() override {
     gameSession = std::make_unique<GameSession>(createTestGameSession());
     gameSession->addNpc(createTestNPC());
+    Random::seed(42);
   }
 };
 
@@ -60,4 +63,14 @@ TEST_F(CombatTest, NoNpcCombatTurns) {
   ASSERT_EQ(gameSession->getActiveCreature().lock(),
             gameSession->getPlayerPtr());
   ASSERT_EQ(gameSession->getCurrentTurn(), 2);
+}
+
+TEST_F(CombatTest, BaseEnemyActions) {
+  gameSession->initializeTurnOrder();
+  gameSession->incrementTurnIndex();
+  auto activeCreature{gameSession->getActiveCreature().lock()};
+  auto npc{std::dynamic_pointer_cast<NonPlayableCharacter>(activeCreature)};
+  ASSERT_NE(npc, nullptr);
+  NpcCombatAI::npcActCombat(*gameSession, npc);
+  ASSERT_EQ(npc->getCurrentAction()->getName(), "Precise Strikes");
 }

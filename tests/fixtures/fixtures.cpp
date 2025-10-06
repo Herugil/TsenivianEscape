@@ -2,8 +2,9 @@
 
 std::unique_ptr<NonPlayableCharacter> createTestNPC() {
   std::vector<std::unique_ptr<Action>> actions{};
-  actions.emplace_back(SkillTree::createActionByName("Dodge"));
-  actions.emplace_back(SkillTree::createActionByName("Precise Attacks"));
+  actions.emplace_back(
+      std::make_unique<BasicAttack>("basic attack", Stat::Strength));
+  actions.emplace_back(SkillTree::createActionByName("Precise Strikes"));
   std::vector<std::shared_ptr<Item>> inventory{
       std::make_shared<Item>("item1", "id", "A simple item"),
   };
