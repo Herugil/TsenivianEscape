@@ -51,7 +51,7 @@ char Input::getKeyBlocking() {
   }
 
   struct termios newTermios = originalTermios;
-  newTermios.c_lflag &= ~static_cast<unsigned long>((ICANON | ECHO));
+  newTermios.c_lflag &= ~static_cast<tcflag_t>(ICANON | ECHO);
   tcsetattr(STDIN_FILENO, TCSANOW, &newTermios);
 
   int ch = getchar();
@@ -72,7 +72,7 @@ void Input::setNonBlockingMode(bool enable) {
 
   if (enable) {
     struct termios newTermios = originalTermios;
-    newTermios.c_lflag &= ~static_cast<unsigned long>((ICANON | ECHO));
+    newTermios.c_lflag &= ~static_cast<tcflag_t>((ICANON | ECHO));
     tcsetattr(STDIN_FILENO, TCSANOW, &newTermios);
 
     int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
