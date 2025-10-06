@@ -57,7 +57,8 @@ NonPlayableCharacter::NonPlayableCharacter(const NonPlayableCharacter &other)
       m_currentBehavior(other.m_currentBehavior), m_AIType(other.m_AIType),
       m_xpValue{other.m_xpValue}, m_armor{other.m_armor} {}
 
-void NonPlayableCharacter::operator=(const NonPlayableCharacter &other) {
+NonPlayableCharacter &
+NonPlayableCharacter::operator=(const NonPlayableCharacter &other) {
   if (this != &other) {
     Creature::operator=(other);
     m_id = other.m_id;
@@ -74,6 +75,7 @@ void NonPlayableCharacter::operator=(const NonPlayableCharacter &other) {
     m_xpValue = other.m_xpValue;
     m_armor = other.m_armor;
   }
+  return *this;
 }
 
 std::shared_ptr<NonPlayableCharacter> NonPlayableCharacter::clone() const {
