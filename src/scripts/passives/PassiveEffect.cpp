@@ -84,6 +84,7 @@ int PassiveEffect::getStatModifier(Stat stat) const {
   case Type::ConstitutionBonus:
     if (stat == Stat::Constitution)
       return m_value;
+    break;
   case Type::ArmorBonus:
     if (stat == Stat::Armor)
       return m_value;
