@@ -57,6 +57,25 @@ NonPlayableCharacter::NonPlayableCharacter(const NonPlayableCharacter &other)
       m_currentBehavior(other.m_currentBehavior), m_AIType(other.m_AIType),
       m_xpValue{other.m_xpValue}, m_armor{other.m_armor} {}
 
+void NonPlayableCharacter::operator=(const NonPlayableCharacter &other) {
+  if (this != &other) {
+    Creature::operator=(other);
+    m_id = other.m_id;
+    m_deadDescription = other.m_deadDescription;
+    m_meleeHitChance = other.m_meleeHitChance;
+    m_distanceHitChance = other.m_distanceHitChance;
+    m_meleeRange = other.m_meleeRange;
+    m_meleeDamage = other.m_meleeDamage;
+    m_distanceRange = other.m_distanceRange;
+    m_distanceDamage = other.m_distanceDamage;
+    m_currentPath = other.m_currentPath;
+    m_currentBehavior = other.m_currentBehavior;
+    m_AIType = other.m_AIType;
+    m_xpValue = other.m_xpValue;
+    m_armor = other.m_armor;
+  }
+}
+
 std::shared_ptr<NonPlayableCharacter> NonPlayableCharacter::clone() const {
   return std::make_shared<NonPlayableCharacter>(*this);
 }

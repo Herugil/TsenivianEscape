@@ -67,6 +67,7 @@ public:
                        std::string_view aiType = "defaultAI", int xpValue = 50,
                        Stats stats = Stats{}, int armor = 0);
   NonPlayableCharacter(const NonPlayableCharacter &other);
+  void operator=(const NonPlayableCharacter &other);
   std::shared_ptr<NonPlayableCharacter> clone() const;
   std::string_view getDeadDescription() const;
   void addItemToInventory(std::shared_ptr<Item> item);
