@@ -20,7 +20,8 @@
 // need to be broken down
 
 GameStateManager::GameStateManager(GameSession &&gameSession)
-    : m_gameSession{std::move(gameSession)} {
+    : m_gameSession{std::move(gameSession)},
+      m_interactionResult{GameState::Exploration, nullptr} {
   m_gameSession.respawnPlayer();
 }
 
