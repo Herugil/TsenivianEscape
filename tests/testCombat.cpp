@@ -74,8 +74,11 @@ TEST_F(CombatTest, BaseEnemyActions) {
   auto activeCreature{gameSession->getActiveCreature().lock()};
   std::cerr << "Got active creature\n" << std::flush;
   ASSERT_NE(activeCreature, nullptr);
+  std::cerr << "Active creature not null\n";
   auto npc{std::dynamic_pointer_cast<NonPlayableCharacter>(activeCreature)};
   ASSERT_NE(npc, nullptr);
+  std::cerr << "NPC not null\n" << std::flush;
   NpcCombatAI::npcActCombat(*gameSession, npc);
+  std::cerr << "NPC acted\n" << std::flush;
   ASSERT_EQ(npc->getCurrentAction()->getName(), "Precise Strikes");
 }
