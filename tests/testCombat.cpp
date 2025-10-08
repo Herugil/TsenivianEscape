@@ -69,6 +69,7 @@ TEST_F(CombatTest, BaseEnemyActions) {
   gameSession->initializeTurnOrder();
   gameSession->incrementTurnIndex();
   auto activeCreature{gameSession->getActiveCreature().lock()};
+  ASSERT_NE(activeCreature, nullptr);
   auto npc{std::dynamic_pointer_cast<NonPlayableCharacter>(activeCreature)};
   ASSERT_NE(npc, nullptr);
   NpcCombatAI::npcActCombat(*gameSession, npc);
