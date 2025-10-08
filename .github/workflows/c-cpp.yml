@@ -74,7 +74,7 @@ jobs:
       - name: Create build directory
         run: mkdir build
       - name: Configure CMake
-        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON
+        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON  -DCMAKE_CXX_FLAGS="-fsanitize=address -g"
       - name: Build Tests
         run: cmake --build build
       - name: Run Tests
