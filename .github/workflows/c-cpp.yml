@@ -71,4 +71,4 @@ jobs:
       - name: Build Tests
         run: cmake --build build
       - name: Run Tests
-        run: ctest --output-on-failure --verbose --test-dir .
+        run: ctest --output-on-failure --verbose --test-dir build
