@@ -66,9 +66,13 @@ TEST_F(CombatTest, NoNpcCombatTurns) {
 }
 
 TEST_F(CombatTest, BaseEnemyActions) {
+  std::cerr << "Test starting\n" << std::flush;
   gameSession->initializeTurnOrder();
+  std::cerr << "Turn order initialized\n" << std::flush;
   gameSession->incrementTurnIndex();
+  std::cerr << "Turn index incremented\n" << std::flush;
   auto activeCreature{gameSession->getActiveCreature().lock()};
+  std::cerr << "Got active creature\n" << std::flush;
   ASSERT_NE(activeCreature, nullptr);
   auto npc{std::dynamic_pointer_cast<NonPlayableCharacter>(activeCreature)};
   ASSERT_NE(npc, nullptr);
