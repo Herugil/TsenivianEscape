@@ -108,3 +108,9 @@ To run the tests, execute the test binary in the build directory.
 
 This project was developed as a learning exercise to apply C++ programming skills in game development. This was built from scratch in September 2025, after going through
 learncpp.com.
+
+## Main inspirations
+
+- Dungeons and Dragons 5e for introducing me to TTRPGs and some mechanics.
+- PF2e for the multiple actions per turn and some mechanics.
+- Divinity Original Sin 2, Baldur's Gate 3 for turn based combat and enemy AI, and Divinity Original Sin board game for some of the combat mechanics.
