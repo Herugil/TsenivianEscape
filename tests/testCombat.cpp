@@ -65,27 +65,12 @@ TEST_F(CombatTest, NoNpcCombatTurns) {
 }
 
 TEST_F(CombatTest, BaseEnemyActions) {
-  std::cerr << "Test starting\n" << std::flush;
   gameSession->initializeTurnOrder();
-  std::cerr << "Turn order initialized\n" << std::flush;
   gameSession->incrementTurnIndex();
-  std::cerr << "Turn index incremented\n" << std::flush;
   auto activeCreature{gameSession->getActiveCreature().lock()};
-  std::cerr << "Got active creature\n" << std::flush;
   ASSERT_NE(activeCreature, nullptr);
-  std::cerr << "Active creature not null\n";
   auto npc{std::dynamic_pointer_cast<NonPlayableCharacter>(activeCreature)};
   ASSERT_NE(npc, nullptr);
-  std::cerr << "NPC not null\n" << std::flush;
-  auto actions{npc->getUsableActionFromType(Action::offenseBuff)};
-  for (const auto &action : actions) {
-    std::cerr << "NPC action: " << action->getName() << "\n";
-  }
-  auto actions2{npc->getUsableActionFromType(Action::defenseBuff)};
-  for (const auto &action : actions2) {
-    std::cerr << "NPC actiondefense: " << action->getName() << "\n";
-  }
   NpcCombatAI::npcActCombat(*gameSession, npc);
-  std::cerr << "NPC acted\n" << std::flush;
   ASSERT_EQ(npc->getCurrentAction()->getName(), "Precise Strikes");
 }
