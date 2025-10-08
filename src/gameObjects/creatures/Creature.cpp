@@ -33,6 +33,34 @@ Creature::Creature(const Creature &other)
   }
 }
 
+Creature &Creature::operator=(const Creature &other) {
+  if (this != &other) {
+    GameObject::operator=(other);
+    m_inventory.clear();
+    for (const auto &item : other.m_inventory) {
+      m_inventory.emplace_back(item->clone());
+    }
+    m_healthPoints = other.m_healthPoints;
+    m_maxHealthPoints = other.m_maxHealthPoints;
+    m_evasion = other.m_evasion;
+    m_stats = other.m_stats;
+    m_maxMovementPoints = other.m_maxMovementPoints;
+    m_maxActionPoints = other.m_maxActionPoints;
+    m_movementPoints = other.m_movementPoints;
+    m_actionPoints = other.m_actionPoints;
+    m_inCombat = other.m_inCombat;
+    m_passiveEffects.clear();
+    for (const auto &effect : other.m_passiveEffects) {
+      m_passiveEffects.emplace_back(std::make_unique<PassiveEffect>(*effect));
+    }
+    m_actions.clear();
+    for (const auto &action : other.m_actions) {
+      m_actions.emplace_back(action->clone());
+    }
+  }
+  return *this;
+}
+
 int Creature::getHealthPoints() const { return m_healthPoints; }
 int Creature::getMaxHealthPoints() const { return m_maxHealthPoints; }
 int Creature::getStrength() const { return 0; }
@@ -47,7 +75,7 @@ int Creature::getEvasion() const {
 int Creature::takeDamage(int damage, bool ignoreArmor) {
   if (!ignoreArmor)
     damage = std::max(0, damage - getArmor());
-  m_healthPoints -= damage;
+  m_healthPoints = std::max(0, m_healthPoints - damage);
   return damage;
 }
 void Creature::addHealthPoints(int healthPoints) {
@@ -134,7 +162,8 @@ bool Creature::canAct(int cost) const {
   return (!m_inCombat || m_actionPoints - cost >= 0);
 }
 bool Creature::canMove(int cost) const {
-  return (!m_inCombat || m_movementPoints - cost >= 0 || m_actionPoints > 0);
+  return (!m_inCombat || m_movementPoints - cost >= 0 ||
+          m_actionPoints * m_maxMovementPoints >= cost);
 }
 
 void Creature::refillActionPoints() { m_actionPoints = m_maxActionPoints; }

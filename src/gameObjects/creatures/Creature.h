@@ -32,6 +32,7 @@ public:
            int maxHealthPoints, int evasion = 0, Stats stats = Stats{},
            std::string_view name = "", std::string_view description = "");
   Creature(const Creature &other);
+  Creature &operator=(const Creature &other);
   int getHealthPoints() const;
   bool isDead() const;
   int takeDamage(int damage, bool ignoreArmor = false);

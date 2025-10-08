@@ -31,6 +31,10 @@ class GameSession {
 
 public:
   GameSession(std::shared_ptr<Player> player);
+  GameSession(const GameSession &) = delete;
+  GameSession &operator=(const GameSession &) = delete;
+  GameSession(GameSession &&) noexcept;
+  GameSession &operator=(GameSession &&) noexcept;
   void moveCreature(std::shared_ptr<GameObject> gameObject,
                     Directions::Direction direction, bool forced = false);
   void respawnPlayer();

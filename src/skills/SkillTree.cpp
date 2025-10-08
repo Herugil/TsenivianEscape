@@ -68,7 +68,7 @@ std::unique_ptr<Action> SkillTree::createDodgeAction() {
 }
 
 std::unique_ptr<Action> SkillTree::createPreciseStrikesAction() {
-  return std::make_unique<StatModifier>("Precise strikes",
+  return std::make_unique<StatModifier>("Precise Strikes",
                                         PassiveEffect::Type::MeleeHitBonus, 10,
                                         2, 1, 1, 4, 10);
 }

@@ -4,6 +4,7 @@
 #include "map/Layer.h"
 #include "map/Point.h"
 #include "nlohmann/json.hpp"
+#include <deque>
 #include <iostream>
 #include <memory>
 #include <unordered_map>
