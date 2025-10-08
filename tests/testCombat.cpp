@@ -9,7 +9,6 @@ protected:
   void SetUp() override {
     gameSession = std::make_unique<GameSession>(createTestGameSession());
     gameSession->addNpc(createTestNPC());
-    Random::seed(42);
   }
 };
 
@@ -78,6 +77,14 @@ TEST_F(CombatTest, BaseEnemyActions) {
   auto npc{std::dynamic_pointer_cast<NonPlayableCharacter>(activeCreature)};
   ASSERT_NE(npc, nullptr);
   std::cerr << "NPC not null\n" << std::flush;
+  auto actions{npc->getUsableActionFromType(Action::offenseBuff)};
+  for (const auto &action : actions) {
+    std::cerr << "NPC action: " << action->getName() << "\n";
+  }
+  auto actions2{npc->getUsableActionFromType(Action::defenseBuff)};
+  for (const auto &action : actions2) {
+    std::cerr << "NPC actiondefense: " << action->getName() << "\n";
+  }
   NpcCombatAI::npcActCombat(*gameSession, npc);
   std::cerr << "NPC acted\n" << std::flush;
   ASSERT_EQ(npc->getCurrentAction()->getName(), "Precise Strikes");
