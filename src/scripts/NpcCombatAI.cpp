@@ -153,8 +153,8 @@ std::deque<Point> NpcCombatAI::getPathFlee(GameSession &gameSession,
                                     gameSession.getPlayerPos()))
         continue; // would get closer to player
       if (gameSession.getMap().getFloorObject(potentialDestination)) {
-        if (auto{dynamic_cast<MapChanger *>(
-                gameSession.getMap().getFloorObject(potentialDestination))})
+        if (dynamic_cast<MapChanger *>(
+                gameSession.getMap().getFloorObject(potentialDestination)))
           mapChangers.push_back(potentialDestination);
         else
           continue;
