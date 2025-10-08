@@ -31,6 +31,7 @@ NpcCombatAI::npcActCombat(GameSession &gameSession,
   if (!target)
     target = gameSession.getPlayerPtr().get();
   std::vector<Action *> availableActions{};
+  std::cerr << "switching\n";
   switch (actor->getCurrentBehavior()) {
   case NonPlayableCharacter::basicAttack:
     if (checkTargetAvailable(gameSession, actor, *target,
