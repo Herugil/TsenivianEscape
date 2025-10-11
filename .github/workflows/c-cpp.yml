@@ -17,14 +17,7 @@ jobs:
         uses: lukka/run-vcpkg@v11
         with:
           runVcpkgInstall: true
-          vcpkgDirectory: "${{ github.workspace }}/vcpkg"
-          vcpkgArguments: "nlohmann-json:x64-windows boost:x64-windows"
-      - name: Install Ninja
-        run: choco install ninja
-      - name: Install dependencies
-        run: |
-          vcpkg install nlohmann-json:x64-windows
-          vcpkg install boost:x64-windows
+          vcpkgDirectory: "${{ github.workspace }}"
       - name: Configure CMake
         run: cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
       - name: Build
