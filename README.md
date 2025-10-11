@@ -27,6 +27,12 @@ Turn-based dungeon crawling with strategic combat:
 
 _(Add a screenshot or gameplay GIF here when available)_
 
+### How to Play
+
+- At any time during play, press 'Escape' to access the main menu.
+- Press the "Help" number hotkey to view the key bindings and controls.
+- All controls are available in the Help menu.
+
 ## Features
 
 - Player movement across a grid based map.

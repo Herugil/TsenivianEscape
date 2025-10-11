@@ -130,3 +130,47 @@ GameState MenuSystems::containerMenu(GameSession &gameSession,
   }
   return returnState;
 }
+
+GameState MenuSystems::displayHelp() {
+  ScreenUtils::clearScreen();
+  std::cout
+      << "Controls:\n"
+         "Move up: "
+      << CommandChar::top
+      << "\n"
+         "Move down: "
+      << CommandChar::bottom
+      << "\n"
+         "Move left: "
+      << CommandChar::left
+      << "\n"
+         "Move right: "
+      << CommandChar::right
+      << "\n"
+         "Action menu: "
+      << CommandChar::actionMenu
+      << "\n"
+         "Inventory: "
+      << CommandChar::inventory
+      << "\n"
+         "Character sheet: "
+      << CommandChar::characterSheet
+      << "\n"
+         "Show enemies in map: "
+      << "Tab"
+      << "\n"
+         "Skip turn in combat: "
+      << "Space"
+      << "\n"
+         "Shove: "
+      << CommandChar::shove << " + a direction\n"
+      << "Interact with object/NPC: " << CommandChar::interact
+      << " + a direction\n"
+      << "Basic attack: " << CommandChar::attack << " + a direction\n"
+      << "Use an action/item in the action menu/inventory: Press the matching "
+         "hotkey\n";
+  std::cout << "\nPress any key to return.\n";
+  Input::getKeyBlocking();
+
+  return GameState::MainMenu;
+}

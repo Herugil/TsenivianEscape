@@ -14,4 +14,5 @@ ItemInspectResult inspectItem(GameSession &gameSession,
                               std::weak_ptr<Item> item);
 std::string actionMenu(GameSession &gameSession);
 GameState containerMenu(GameSession &gameSession, GameObject *container);
+GameState displayHelp();
 } // namespace MenuSystems
