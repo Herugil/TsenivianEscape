@@ -21,12 +21,15 @@ list(FILTER SOURCES EXCLUDE REGEX ".*/main\\.cpp$")
 
 add_executable(game src/main.cpp ${SOURCES})
 
-# Include directories
 target_include_directories(game PRIVATE src)
 
 find_package(nlohmann_json REQUIRED)
 find_package(Boost REQUIRED COMPONENTS random)
 target_link_libraries(game PRIVATE nlohmann_json::nlohmann_json Boost::random)
+
+# Temporarily disable strict warnings for googletest
+set(CMAKE_CXX_FLAGS_DEBUG_BACKUP "${CMAKE_CXX_FLAGS_DEBUG}")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -ggdb")
 
 include(FetchContent)
 FetchContent_Declare(
@@ -37,15 +40,14 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+# Restore strict warnings for the code
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG_BACKUP}")
+
 file(GLOB_RECURSE TEST_SOURCES "tests/*.cpp")
 
 add_executable(runTests ${TEST_SOURCES} ${SOURCES})
 target_include_directories(runTests PRIVATE src)
 target_link_libraries(runTests PRIVATE gtest gtest_main nlohmann_json::nlohmann_json Boost::random)
 
-# google test triggers some sign-conversion warnings, disable them
-target_compile_options(runTests PRIVATE
-    $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-Wno-sign-conversion>
-)
 enable_testing()
 add_test(NAME AllTests COMMAND runTests)
