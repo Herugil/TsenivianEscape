@@ -1,11 +1,25 @@
 #pragma once
 
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#elif defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4365) // signed/unsigned mismatch
+#endif
+
+#include <boost/random/uniform_int_distribution.hpp> // used for reproducible tests
+
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
+#elif defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 #include <chrono>
 #include <random>
 
 namespace Random {
 
-// Separate generator class for testability
 class Generator {
 private:
   std::mt19937 m_mt;
@@ -14,10 +28,10 @@ public:
   Generator() : m_mt(generateSeed()) {}
   explicit Generator(unsigned int seed) : m_mt(seed) {}
   int get(int min, int max) {
-    return std::uniform_int_distribution{min, max}(m_mt);
+    return boost::random::uniform_int_distribution<int>{min, max}(m_mt);
   }
   template <typename T> T get(T min, T max) {
-    return std::uniform_int_distribution<T>{min, max}(m_mt);
+    return boost::random::uniform_int_distribution<T>{min, max}(m_mt);
   }
   int rollD100() { return get(1, 100); }
   void setSeed(unsigned int seed) { m_mt.seed(seed); }

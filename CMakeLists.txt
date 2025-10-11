@@ -25,7 +25,8 @@ add_executable(game src/main.cpp ${SOURCES})
 target_include_directories(game PRIVATE src)
 
 find_package(nlohmann_json REQUIRED)
-target_link_libraries(game PRIVATE nlohmann_json::nlohmann_json)
+find_package(Boost REQUIRED COMPONENTS random)
+target_link_libraries(game PRIVATE nlohmann_json::nlohmann_json Boost::random)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -40,7 +41,7 @@ file(GLOB_RECURSE TEST_SOURCES "tests/*.cpp")
 
 add_executable(runTests ${TEST_SOURCES} ${SOURCES})
 target_include_directories(runTests PRIVATE src)
-target_link_libraries(runTests PRIVATE gtest gtest_main nlohmann_json::nlohmann_json)
+target_link_libraries(runTests PRIVATE gtest gtest_main nlohmann_json::nlohmann_json Boost::random)
 
 enable_testing()
 add_test(NAME AllTests COMMAND runTests)
