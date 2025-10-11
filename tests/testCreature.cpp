@@ -1,5 +1,4 @@
 #include "fixtures/fixtures.h"
-#include <gtest/gtest.h>
 
 class CreatureTest : public testing::Test {
 protected:

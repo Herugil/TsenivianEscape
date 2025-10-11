@@ -1,7 +1,6 @@
 #include "fixtures/fixtures.h"
 #include "scripts/NpcCombatAI.h"
 #include "utils/Random.h"
-#include <gtest/gtest.h>
 
 class CombatTest : public testing::Test {
 protected:
