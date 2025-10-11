@@ -9,7 +9,7 @@ if(APPLE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 endif()
 
-set(CMAKE_CXX_FLAGS_DEBUG "-g -ggdb -Wall -Weffc++ -Wextra -Wconversion -Wsign-conversion -Werror")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -ggdb -Wall -Wextra -Wconversion -Wsign-conversion -Werror")
 if (MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "/O2 /DNDEBUG")
 else()
@@ -21,12 +21,15 @@ list(FILTER SOURCES EXCLUDE REGEX ".*/main\\.cpp$")
 
 add_executable(game src/main.cpp ${SOURCES})
 
-# Include directories
 target_include_directories(game PRIVATE src)
 
 find_package(nlohmann_json REQUIRED)
 find_package(Boost REQUIRED COMPONENTS random)
 target_link_libraries(game PRIVATE nlohmann_json::nlohmann_json Boost::random)
+
+# Temporarily disable strict warnings for googletest
+set(CMAKE_CXX_FLAGS_DEBUG_BACKUP "${CMAKE_CXX_FLAGS_DEBUG}")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -ggdb")
 
 include(FetchContent)
 FetchContent_Declare(
@@ -36,6 +39,9 @@ FetchContent_Declare(
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
+
+# Restore strict warnings for the code
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG_BACKUP}")
 
 file(GLOB_RECURSE TEST_SOURCES "tests/*.cpp")
 

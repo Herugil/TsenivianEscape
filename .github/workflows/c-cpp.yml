@@ -28,17 +28,18 @@ jobs:
         run: cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
       - name: Build
         run: cmake --build build --config Release
+      - name: Upload Windows Binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: game-windows
+          path: build/game.exe
 
   build-macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
-        run: |
-          brew install nlohmann-json
-          brew install boost
-      - name: Create build directory
-        run: mkdir build
+        run: brew install nlohmann-json boost
       - name: Configure CMake
         run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
       - name: Build macOS
@@ -54,9 +55,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y build-essential cmake nlohmann-json3-dev libboost-all-dev
-      - name: Create build directory
-        run: mkdir build
+        run: sudo apt-get update && sudo apt-get install -y build-essential cmake nlohmann-json3-dev libboost-random-dev
       - name: Configure CMake
         run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
       - name: Build Linux
@@ -72,12 +71,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y build-essential cmake nlohmann-json3-dev libboost-all-dev
-      - name: Create build directory
-        run: mkdir build
+        run: sudo apt-get update && sudo apt-get install -y build-essential cmake nlohmann-json3-dev libboost-random-dev
       - name: Configure CMake
-        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON  -DCMAKE_CXX_FLAGS="-fsanitize=address -g"
+        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="-fsanitize=address -g"
       - name: Build Tests
         run: cmake --build build
       - name: Run Tests
-        run: build/runTests
+        run: |
+          cd build
+          ./runTests
