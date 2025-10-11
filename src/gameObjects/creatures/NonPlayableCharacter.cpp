@@ -196,8 +196,8 @@ std::string NonPlayableCharacter::setCurrentBehavior(GameSession &gameSession) {
 Action *NonPlayableCharacter::determineCurrentAction(Action::ActionType type,
                                                      GameSession &gameSession) {
   auto availableActions{getUsableActionFromType(type)};
-  auto r{Random::get<std::size_t>(0, availableActions.size() - 1)};
   if (!availableActions.empty()) {
+    auto r{Random::get<std::size_t>(0, availableActions.size() - 1)};
     m_currentAction = availableActions[r];
     m_currentTarget =
         NpcCombatAI::pickTargetForAction(gameSession, *this, m_currentAction);
