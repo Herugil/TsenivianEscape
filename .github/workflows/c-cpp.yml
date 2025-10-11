@@ -68,7 +68,7 @@ jobs:
 
   run-tests:
     runs-on: ubuntu-latest
-    needs: [build-linux] # Optional: run tests after build succeeds
+    needs: [build-linux]
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
