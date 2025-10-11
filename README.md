@@ -1,6 +1,31 @@
 # TsenivianEscape
 
+[![C/C++ Multi-Platform CI](https://github.com/Herugil/TsenivianEscape/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/Herugil/TsenivianEscape/actions/workflows/c-cpp.yml)
+
 A text-based dungeon crawler written in C++, in which you play as a deserter, trying to escape from your prison in Tséniva.
+
+## Tech Stack
+
+- **Language**: C++23
+- **Build System**: CMake
+- **Dependencies**:
+  - [nlohmann/json](https://github.com/nlohmann/json) - JSON parsing
+  - [Boost.Random](https://www.boost.org/doc/libs/release/libs/random/) - Random number generation
+- **Testing**: Google Test
+- **CI/CD**: GitHub Actions (Windows, macOS, Linux builds)
+
+## Gameplay
+
+```
+Turn-based dungeon crawling with strategic combat:
+- Explore multiple interconnected maps
+- Battle enemies with varied AI behaviors
+- Manage action points and resources
+- Level up and customize your character through a skill tree
+- Find loot and equipment to enhance your abilities
+```
+
+_(Add a screenshot or gameplay GIF here when available)_
 
 ## Features
 
@@ -15,38 +40,71 @@ A text-based dungeon crawler written in C++, in which you play as a deserter, tr
 
 ### Prerequisites
 
-- C++23 compatible compiler (e.g., GCC, Clang, MSVC)
-- CMake
-- Google Test for running tests
-- nlohmann/json for JSON parsing
+- C++23 compatible compiler (GCC 13+, Clang 16+, MSVC 2022+)
+- CMake 3.20+
+- nlohmann/json
+- Boost (Random component)
 
 ### Building the Project
 
-1. Clone the repository:
-   ```bash
-   git clone <repository_url>
-   ```
-2. Navigate to the project directory:
-   ```bash
-   cd TsenivianEscape
-   ```
-3. Create a build directory and navigate into it:
-   ```bash
-   mkdir build && cd build
-   ```
-4. Run CMake to configure the project:
-   ```bash
-   cmake ..
-   ```
-5. Build the project:
-   ```bash
-   cmake --build .
-   ```
+#### Linux (Ubuntu/Debian)
 
-To run the game, execute the generated binary in the build directory.
-To be able to save, make sure the `saves` directory is present in one level up from the build directory.
-Executing them outside the build directory will not work, as the game expects to find its data files relative to the executable.
-To run the tests, execute the test binary in the build directory.
+```bash
+# Install dependencies
+sudo apt-get update
+sudo apt-get install -y build-essential cmake nlohmann-json3-dev libboost-random-dev
+
+# Build
+git clone https://github.com/Herugil/TsenivianEscape.git
+cd TsenivianEscape
+cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+
+# Run
+./build/game
+```
+
+#### macOS
+
+```bash
+# Install dependencies
+brew install nlohmann-json boost cmake
+
+# Build
+git clone https://github.com/Herugil/TsenivianEscape.git
+cd TsenivianEscape
+cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+
+# Run
+./build/game
+```
+
+#### Windows
+
+```powershell
+# Install dependencies via vcpkg
+vcpkg install nlohmann-json:x64-windows boost-random:x64-windows
+
+# Build
+git clone https://github.com/Herugil/TsenivianEscape.git
+cd TsenivianEscape
+cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
+cmake --build build
+
+# Run
+.\build\game.exe
+```
+
+**Note**: The `saves/` directory must exist one level up from the executable for save functionality to work.
+
+### Running Tests
+
+```bash
+cmake -B build -S . -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON
+cmake --build build
+./build/runTests
+```
 
 ## Project Structure
 

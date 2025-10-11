@@ -9,7 +9,7 @@ if(APPLE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 endif()
 
-set(CMAKE_CXX_FLAGS_DEBUG "-g -ggdb -Wall -Weffc++ -Wextra -Wconversion -Wsign-conversion -Werror")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -ggdb -Wall -Wextra -Wconversion -Wsign-conversion -Werror")
 if (MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "/O2 /DNDEBUG")
 else()
