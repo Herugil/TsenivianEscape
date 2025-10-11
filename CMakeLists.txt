@@ -43,5 +43,9 @@ add_executable(runTests ${TEST_SOURCES} ${SOURCES})
 target_include_directories(runTests PRIVATE src)
 target_link_libraries(runTests PRIVATE gtest gtest_main nlohmann_json::nlohmann_json Boost::random)
 
+# google test triggers some sign-conversion warnings, disable them
+target_compile_options(runTests PRIVATE
+    $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-Wno-sign-conversion>
+)
 enable_testing()
 add_test(NAME AllTests COMMAND runTests)
