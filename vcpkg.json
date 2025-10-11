@@ -1,5 +1,0 @@
-{
-  "name": "TsenivianEscape",
-  "version": "1.0.0",
-  "dependencies": ["nlohmann-json", "boost"]
-}
