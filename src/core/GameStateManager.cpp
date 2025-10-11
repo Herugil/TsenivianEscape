@@ -420,5 +420,8 @@ void GameStateManager::handleMainMenu() {
       return;
     ScreenUtils::clearScreen();
     std::exit(0);
+  } else if ((inSession && pressedKey == 5) ||
+             (!inSession && pressedKey == 3)) {
+    MenuSystems::displayHelp();
   }
 }

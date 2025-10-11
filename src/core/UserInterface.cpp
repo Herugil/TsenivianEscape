@@ -96,11 +96,13 @@ int UserInterface::mainMenu(bool inSession) {
     std::cout << "3: Save Game\n";
     std::cout << "4: Load Game\n";
     std::cout << "5: Exit to Desktop\n";
+    std::cout << "6: Help\n";
   } else {
     std::cout << "Main Menu\n";
     std::cout << "1: New Game\n";
     std::cout << "2: Load Game\n";
     std::cout << "3: Exit to Desktop\n";
+    std::cout << "4: Help\n";
   }
   std::cout << "Press the corresponding number key to choose an option.\n";
   auto command{CommandHandler::getCommand(Input::getKeyBlocking())};
