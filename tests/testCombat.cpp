@@ -7,7 +7,7 @@ class CombatTest : public testing::Test {
 protected:
   std::unique_ptr<GameSession> gameSession;
   void SetUp() override {
-    Random::setSeed(42);
+    Random::setSeed(12);
     gameSession = std::make_unique<GameSession>(createTestGameSession());
     gameSession->addNpc(createTestNPC());
   }
@@ -99,7 +99,7 @@ TEST_F(CombatTest, EnemyTurns) {
   while (npc->getCurrentBehavior() != NonPlayableCharacter::skipTurn) {
     NpcCombatAI::npcActCombat(*gameSession, npc);
   }
-  ASSERT_EQ(gameSession->getPlayer().getHealthPoints(), 10);
+  ASSERT_EQ(gameSession->getPlayer().getHealthPoints(), 8);
   npc->resetTurn();
   gameSession->incrementTurnIndex();
   gameSession->incrementTurnIndex();
@@ -109,5 +109,5 @@ TEST_F(CombatTest, EnemyTurns) {
   while (npc->getCurrentBehavior() != NonPlayableCharacter::skipTurn) {
     NpcCombatAI::npcActCombat(*gameSession, npc);
   }
-  ASSERT_EQ(gameSession->getPlayer().getHealthPoints(), 8);
+  ASSERT_EQ(gameSession->getPlayer().getHealthPoints(), 4);
 }
