@@ -27,6 +27,10 @@ Turn-based dungeon crawling with strategic combat:
 
 _(Add a screenshot or gameplay GIF here when available)_
 
+## Playing the demo
+To play the demo of the game, simply download the github release artifact corresponding to your 
+OS and run the executable! (your antivirus may flag the executable, this is expected).
+
 ### How to Play
 
 - At any time during play, press 'Escape' to access the main menu.
