@@ -1,62 +1,82 @@
 {
-  "introTextFile": "level2.txt",
+  "introTextFile": "level3.txt",
   "mapWidth": 13,
-  "mapHeight": 10,
+  "mapHeight": 13,
   "wallDescription": "A simple wall of rough hewn stone",
   "walls": [
-    [0, 0],
-    [0, 3],
+    [ 0, 0 ],
+    [ 0, 4 ],
 
-    [0, 5],
-    [0, 12],
+    [ 0, 6 ],
+    [ 0, 12 ],
 
-    [12, 0],
-    [12, 4],
+    [ 12, 0 ],
+    [ 12, 12 ],
 
-    [12, 6],
-    [12, 12],
+    [ 12, 0 ],
+    [ 0, 0 ],
 
-    [12, 0],
-    [0, 0],
-
-    [0, 9],
-    [12, 9],
-
-    [4, 0],
-    [4, 5]
-  ],
-  "enemies": [
-    {
-      "symbol": "b",
-      "position": [7, 5],
-      "id": "enemyBandit",
-      "inventory": []
-    }
+    [ 0, 12 ],
+    [ 12, 12 ]
   ],
   "gameObjects": [
     {
       "symbol": "X",
-      "position": [12, 5],
-      "type": "container",
-      "name": "hidden items in the wall",
-      "description": "A brick you could dig out of the wall with the appropriate tools.",
-      "contents": ["itemSword", "itemBanana"]
+      "position": [
+        [ 4, 4 ],
+        [ 4, 5 ],
+        [ 5, 4 ],
+
+        [ 8, 7 ],
+        [ 8, 8 ],
+        [ 9, 7 ],
+        [ 9, 8 ],
+
+        [ 7, 2 ],
+        [ 7, 3 ]
+      ],
+      "name": "Rocks",
+      "description": "Rough and solid stone pillars, formed by erosion, wet and glistening."
     },
     {
-      "symbol": " ",
-      "position": [0, 4],
-      "type": "mapChanger",
-      "name": "passage to the next room",
-      "description": "A creaking, half open wooden door.",
-      "destLevel": "level2",
-      "destPosition": [8, 3]
+      "symbol": "B",
+      "position": [ 11, 6 ],
+      "name": "boat",
+      "description": "A boat that should allow you to follow the underground river and escape. Thank you for playing the demo of TsenivianEscape!"
     },
     {
       "symbol": "Z",
-      "position": [6, 5],
+      "position": [ 1, 11 ],
       "type": "restingPlace",
       "name": "Tranquil spot",
-      "description": "A tranquil spot below a broken statue. You feel confident you can lock the doors to this room and rest here."
+      "description": "A tranquil spot, next to what remains of a small fire. You feel confident you can lock the doors to this room and rest here."
+    },
+    {
+      "symbol": " ",
+      "position": [ 0, 5 ],
+      "type": "mapChanger",
+      "name": "passage to the next room",
+      "description": "A wooden door, closed.",
+      "destLevel": "level2",
+      "destPosition": [ 14, 5 ]
     }
-  ]
+  ],
+  "enemies": 
+    [
+      {
+        "symbol": "m",
+        "position": [ 5, 9 ],
+        "id": "enemyBanditMelee"
+      },
+      {
+        "symbol": "d",
+        "position": [ 5, 5 ],
+        "id": "enemyBanditRange"
+      },
+      {
+        "symbol": "D",
+        "position": [ 8, 2 ],
+        "id": "enemyBanditRange"
+      }
+    ]
 }
