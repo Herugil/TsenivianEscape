@@ -49,31 +49,40 @@
   "gameObjects": [
     {
       "symbol": "D",
-      "position": [8, 0],
+      "position": [ 8, 0 ],
       "type": "mapChanger",
       "name": "Cave in",
       "description": "Some heavy rocks blocking a pathway. You could dig it out with an appropriate tool.",
       "locked": true,
       "keyId": "itemPickaxe",
       "destLevel": "level2b",
-      "destPosition": [8, 9]
+      "destPosition": [ 8, 9 ]
     },
     {
       "symbol": " ",
-      "position": [0, 5],
+      "position": [ 0, 5 ],
       "type": "mapChanger",
       "name": "passage to the next room",
       "description": "A creaking, half open wooden door.",
       "destLevel": "level1",
-      "destPosition": [13, 5]
+      "destPosition": [ 13, 5 ]
+    },
+    {
+      "symbol": " ",
+      "position": [ 14, 5 ],
+      "type": "mapChanger",
+      "name": "passage to the next room",
+      "description": "A wooden door, closed. You can hear someone speaking behind, and the sound of water trickling.",
+      "destLevel": "level3",
+      "destPosition": [ 0, 5 ]
     },
     {
       "symbol": "C",
-      "position": [13, 8],
+      "position": [ 13, 8 ],
       "type": "container",
       "name": "Dusty skeleton",
       "description": "A crumbling skeleton, with yellowed bones and a cracked skull.",
-      "contents": ["itemPickaxe", "itemLeatherHelmet", "itemSmallHealthPotion"]
+      "contents": [ "itemPickaxe", "itemLeatherHelmet", "itemSmallHealthPotion" ]
     }
   ]
 }
