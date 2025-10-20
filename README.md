@@ -25,7 +25,9 @@ Turn-based dungeon crawling with strategic combat:
 - Find loot and equipment to enhance your abilities
 ```
 
-_(Add a screenshot or gameplay GIF here when available)_
+![Demo GIF](screenshots/firstgif.gif)
+![Demo GIF](screenshots/secondgif.gif)
+
 
 ## Playing the demo
 To play the demo of the game, simply download the github release artifact corresponding to your 
