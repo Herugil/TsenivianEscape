@@ -63,8 +63,6 @@ DataLoader::getAllItems() {
     } else if (itemType == "chestArmor" || itemType == "legArmor" ||
                itemType == "helmet" || itemType == "boots" ||
                itemType == "gloves") {
-      std::string name{value["name"]};
-      std::string description{value["description"]};
       int armorValue{value["armorValue"]};
       items[key] = std::make_shared<Armor>(
           Armor{name, key, itemType, description, armorValue});
