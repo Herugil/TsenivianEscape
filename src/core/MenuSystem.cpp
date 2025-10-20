@@ -63,11 +63,11 @@ std::string MenuSystems::actionMenu(GameSession &gameSession) {
       });
       auto hotkeyCommand{CommandHandler::getCommand(Input::getKeyBlocking())};
       if (CommandHandler::isHotkeyCommand(hotkeyCommand)) {
-        auto pressedKey{static_cast<std::size_t>(
+        auto pressedKeyEnemy{static_cast<std::size_t>(
             CommandHandler::getPressedKey(hotkeyCommand))};
-        if (pressedKey >= gameSession.getEnemiesInMap().size())
+        if (pressedKeyEnemy >= gameSession.getEnemiesInMap().size())
           return "";
-        auto targetCreature{gameSession.getEnemiesInMap()[pressedKey].lock()};
+        auto targetCreature{gameSession.getEnemiesInMap()[pressedKeyEnemy].lock()};
         if (targetCreature) {
           result += action->playerExecute(gameSession, *targetCreature);
         }

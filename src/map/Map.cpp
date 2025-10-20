@@ -254,19 +254,19 @@ json Map::toJson() const {
 void Map::updateFromJson(
     const json &j,
     const std::unordered_map<std::string, std::shared_ptr<Item>> &allItems) {
-  for (const auto &item : j.at("floorLayer")) {
-    Point pos{item["position"][0], item["position"][1]};
+  for (const auto &object : j.at("floorLayer")) {
+    Point pos{ object["position"][0], object["position"][1]};
     auto currentFloorObject{getFloorObject(pos)};
-    std::string itemName{item["name"]};
+    std::string itemName{ object["name"]};
     if (currentFloorObject && (currentFloorObject->getName() == itemName)) {
-      if (item.contains("locked") && !item["locked"])
+      if (object.contains("locked") && !object["locked"])
         // for now player cant lock objects (seems useless)
         currentFloorObject->unlock();
-      if (item.contains("contents")) {
+      if (object.contains("contents")) {
         if (auto container{dynamic_cast<Container *>(currentFloorObject)}) {
           // above cast should never fail
           container->clearContents();
-          for (const auto &itemJson : item["contents"]) {
+          for (const auto &itemJson : object["contents"]) {
             auto item{DataLoader::parseItem(itemJson, allItems)};
             if (item)
               container->addItem(item);
@@ -276,8 +276,8 @@ void Map::updateFromJson(
               "Error updating map from json: object with contents is not a "
               "container.");
       }
-      if (item.contains("hasBeenUsed"))
-        if (item["hasBeenUsed"])
+      if (object.contains("hasBeenUsed"))
+        if (object["hasBeenUsed"])
           currentFloorObject->setUsed();
     }
   }

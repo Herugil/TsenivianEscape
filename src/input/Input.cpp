@@ -28,7 +28,7 @@ bool Input::hasKeyPressed() {
 char Input::getKey() {
 #ifdef _WIN32
   if (hasKeyPressed()) {
-    return _getch();
+    return static_cast<char>(_getch());
   }
   return 0;
 #else
@@ -42,7 +42,7 @@ char Input::getKey() {
 
 char Input::getKeyBlocking() {
 #ifdef _WIN32
-  return _getch();
+    return static_cast<char>(_getch());
 #else
   // Use the same terminal setup as getKey() but without non-blocking
   if (!termiosInitialized) {
